@@ -1,0 +1,24 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Pre-commit hook: Warn if code changed but CHANGELOG.md wasn't updated
+# This is a WARNING, not a blocker — you can override with --no-verify
+
+changed_files=$(git diff --cached --name-only)
+
+# Check if any source code files were staged
+code_changed=$(echo "$changed_files" | grep -E '\.(js|jsx|ts|tsx|json|css)$' || true)
+
+# Check if CHANGELOG.md was staged
+changelog_updated=$(echo "$changed_files" | grep -E 'CHANGELOG\.md' || true)
+
+if [ -n "$code_changed" ] && [ -z "$changelog_updated" ]; then
+  echo ""
+  echo "⚠️  WARNING: Code files changed but CHANGELOG.md was not updated."
+  echo ""
+  echo "If this is a version completion, update CHANGELOG.md and version docs."
+  echo "If this is mid-development, this warning is expected — proceed."
+  echo ""
+  echo "To suppress: git commit --no-verify"
+  echo ""
+fi

@@ -1,0 +1,25 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Commit message hook: Enforce conventional commits
+# Format: type(scope): description
+# Types: feat, fix, chore, docs, refactor, test, style, ci, build, perf
+
+commit_msg=$(cat "$1")
+
+# Check if message matches conventional commit format
+if ! echo "$commit_msg" | grep -qE '^(feat|fix|chore|docs|refactor|test|style|ci|build|perf)(\(.+\))?: .+'; then
+  echo ""
+  echo "❌ Invalid commit message format."
+  echo ""
+  echo "Expected: type(scope): description"
+  echo "Examples:"
+  echo "  feat: add product catalog page"
+  echo "  fix: resolve cart total calculation"
+  echo "  docs: update version v0.1.0"
+  echo "  chore: install dependencies"
+  echo ""
+  echo "Types: feat, fix, chore, docs, refactor, test, style, ci, build, perf"
+  echo ""
+  exit 1
+fi
