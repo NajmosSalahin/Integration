@@ -9,6 +9,7 @@ node_modules/
 .env.production
 .env.local
 .env.*.local
+render.env
 
 # Build output
 dist/
