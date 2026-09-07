@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: integration
+    runtime: node
+    plan: free
+    buildCommand: >-
+      npm install &&
+      cd client && npm install && npm run build &&
+      cd ../server && npm install
+    startCommand: cd server && node server.js
+    envVars:
+      - key: MONGO_URI
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
+      - key: BREVO_API_KEY
+        sync: false
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      - key: CLIENT_URL
+        value: https://integration.onrender.com
+      - key: NODE_ENV
+        value: production

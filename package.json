@@ -1,0 +1,19 @@
+{
+  "name": "integration",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Curated T-Shirt Storefront — Integration",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:client\" \"npm run dev:server\"",
+    "dev:client": "cd client && npm run dev",
+    "dev:server": "cd server && npm run dev",
+    "build": "cd client && npm run build",
+    "start": "cd server && node server.js",
+    "seed": "cd server && node --input-type=module -e \"import './utils/seed.js'\"",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.0",
+    "husky": "^9.0.0"
+  }
+}
