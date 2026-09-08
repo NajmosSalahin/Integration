@@ -39,3 +39,11 @@ export const refreshLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
 });
+
+export const orderCreateLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 10,
+  message: { error: 'Too many order attempts. Please try again later.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
