@@ -7,21 +7,36 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
-## [0.1.0] — 2026-09-07
+## [0.1.0] — 2026-09-08
 
-**Status:** Pre-Release — Planning Complete
+**Status:** Stable — v0.1.0 Complete
 
-Initial planning snapshot. All design decisions locked, tech stack chosen, API contracts defined, data models finalized. No code shipped.
+Full MVP build across 11 steps. All features from the build order are implemented and deployed.
 
-**Key decisions:**
-- Brand: Modern Japanese streetwear, dark base, cobalt blue accent
-- Logo: Keep both — refined mark as fixed element, streetwear energy on product pages
-- Fonts: Bebas Neue (display) + Inter (body)
-- Auth: JWT access + refresh tokens, httpOnly cookies
-- Cart: Zustand + localStorage
-- Server state: TanStack Query with optimistic updates
-- Payment: Manual bKash, off-platform
-- Hosting: Render (both frontend and backend)
+**Features:**
+- Product catalog with gallery, size selector, and stock status
+- User authentication (signup, login, logout, email verification, password reset)
+- Zustand cart with localStorage persistence
+- Order request flow with PDF receipt, owner notification email, and customer confirmation
+- Admin order management (status updates, list with filter tabs)
+- Admin product management (CRUD, stock toggle, soft delete)
+- Customer order history with status filters
+- 9 content/legal pages (FAQ, Shipping, Returns, Payments, Privacy, Cookies, Terms, About, Contact)
+- Contact form with Brevo email delivery
+- Newsletter signup via Brevo contacts API
+- 404 page with catch-all route
+- Plausible analytics
+- Footer with newsletter form on all pages
+- Framer Motion staggered reveals and hover effects
+- Responsive grid (1/2/3 columns)
+- Rate limiting on all mutation endpoints
+- Zod validation on all inputs
+
+**Infrastructure:**
+- Deployed to Render (single service: frontend + backend)
+- MongoDB Atlas (free tier)
+- Brevo API (transactional + newsletter)
+- Dev/prod env separation
 
 **Detailed snapshot:** [versions/v0.1.0.md](versions/v0.1.0.md)
 
@@ -32,21 +47,14 @@ Initial planning snapshot. All design decisions locked, tech stack chosen, API c
 Features currently in development or planned for the next release.
 
 ### Planned for v1.0.0
-- User authentication (signup, login, email verification, password reset)
-- Product catalog with mixed-layout grid and thumbnail gallery
-- Cart with Zustand persistence
-- Order request flow with Brevo email notifications
-- Admin order management and product forms
-- Legal/content pages (FAQ, Shipping, Returns, Payments, Privacy, Cookies, Terms)
-- About page with brand story
-- Contact form
-- Newsletter signup via Brevo
-- Framer Motion animations and hover effects
-- Grain/noise texture overlay
-- SEO with react-helmet-async
-- Plausible analytics
-- Responsive mobile-first layout
-- 404/error pages
+- Search/filter (text search, price filter, size filter)
+- Order tracking (shipping carrier integration)
+- Japanese text elements (katakana/kanji)
+- Product reviews/ratings
+- Wishlists/favorites
+- Automated payment gateway
+- Admin analytics dashboard
+- Custom domain
 
 ---
 
