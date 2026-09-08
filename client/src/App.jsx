@@ -11,6 +11,7 @@ import ResetPassword from './pages/ResetPassword';
 import VerifyEmail from './pages/VerifyEmail';
 import AdminOrders from './pages/admin/Orders';
 import AdminProducts from './pages/admin/Products';
+import OrdersHistory from './pages/OrdersHistory';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminRoute from './components/AdminRoute';
 
@@ -61,9 +62,7 @@ function App() {
         path="/orders"
         element={
           <ProtectedRoute>
-            <div className="min-h-screen bg-[#0a0a0a] text-[#e8e8e8] flex items-center justify-center">
-              <p className="text-gray-400">Orders page — coming soon</p>
-            </div>
+            <OrdersHistory />
           </ProtectedRoute>
         }
       />
