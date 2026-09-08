@@ -1,16 +1,21 @@
 import { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, ShoppingCart } from 'lucide-react';
 import { fetchProduct } from '../api/products';
 import ProductGallery from '../components/ProductGallery';
 import SizeSelector from '../components/SizeSelector';
+import useCart from '../stores/cartStore';
 
 export default function ProductDetail() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [selectedSize, setSelectedSize] = useState(null);
+  const [added, setAdded] = useState(false);
+  const addItem = useCart((s) => s.addItem);
+  const itemCount = useCart((s) => s.getItemCount());
 
   const { data: product, isLoading, error } = useQuery({
     queryKey: ['product', id],
@@ -55,13 +60,23 @@ export default function ProductDetail() {
               <ArrowLeft size={16} />
               <span className="tracking-wider uppercase">Collection</span>
             </Link>
-            <Link
-              to="/"
-              className="text-lg tracking-[0.2em] uppercase"
-              style={{ fontFamily: "'Bebas Neue', sans-serif" }}
-            >
-              INTEGRATION
-            </Link>
+            <div className="flex items-center gap-4">
+              <Link to="/cart" className="relative">
+                <ShoppingCart size={20} className="text-gray-400 hover:text-white transition-colors" />
+                {itemCount > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-blue-600 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center">
+                    {itemCount}
+                  </span>
+                )}
+              </Link>
+              <Link
+                to="/"
+                className="text-lg tracking-[0.2em] uppercase"
+                style={{ fontFamily: "'Bebas Neue', sans-serif" }}
+              >
+                INTEGRATION
+              </Link>
+            </div>
           </div>
         </header>
 
@@ -134,15 +149,22 @@ export default function ProductDetail() {
 
                 <button
                   disabled={!selectedSize}
+                  onClick={() => {
+                    addItem({ product, size: selectedSize });
+                    setAdded(true);
+                    setTimeout(() => setAdded(false), 1500);
+                  }}
                   className={`
                     w-full py-3 rounded-sm text-sm tracking-[0.2em] uppercase transition-all duration-200
                     ${selectedSize
-                      ? 'bg-blue-600 hover:bg-blue-500 text-white cursor-pointer'
+                      ? added
+                        ? 'bg-green-600 text-white cursor-default'
+                        : 'bg-blue-600 hover:bg-blue-500 text-white cursor-pointer'
                       : 'bg-gray-800 text-gray-600 cursor-not-allowed'
                     }
                   `}
                 >
-                  {selectedSize ? 'Add to Cart' : 'Select a Size'}
+                  {added ? 'Added!' : selectedSize ? 'Add to Cart' : 'Select a Size'}
                 </button>
               </motion.div>
             </div>
