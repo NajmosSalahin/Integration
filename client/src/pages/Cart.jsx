@@ -2,9 +2,11 @@ import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { ArrowLeft, Minus, Plus, X, ShoppingBag } from 'lucide-react';
 import useCart from '../stores/cartStore';
+import { useAuth } from '../context/AuthContext';
 
 export default function Cart() {
   const { items, removeItem, updateQuantity, clearCart, getTotal } = useCart();
+  const { user } = useAuth();
   const total = getTotal();
 
   return (
@@ -139,12 +141,21 @@ export default function Cart() {
                     Payment is manual via bKash. You will be contacted after placing your order.
                   </p>
 
-                  <button
-                    disabled
-                    className="w-full py-3 rounded-sm text-sm tracking-[0.2em] uppercase bg-gray-800 text-gray-600 cursor-not-allowed"
-                  >
-                    Checkout — Coming Soon
-                  </button>
+                  {user ? (
+                    <Link
+                      to="/checkout"
+                      className="block w-full py-3 rounded-sm text-sm tracking-[0.2em] uppercase bg-blue-600 hover:bg-blue-500 text-white text-center transition-all duration-200"
+                    >
+                      Checkout
+                    </Link>
+                  ) : (
+                    <Link
+                      to="/login?redirect=/checkout"
+                      className="block w-full py-3 rounded-sm text-sm tracking-[0.2em] uppercase bg-blue-600 hover:bg-blue-500 text-white text-center transition-all duration-200"
+                    >
+                      Login to Checkout
+                    </Link>
+                  )}
 
                   <button
                     onClick={clearCart}

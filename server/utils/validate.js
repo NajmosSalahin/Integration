@@ -34,6 +34,16 @@ export const resetPasswordSchema = z.object({
   path: ['confirmPassword'],
 });
 
+export const createOrderSchema = z.object({
+  items: z.array(z.object({
+    productId: z.string().min(1),
+    size: z.string().min(1),
+    quantity: z.number().int().min(1),
+  })).min(1, 'Cart must not be empty'),
+  deliveryAddress: z.string().min(5, 'Delivery address is required'),
+  contactPhone: z.string().min(5, 'Phone number is required'),
+});
+
 export function validate(schema) {
   return (req, res, next) => {
     const result = schema.safeParse(req.body);
