@@ -21,6 +21,7 @@ import Payments from './pages/legal/Payments';
 import Privacy from './pages/legal/Privacy';
 import Cookies from './pages/legal/Cookies';
 import Terms from './pages/legal/Terms';
+import NotFound from './pages/NotFound';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminRoute from './components/AdminRoute';
 
@@ -84,6 +85,7 @@ function App() {
       <Route path="/privacy" element={<Privacy />} />
       <Route path="/cookies" element={<Cookies />} />
       <Route path="/terms" element={<Terms />} />
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 }

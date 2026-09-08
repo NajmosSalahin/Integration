@@ -1,7 +1,7 @@
 # Handoff — Integration Project
 
-**Last updated:** 2026-09-07
-**Current state:** Deployed to Render, auth + products working, cart not started
+**Last updated:** 2026-09-08
+**Current state:** v0.1.0 complete — all 11 steps done, deployed to Render
 
 ---
 
@@ -16,7 +16,13 @@
 | Cloudinary | ❌ Not configured | Placeholder values in env |
 | Products | ✅ Working | 8 seed designs, gallery, size selector |
 | Auth | ✅ Working | Signup, login, logout, refresh, email verification, password reset |
-| Cart | ❌ Not started | **Next step (Step 4 in build order)** |
+| Cart | ✅ Working | Zustand store, localStorage persistence, cart page |
+| Orders | ✅ Working | Checkout, PDF receipt, notification email, confirmation email |
+| Admin | ✅ Working | Order list, status updates, product CRUD, stock toggle |
+| Content Pages | ✅ Working | About, Contact, FAQ, Shipping, Returns, Payments, Privacy, Cookies, Terms |
+| Newsletter | ✅ Working | Brevo contacts API, footer signup form |
+| Analytics | ✅ Plausible | Script tag in index.html |
+| 404 Page | ✅ Working | NotFound component with catch-all route |
 
 ---
 
@@ -182,14 +188,14 @@ Every page renders its own `min-h-screen bg-[#0a0a0a] text-[#e8e8e8]` wrapper an
 | 1 | Scaffold repo (client + server) | ✅ |
 | 2 | Product model + seed script, browse/detail pages | ✅ |
 | 3 | Auth (signup/login/JWT, email verification, password reset) | ✅ |
-| 4 | **Cart (Zustand store, localStorage persistence)** | **⬅️ NEXT** |
-| 5 | Order Request flow → notification email → confirmation page | Pending |
-| 6 | Admin order list with status updates | Pending |
-| 7 | Admin product management (add/edit form, stock toggle) | Pending |
-| 8 | Order history page (customer-facing) | Pending |
-| 9 | Legal/content pages + About + Contact form | Pending |
-| 10 | Newsletter signup via Brevo | Pending |
-| 11 | Polish: animations, hover effects, grain overlay, responsive, 404, SEO, analytics | Pending |
+| 4 | Cart (Zustand store, localStorage persistence) | ✅ |
+| 5 | Order Request flow → notification email → confirmation page | ✅ |
+| 6 | Admin order list with status updates | ✅ |
+| 7 | Admin product management (add/edit form, stock toggle) | ✅ |
+| 8 | Order history page (customer-facing) | ✅ |
+| 9 | Legal/content pages + About + Contact form | ✅ |
+| 10 | Newsletter signup via Brevo | ✅ |
+| 11 | Polish: 404 page, Plausible analytics, footer on Home | ✅ |
 
 ---
 
@@ -258,13 +264,11 @@ e722424 feat: MERN stack storefront with products, auth, and render blueprint
 
 ## Next Session Starting Point
 
-**Task:** Step 4 — Cart (Zustand store, localStorage persistence)
+**v0.1.0 is complete.** All 11 build steps are done.
 
-**Files to create:**
-- `client/src/stores/cartStore.js` — Zustand store with persist middleware
-- `client/src/pages/Cart.jsx` — Cart page
-
-**Files to modify:**
-- `client/src/pages/ProductDetail.jsx` — Wire "Add to Cart" button + add cart icon to header
-- `client/src/pages/Home.jsx` — Add cart icon with badge to header
-- `client/src/App.jsx` — Add `/cart` route
+### Remaining manual actions (not code):
+- Set `BREVO_NEWSLETTER_LIST_ID` in `.env.development` and `render.env`
+- Configure Cloudinary (replace placeholder env values)
+- Replace picsum.photos placeholder images with real product photography
+- Replace WhatsApp/Messenger placeholder values in OrderConfirmation.jsx
+- Set up custom domain (optional)

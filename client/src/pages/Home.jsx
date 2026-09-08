@@ -7,6 +7,7 @@ import { fetchProducts } from '../api/products';
 import ProductCard from '../components/ProductCard';
 import useCart from '../stores/cartStore';
 import { useAuth } from '../context/AuthContext';
+import Footer from '../components/Footer';
 
 export default function Home() {
   const { data: products, isLoading, error } = useQuery({
@@ -118,6 +119,8 @@ export default function Home() {
             )}
           </div>
         </main>
+
+        <Footer />
       </div>
     </>
   );
