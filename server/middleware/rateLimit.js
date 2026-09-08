@@ -47,3 +47,11 @@ export const orderCreateLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
 });
+
+export const contactLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 5,
+  message: { error: 'Too many contact attempts. Please try again later.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
