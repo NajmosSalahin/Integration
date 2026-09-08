@@ -12,6 +12,15 @@ import VerifyEmail from './pages/VerifyEmail';
 import AdminOrders from './pages/admin/Orders';
 import AdminProducts from './pages/admin/Products';
 import OrdersHistory from './pages/OrdersHistory';
+import About from './pages/About';
+import Contact from './pages/Contact';
+import FAQ from './pages/legal/FAQ';
+import Shipping from './pages/legal/Shipping';
+import Returns from './pages/legal/Returns';
+import Payments from './pages/legal/Payments';
+import Privacy from './pages/legal/Privacy';
+import Cookies from './pages/legal/Cookies';
+import Terms from './pages/legal/Terms';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminRoute from './components/AdminRoute';
 
@@ -66,6 +75,15 @@ function App() {
           </ProtectedRoute>
         }
       />
+      <Route path="/about" element={<About />} />
+      <Route path="/contact" element={<Contact />} />
+      <Route path="/faq" element={<FAQ />} />
+      <Route path="/shipping" element={<Shipping />} />
+      <Route path="/returns" element={<Returns />} />
+      <Route path="/payments" element={<Payments />} />
+      <Route path="/privacy" element={<Privacy />} />
+      <Route path="/cookies" element={<Cookies />} />
+      <Route path="/terms" element={<Terms />} />
     </Routes>
   );
 }
