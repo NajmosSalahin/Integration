@@ -42,3 +42,18 @@ export async function getMyOrders() {
 export async function getOrder(id) {
   return request(`/api/orders/${id}`);
 }
+
+export async function getAllOrders({ status, page } = {}) {
+  const params = new URLSearchParams();
+  if (status) params.set('status', status);
+  if (page) params.set('page', String(page));
+  const qs = params.toString();
+  return request(`/api/orders${qs ? `?${qs}` : ''}`);
+}
+
+export async function updateOrderStatus(orderId, status) {
+  return request(`/api/orders/${orderId}/status`, {
+    method: 'PATCH',
+    body: JSON.stringify({ status }),
+  });
+}

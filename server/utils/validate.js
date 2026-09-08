@@ -44,6 +44,10 @@ export const createOrderSchema = z.object({
   contactPhone: z.string().min(5, 'Phone number is required'),
 });
 
+export const updateStatusSchema = z.object({
+  status: z.enum(['pending_payment', 'awaiting_confirmation', 'paid', 'fulfilled', 'cancelled']),
+});
+
 export function validate(schema) {
   return (req, res, next) => {
     const result = schema.safeParse(req.body);
