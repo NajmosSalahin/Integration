@@ -1,14 +1,18 @@
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
+import { Link } from 'react-router-dom';
+import { ShoppingCart } from 'lucide-react';
 import { fetchProducts } from '../api/products';
 import ProductCard from '../components/ProductCard';
+import useCart from '../stores/cartStore';
 
 export default function Home() {
   const { data: products, isLoading, error } = useQuery({
     queryKey: ['products'],
     queryFn: fetchProducts,
   });
+  const itemCount = useCart((s) => s.getItemCount());
 
   return (
     <>
@@ -19,16 +23,26 @@ export default function Home() {
 
       <div className="min-h-screen bg-[#0a0a0a] text-[#e8e8e8]">
         <header className="px-4 sm:px-6 lg:px-8 py-8 border-b border-gray-800/50">
-          <div className="max-w-7xl mx-auto">
-            <h1
-              className="text-4xl sm:text-5xl tracking-[0.2em] uppercase"
-              style={{ fontFamily: "'Bebas Neue', sans-serif" }}
-            >
-              INTEGRATION
-            </h1>
-            <p className="mt-1 text-xs tracking-[0.3em] text-gray-500 uppercase">
-              Different Styles, One Identity
-            </p>
+          <div className="max-w-7xl mx-auto flex items-center justify-between">
+            <div>
+              <h1
+                className="text-4xl sm:text-5xl tracking-[0.2em] uppercase"
+                style={{ fontFamily: "'Bebas Neue', sans-serif" }}
+              >
+                INTEGRATION
+              </h1>
+              <p className="mt-1 text-xs tracking-[0.3em] text-gray-500 uppercase">
+                Different Styles, One Identity
+              </p>
+            </div>
+            <Link to="/cart" className="relative">
+              <ShoppingCart size={22} className="text-gray-400 hover:text-white transition-colors" />
+              {itemCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-blue-600 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center">
+                  {itemCount}
+                </span>
+              )}
+            </Link>
           </div>
         </header>
 
