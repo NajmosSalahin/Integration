@@ -10,6 +10,7 @@ import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import VerifyEmail from './pages/VerifyEmail';
 import AdminOrders from './pages/admin/Orders';
+import AdminProducts from './pages/admin/Products';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminRoute from './components/AdminRoute';
 
@@ -45,6 +46,14 @@ function App() {
         element={
           <AdminRoute>
             <AdminOrders />
+          </AdminRoute>
+        }
+      />
+      <Route
+        path="/admin/products"
+        element={
+          <AdminRoute>
+            <AdminProducts />
           </AdminRoute>
         }
       />

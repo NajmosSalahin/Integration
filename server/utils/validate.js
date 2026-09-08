@@ -48,6 +48,22 @@ export const updateStatusSchema = z.object({
   status: z.enum(['pending_payment', 'awaiting_confirmation', 'paid', 'fulfilled', 'cancelled']),
 });
 
+export const createProductSchema = z.object({
+  title: z.string().min(1, 'Title is required').max(100),
+  description: z.string().min(10, 'Description must be at least 10 characters').max(2000),
+  price: z.number().int().min(1, 'Price must be at least 1'),
+  images: z.array(z.string().url('Invalid image URL')).min(1, 'At least one image is required'),
+  sizes: z.array(z.string().min(1)).min(1, 'At least one size is required'),
+  sizeGuideNote: z.string().max(500).optional().default(''),
+  tags: z.array(z.string()).optional().default([]),
+  stock: z.array(z.object({
+    size: z.string(),
+    inStock: z.boolean(),
+  })).optional(),
+});
+
+export const updateProductSchema = createProductSchema.partial();
+
 export function validate(schema) {
   return (req, res, next) => {
     const result = schema.safeParse(req.body);

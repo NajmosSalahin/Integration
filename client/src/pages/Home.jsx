@@ -39,12 +39,20 @@ export default function Home() {
             </div>
             <div className="flex items-center gap-4">
               {user?.role === 'admin' && (
-                <Link
-                  to="/admin/orders"
-                  className="text-xs tracking-wider uppercase text-gray-500 hover:text-blue-400 transition-colors"
-                >
-                  Admin
-                </Link>
+                <div className="flex items-center gap-3">
+                  <Link
+                    to="/admin/orders"
+                    className="text-xs tracking-wider uppercase text-gray-500 hover:text-blue-400 transition-colors"
+                  >
+                    Orders
+                  </Link>
+                  <Link
+                    to="/admin/products"
+                    className="text-xs tracking-wider uppercase text-gray-500 hover:text-blue-400 transition-colors"
+                  >
+                    Products
+                  </Link>
+                </div>
               )}
               <Link to="/cart" className="relative">
                 <ShoppingCart size={22} className="text-gray-400 hover:text-white transition-colors" />
