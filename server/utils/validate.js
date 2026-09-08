@@ -70,6 +70,10 @@ export const contactSchema = z.object({
   message: z.string().min(10, 'Message must be at least 10 characters').max(2000),
 });
 
+export const newsletterSchema = z.object({
+  email: z.string().email('Invalid email address'),
+});
+
 export function validate(schema) {
   return (req, res, next) => {
     const result = schema.safeParse(req.body);

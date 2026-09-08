@@ -55,3 +55,11 @@ export const contactLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
 });
+
+export const newsletterLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 5,
+  message: { error: 'Too many subscribe attempts. Please try again later.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
