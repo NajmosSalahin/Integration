@@ -6,6 +6,7 @@ import { ShoppingCart } from 'lucide-react';
 import { fetchProducts } from '../api/products';
 import ProductCard from '../components/ProductCard';
 import useCart from '../stores/cartStore';
+import { useAuth } from '../context/AuthContext';
 
 export default function Home() {
   const { data: products, isLoading, error } = useQuery({
@@ -13,6 +14,7 @@ export default function Home() {
     queryFn: fetchProducts,
   });
   const itemCount = useCart((s) => s.getItemCount());
+  const { user } = useAuth();
 
   return (
     <>
@@ -35,14 +37,24 @@ export default function Home() {
                 Different Styles, One Identity
               </p>
             </div>
-            <Link to="/cart" className="relative">
-              <ShoppingCart size={22} className="text-gray-400 hover:text-white transition-colors" />
-              {itemCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-blue-600 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center">
-                  {itemCount}
-                </span>
+            <div className="flex items-center gap-4">
+              {user?.role === 'admin' && (
+                <Link
+                  to="/admin/orders"
+                  className="text-xs tracking-wider uppercase text-gray-500 hover:text-blue-400 transition-colors"
+                >
+                  Admin
+                </Link>
               )}
-            </Link>
+              <Link to="/cart" className="relative">
+                <ShoppingCart size={22} className="text-gray-400 hover:text-white transition-colors" />
+                {itemCount > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-blue-600 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center">
+                    {itemCount}
+                  </span>
+                )}
+              </Link>
+            </div>
           </div>
         </header>
 

@@ -128,3 +128,69 @@ export async function getOrder(req, res) {
     res.status(500).json({ error: 'Failed to fetch order' });
   }
 }
+
+export async function getAllOrders(req, res) {
+  try {
+    if (mongoose.connection.readyState !== 1) {
+      return res.json({ orders: [], page: 1, totalOrders: 0, totalPages: 0 });
+    }
+
+    const { status, page = 1, limit = 20 } = req.query;
+    const filter = {};
+    if (status) filter.status = status;
+
+    const totalOrders = await Order.countDocuments(filter);
+    const totalPages = Math.ceil(totalOrders / limit);
+    const skip = (Number(page) - 1) * Number(limit);
+
+    const orders = await Order.find(filter)
+      .populate('userId', 'name email')
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(Number(limit))
+      .select('-__v');
+
+    res.json({
+      orders,
+      page: Number(page),
+      totalOrders,
+      totalPages,
+    });
+  } catch (err) {
+    console.error('getAllOrders error:', err);
+    res.status(500).json({ error: 'Failed to fetch orders' });
+  }
+}
+
+export async function updateOrderStatus(req, res) {
+  try {
+    if (mongoose.connection.readyState !== 1) {
+      return res.status(503).json({ error: 'Database not connected' });
+    }
+
+    const { status } = req.body;
+    const order = await Order.findById(req.params.id);
+    if (!order) {
+      return res.status(404).json({ error: 'Order not found' });
+    }
+
+    order.status = status;
+    if (status === 'paid' && !order.paidAt) {
+      order.paidAt = new Date();
+    }
+    if (status === 'fulfilled' && !order.fulfilledAt) {
+      order.fulfilledAt = new Date();
+    }
+
+    await order.save();
+
+    const updated = await Order.findById(order._id)
+      .populate('userId', 'name email')
+      .select('-__v');
+
+    res.json(updated);
+  } catch (err) {
+    console.error('updateOrderStatus error:', err);
+    res.status(500).json({ error: 'Failed to update order status' });
+  }
+}
