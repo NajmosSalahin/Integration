@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, ShoppingCart, User, Menu, X, LogOut, Package, LogIn } from 'lucide-react';
+import { Search, ShoppingCart, Menu, X, LogOut, Package, LogIn } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { fetchProducts } from '../api/products';
 import useCart from '../stores/cartStore';
@@ -25,6 +25,27 @@ export default function Navbar() {
     queryKey: ['products'],
     queryFn: fetchProducts,
   });
+
+  const getInitials = (name) => {
+    if (!name) return '?';
+    const parts = name.trim().split(/\s+/);
+    return parts.length >= 2
+      ? (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
+      : parts[0].substring(0, 2).toUpperCase();
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setUserMenuOpen(false);
+        setMobileMenuOpen(false);
+        setMobileSearchOpen(false);
+        setShowResults(false);
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -151,31 +172,41 @@ export default function Navbar() {
                 <div className="relative" ref={userMenuRef}>
                   <button
                     onClick={() => setUserMenuOpen(!userMenuOpen)}
-                    className="p-2.5 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
+                    className="w-9 h-9 rounded-full bg-[var(--accent)] text-white flex items-center justify-center text-sm font-bold hover:ring-2 hover:ring-[var(--accent)]/50 transition-all"
                     aria-label="Account menu"
                     aria-expanded={userMenuOpen}
+                    aria-haspopup="menu"
                   >
-                    <User size={20} />
+                    {getInitials(user.name)}
                   </button>
 
                   <AnimatePresence>
                     {userMenuOpen && (
                       <motion.div
-                        initial={{ opacity: 0, y: -8 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -8 }}
+                        initial={{ opacity: 0, y: -8, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -8, scale: 0.95 }}
                         transition={{ duration: 0.15 }}
-                        className="absolute right-0 top-full mt-1 w-48 bg-[#111] border border-[var(--border)] rounded-lg shadow-lg overflow-hidden z-50"
+                        className="absolute right-0 top-full mt-2 w-56 bg-[#111] border border-[var(--border)] rounded-xl shadow-xl overflow-hidden z-50"
+                        role="menu"
                       >
                         <div className="px-4 py-3 border-b border-[var(--border)]">
-                          <p className="text-sm text-[var(--text-primary)] truncate">{user.name}</p>
-                          <p className="text-xs text-[var(--text-secondary)] truncate">{user.email}</p>
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-full bg-[var(--accent)] text-white flex items-center justify-center text-sm font-bold shrink-0">
+                              {getInitials(user.name)}
+                            </div>
+                            <div className="min-w-0">
+                              <p className="text-sm font-medium text-[var(--text-primary)] truncate">{user.name}</p>
+                              <p className="text-xs text-[var(--text-secondary)] truncate">{user.email}</p>
+                            </div>
+                          </div>
                         </div>
                         <div className="py-1">
                           <Link
                             to="/orders"
                             onClick={() => setUserMenuOpen(false)}
-                            className="flex items-center gap-3 px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-primary)] transition-colors"
+                            className="flex items-center gap-3 px-4 py-3 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-primary)] transition-colors"
+                            role="menuitem"
                           >
                             <Package size={16} />
                             My Orders
@@ -185,7 +216,8 @@ export default function Navbar() {
                               <Link
                                 to="/admin/orders"
                                 onClick={() => setUserMenuOpen(false)}
-                                className="flex items-center gap-3 px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-primary)] transition-colors sm:hidden"
+                                className="flex items-center gap-3 px-4 py-3 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-primary)] transition-colors sm:hidden"
+                                role="menuitem"
                               >
                                 <Package size={16} />
                                 Admin Orders
@@ -193,16 +225,19 @@ export default function Navbar() {
                               <Link
                                 to="/admin/products"
                                 onClick={() => setUserMenuOpen(false)}
-                                className="flex items-center gap-3 px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-primary)] transition-colors sm:hidden"
+                                className="flex items-center gap-3 px-4 py-3 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-primary)] transition-colors sm:hidden"
+                                role="menuitem"
                               >
                                 <Package size={16} />
                                 Admin Products
                               </Link>
                             </>
                           )}
+                          <div className="border-t border-[var(--border)] my-1" />
                           <button
                             onClick={handleLogout}
-                            className="flex items-center gap-3 px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:text-red-400 hover:bg-[var(--bg-primary)] transition-colors w-full"
+                            className="flex items-center gap-3 px-4 py-3 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors w-full"
+                            role="menuitem"
                           >
                             <LogOut size={16} />
                             Log Out
