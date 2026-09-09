@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, ShoppingCart, Menu, X, LogOut, Package, LogIn } from 'lucide-react';
+import { Search, ShoppingCart, Menu, X, LogOut, Package, LogIn, User } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { fetchProducts } from '../api/products';
 import useCart from '../stores/cartStore';
@@ -25,14 +25,6 @@ export default function Navbar() {
     queryKey: ['products'],
     queryFn: fetchProducts,
   });
-
-  const getInitials = (name) => {
-    if (!name) return '?';
-    const parts = name.trim().split(/\s+/);
-    return parts.length >= 2
-      ? (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
-      : parts[0].substring(0, 2).toUpperCase();
-  };
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -168,32 +160,32 @@ export default function Navbar() {
                 )}
               </Link>
 
-              {user ? (
-                <div className="relative" ref={userMenuRef}>
-                  <button
-                    onClick={() => setUserMenuOpen(!userMenuOpen)}
-                    className="w-9 h-9 rounded-full bg-[var(--accent)] text-white flex items-center justify-center text-sm font-bold hover:ring-2 hover:ring-[var(--accent)]/50 transition-all"
-                    aria-label="Account menu"
-                    aria-expanded={userMenuOpen}
-                    aria-haspopup="menu"
-                  >
-                    {getInitials(user.name)}
-                  </button>
+              <div className="relative" ref={userMenuRef}>
+                <button
+                  onClick={() => setUserMenuOpen(!userMenuOpen)}
+                  className="w-9 h-9 rounded-full border border-[var(--border)] flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--accent)] transition-all"
+                  aria-label="Account menu"
+                  aria-expanded={userMenuOpen}
+                  aria-haspopup="menu"
+                >
+                  <User size={18} />
+                </button>
 
-                  <AnimatePresence>
-                    {userMenuOpen && (
-                      <motion.div
-                        initial={{ opacity: 0, y: -8, scale: 0.95 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: -8, scale: 0.95 }}
-                        transition={{ duration: 0.15 }}
-                        className="absolute right-0 top-full mt-2 w-56 bg-[#111] border border-[var(--border)] rounded-xl shadow-xl overflow-hidden z-50"
-                        role="menu"
-                      >
+                <AnimatePresence>
+                  {userMenuOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -8, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -8, scale: 0.95 }}
+                      transition={{ duration: 0.15 }}
+                      className="absolute right-0 top-full mt-2 w-56 bg-[#111] border border-[var(--border)] rounded-xl shadow-xl overflow-hidden z-50"
+                      role="menu"
+                    >
+                      {user && (
                         <div className="px-4 py-3 border-b border-[var(--border)]">
                           <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-[var(--accent)] text-white flex items-center justify-center text-sm font-bold shrink-0">
-                              {getInitials(user.name)}
+                            <div className="w-10 h-10 rounded-full border border-[var(--border)] flex items-center justify-center text-[var(--text-secondary)] shrink-0">
+                              <User size={18} />
                             </div>
                             <div className="min-w-0">
                               <p className="text-sm font-medium text-[var(--text-primary)] truncate">{user.name}</p>
@@ -201,7 +193,9 @@ export default function Navbar() {
                             </div>
                           </div>
                         </div>
-                        <div className="py-1">
+                      )}
+                      <div className="py-1">
+                        {user ? (
                           <Link
                             to="/orders"
                             onClick={() => setUserMenuOpen(false)}
@@ -211,29 +205,41 @@ export default function Navbar() {
                             <Package size={16} />
                             My Orders
                           </Link>
-                          {user.role === 'admin' && (
-                            <>
-                              <Link
-                                to="/admin/orders"
-                                onClick={() => setUserMenuOpen(false)}
-                                className="flex items-center gap-3 px-4 py-3 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-primary)] transition-colors sm:hidden"
-                                role="menuitem"
-                              >
-                                <Package size={16} />
-                                Admin Orders
-                              </Link>
-                              <Link
-                                to="/admin/products"
-                                onClick={() => setUserMenuOpen(false)}
-                                className="flex items-center gap-3 px-4 py-3 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-primary)] transition-colors sm:hidden"
-                                role="menuitem"
-                              >
-                                <Package size={16} />
-                                Admin Products
-                              </Link>
-                            </>
-                          )}
-                          <div className="border-t border-[var(--border)] my-1" />
+                        ) : (
+                          <Link
+                            to="/login"
+                            onClick={() => setUserMenuOpen(false)}
+                            className="flex items-center gap-3 px-4 py-3 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-primary)] transition-colors"
+                            role="menuitem"
+                          >
+                            <Package size={16} />
+                            My Orders
+                          </Link>
+                        )}
+                        {user?.role === 'admin' && (
+                          <>
+                            <Link
+                              to="/admin/orders"
+                              onClick={() => setUserMenuOpen(false)}
+                              className="flex items-center gap-3 px-4 py-3 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-primary)] transition-colors sm:hidden"
+                              role="menuitem"
+                            >
+                              <Package size={16} />
+                              Admin Orders
+                            </Link>
+                            <Link
+                              to="/admin/products"
+                              onClick={() => setUserMenuOpen(false)}
+                              className="flex items-center gap-3 px-4 py-3 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-primary)] transition-colors sm:hidden"
+                              role="menuitem"
+                            >
+                              <Package size={16} />
+                              Admin Products
+                            </Link>
+                          </>
+                        )}
+                        <div className="border-t border-[var(--border)] my-1" />
+                        {user ? (
                           <button
                             onClick={handleLogout}
                             className="flex items-center gap-3 px-4 py-3 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors w-full"
@@ -242,20 +248,22 @@ export default function Navbar() {
                             <LogOut size={16} />
                             Log Out
                           </button>
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-              ) : (
-                <Link
-                  to="/login"
-                  className="p-2.5 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
-                  aria-label="Log in"
-                >
-                  <LogIn size={20} />
-                </Link>
-              )}
+                        ) : (
+                          <Link
+                            to="/login"
+                            onClick={() => setUserMenuOpen(false)}
+                            className="flex items-center gap-3 px-4 py-3 text-sm text-[var(--accent)] hover:text-blue-400 hover:bg-[var(--bg-primary)] transition-colors"
+                            role="menuitem"
+                          >
+                            <LogIn size={16} />
+                            Log In
+                          </Link>
+                        )}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
 
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -320,9 +328,7 @@ export default function Navbar() {
                 <Link to="/cart" className="block py-2.5 px-1 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">
                   Cart {itemCount > 0 && <span className="text-[var(--accent)]">({itemCount})</span>}
                 </Link>
-                {user && (
-                  <Link to="/orders" className="block py-2.5 px-1 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">My Orders</Link>
-                )}
+                <Link to={user ? "/orders" : "/login"} className="block py-2.5 px-1 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">My Orders</Link>
                 <Link to="/about" className="block py-2.5 px-1 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">About</Link>
                 <Link to="/contact" className="block py-2.5 px-1 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">Contact</Link>
                 <Link to="/faq" className="block py-2.5 px-1 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">FAQ</Link>
