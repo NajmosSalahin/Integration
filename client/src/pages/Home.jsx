@@ -1,21 +1,35 @@
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
-import { Link } from 'react-router-dom';
-import { ShoppingCart } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
 import { fetchProducts } from '../api/products';
 import ProductCard from '../components/ProductCard';
-import useCart from '../stores/cartStore';
-import { useAuth } from '../context/AuthContext';
+import Navbar from '../components/Navbar';
+import Hero from '../components/Hero';
+import CategoryGrid from '../components/CategoryGrid';
+import NewsletterForm from '../components/NewsletterForm';
 import Footer from '../components/Footer';
 
 export default function Home() {
+  const [searchParams] = useSearchParams();
+  const searchQuery = searchParams.get('q') || '';
+  const tagFilter = searchParams.get('tag') || '';
+
   const { data: products, isLoading, error } = useQuery({
     queryKey: ['products'],
     queryFn: fetchProducts,
   });
-  const itemCount = useCart((s) => s.getItemCount());
-  const { user } = useAuth();
+
+  const filtered = products?.filter((p) => {
+    const matchesSearch = searchQuery
+      ? p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        p.tags?.some((t) => t.toLowerCase().includes(searchQuery.toLowerCase()))
+      : true;
+    const matchesTag = tagFilter
+      ? p.tags?.some((t) => t.toLowerCase() === tagFilter.toLowerCase())
+      : true;
+    return matchesSearch && matchesTag;
+  });
 
   return (
     <>
@@ -24,61 +38,29 @@ export default function Home() {
         <meta name="description" content="Curated t-shirt designs. Modern Japanese streetwear. Different styles, one identity." />
       </Helmet>
 
-      <div className="min-h-screen bg-[#0a0a0a] text-[#e8e8e8]">
-        <header className="px-4 sm:px-6 lg:px-8 py-8 border-b border-gray-800/50">
-          <div className="max-w-7xl mx-auto flex items-center justify-between">
-            <div>
-              <h1
-                className="text-4xl sm:text-5xl tracking-[0.2em] uppercase"
-                style={{ fontFamily: "'Bebas Neue', sans-serif" }}
-              >
-                INTEGRATION
-              </h1>
-              <p className="mt-1 text-xs tracking-[0.3em] text-gray-500 uppercase">
-                Different Styles, One Identity
-              </p>
-            </div>
-            <div className="flex items-center gap-4">
-              {user?.role === 'admin' && (
-                <div className="flex items-center gap-3">
-                  <Link
-                    to="/admin/orders"
-                    className="text-xs tracking-wider uppercase text-gray-500 hover:text-blue-400 transition-colors"
-                  >
-                    Orders
-                  </Link>
-                  <Link
-                    to="/admin/products"
-                    className="text-xs tracking-wider uppercase text-gray-500 hover:text-blue-400 transition-colors"
-                  >
-                    Products
-                  </Link>
-                </div>
-              )}
-              <Link to="/cart" className="relative">
-                <ShoppingCart size={22} className="text-gray-400 hover:text-white transition-colors" />
-                {itemCount > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-blue-600 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center">
-                    {itemCount}
-                  </span>
-                )}
-              </Link>
-            </div>
-          </div>
-        </header>
+      <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
+        <Navbar />
 
-        <main className="px-4 sm:px-6 lg:px-8 py-8">
+        <Hero />
+
+        <CategoryGrid />
+
+        <section className="px-4 sm:px-6 lg:px-8 py-12">
           <div className="max-w-7xl mx-auto">
             <div className="flex items-center justify-between mb-8">
               <h2
                 className="text-2xl tracking-[0.15em] uppercase"
-                style={{ fontFamily: "'Bebas Neue', sans-serif" }}
+                style={{ fontFamily: "var(--font-utility)" }}
               >
-                Collection
+                {searchQuery
+                  ? `Results for "${searchQuery}"`
+                  : tagFilter
+                    ? tagFilter
+                    : 'Collection'}
               </h2>
-              {products && (
-                <span className="text-xs text-gray-500 tracking-wider">
-                  {products.length} designs
+              {filtered && (
+                <span className="text-xs text-[var(--text-secondary)] tracking-wider">
+                  {filtered.length} design{filtered.length !== 1 ? 's' : ''}
                 </span>
               )}
             </div>
@@ -87,9 +69,9 @@ export default function Home() {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {[...Array(6)].map((_, i) => (
                   <div key={i} className="animate-pulse">
-                    <div className="aspect-[3/4] bg-gray-900 rounded-sm" />
-                    <div className="mt-3 h-4 bg-gray-900 rounded w-2/3" />
-                    <div className="mt-2 h-3 bg-gray-900 rounded w-1/3" />
+                    <div className="aspect-[3/4] bg-[#111] rounded-sm" />
+                    <div className="mt-3 h-4 bg-[#111] rounded w-2/3" />
+                    <div className="mt-2 h-3 bg-[#111] rounded w-1/3" />
                   </div>
                 ))}
               </div>
@@ -98,11 +80,17 @@ export default function Home() {
             {error && (
               <div className="text-center py-20">
                 <p className="text-red-400">Failed to load products</p>
-                <p className="text-sm text-gray-500 mt-2">{error.message}</p>
+                <p className="text-sm text-[var(--text-secondary)] mt-2">{error.message}</p>
               </div>
             )}
 
-            {products && (
+            {filtered && filtered.length === 0 && (
+              <div className="text-center py-20">
+                <p className="text-[var(--text-secondary)]">No designs found</p>
+              </div>
+            )}
+
+            {filtered && filtered.length > 0 && (
               <motion.div
                 className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
                 initial="hidden"
@@ -112,13 +100,19 @@ export default function Home() {
                   visible: { transition: { staggerChildren: 0.08 } },
                 }}
               >
-                {products.map((product, i) => (
+                {filtered.map((product, i) => (
                   <ProductCard key={product._id} product={product} index={i} />
                 ))}
               </motion.div>
             )}
           </div>
-        </main>
+        </section>
+
+        <section className="px-4 sm:px-6 lg:px-8 py-12 border-t border-[var(--border)]">
+          <div className="max-w-xl mx-auto">
+            <NewsletterForm />
+          </div>
+        </section>
 
         <Footer />
       </div>

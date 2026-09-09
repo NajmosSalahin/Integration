@@ -148,4 +148,39 @@ e722424 feat: MERN stack storefront with products, auth, and render blueprint
 
 ## Next Step
 
-**Step 4: Cart** — Zustand store with localStorage persistence, Cart page, wire "Add to Cart" button, add cart icon to headers.
+**Phase 2: Visual Redesign to Match "Website Design.png"**
+
+A reference design image was provided ("Website Design.png") showing a menswear e-commerce site with a distinctive light background, handwritten typography, sketch-style illustrations, and a clean card-based layout. The user wants Integration's website to match this aesthetic.
+
+### Redesign Decision
+- **Theme shift:** Dark (current v0.1.0) → Light (reference design)
+- **Palette:** `#f8f5f2` bg, `#ffffff` cards, `#111111` text, `#3b82f6` accent (kept), `#e5e5e5` borders
+- **Typography:** Dancing Script (new display) + Inter (body) + Bebas Neue (utility, already loaded)
+- **Signature element:** Hand-drawn wobbly underline accents on section titles
+- **Logo:** Using existing `INTEGRATION_LOGO/` assets — light variants copied to `client/public/`
+
+### What's New
+- `Navbar.jsx` — shared header (logo, nav, search bar, account/cart icons)
+- `Hero.jsx` — hero section (eyebrow, headline, CTA, illustration)
+- `CategoryGrid.jsx` — "Shop by Category" using product tags
+- `SearchResults.jsx` — search dropdown
+- `NewsletterForm.jsx` — extracted newsletter form component
+- `NotFound.jsx` — 404 page (already created in v0.1.0)
+
+### What's Modified
+- `Home.jsx` — complete redesign with new components
+- `ProductCard.jsx` — light theme, simpler layout
+- `Footer.jsx` — light theme, use NewsletterForm, add social links
+- `ContentLayout.jsx` — use Navbar instead of inline header
+- All remaining pages and admin pages — light theme
+
+### What's NOT Changing
+- All backend code unchanged
+- All API endpoints unchanged
+- All data models unchanged
+
+---
+
+### Previous Next Step (completed)
+
+**v0.1.0 is complete.** All 11 build steps done. Redesign is Phase 2.
