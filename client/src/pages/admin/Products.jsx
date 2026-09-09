@@ -2,8 +2,10 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Helmet } from 'react-helmet-async';
-import { ArrowLeft, Plus, X, Pencil, Trash2 } from 'lucide-react';
+import { Plus, X, Pencil, Trash2 } from 'lucide-react';
 import { getAllProductsAdmin, createProduct, updateProduct, deleteProduct, toggleStock } from '../../api/products';
+import Navbar from '../../components/Navbar';
+import Footer from '../../components/Footer';
 
 const AVAILABLE_SIZES = ['S', 'M', 'L', 'XL', 'XXL'];
 
@@ -134,38 +136,10 @@ export default function Products() {
         <title>Admin Products — Integration</title>
       </Helmet>
 
-      <div className="min-h-screen bg-[#0a0a0a] text-[#e8e8e8]">
-        <header className="px-4 sm:px-6 lg:px-8 py-4 border-b border-gray-800/50">
-          <div className="max-w-7xl mx-auto flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Link
-                to="/"
-                className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors"
-              >
-                <ArrowLeft size={16} />
-                <span className="tracking-wider uppercase">Home</span>
-              </Link>
-              <Link
-                to="/admin/orders"
-                className="text-xs tracking-wider uppercase text-gray-500 hover:text-blue-400 transition-colors"
-              >
-                Orders
-              </Link>
-              <span className="text-xs tracking-wider uppercase text-blue-400">
-                Products
-              </span>
-            </div>
-            <Link
-              to="/"
-              className="text-lg tracking-[0.2em] uppercase"
-              style={{ fontFamily: "'Bebas Neue', sans-serif" }}
-            >
-              INTEGRATION
-            </Link>
-          </div>
-        </header>
+      <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
+        <Navbar />
 
-        <main className="px-4 sm:px-6 lg:px-8 py-8">
+        <main className="px-4 sm:px-6 lg:px-8 py-10">
           <div className="max-w-7xl mx-auto">
             <div className="flex items-center justify-between mb-6">
               <h1
@@ -247,7 +221,7 @@ export default function Products() {
                                 key={s.size}
                                 onClick={() => stockMutation.mutate({ id: product._id, size: s.size, inStock: !s.inStock })}
                                 disabled={stockMutation.isPending}
-                                className={`w-6 h-6 rounded-sm text-[10px] flex items-center justify-center border transition-colors ${
+                                className={`w-9 h-9 rounded-lg text-xs flex items-center justify-center border transition-colors ${
                                   s.inStock
                                     ? 'border-green-700 bg-green-900/30 text-green-400 hover:bg-green-800/50'
                                     : 'border-red-800 bg-red-900/20 text-red-500 hover:bg-red-800/30'
@@ -290,6 +264,7 @@ export default function Products() {
             )}
           </div>
         </main>
+        <Footer />
       </div>
 
       {showModal && (

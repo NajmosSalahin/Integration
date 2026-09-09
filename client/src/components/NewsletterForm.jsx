@@ -28,24 +28,32 @@ export default function NewsletterForm({ compact = false }) {
 
   if (compact) {
     return (
-      <form onSubmit={handleSubmit} className="flex gap-2">
-        <input
-          type="email"
-          required
-          placeholder="Your email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="flex-1 px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--bg-primary)] text-[var(--text-primary)] text-sm focus:outline-none focus:border-[var(--accent)] transition-colors"
-        />
-        <button
-          type="submit"
-          disabled={mutation.isPending}
-          className="px-3 py-2 bg-[var(--accent)] text-white text-xs tracking-[0.2em] uppercase rounded-lg hover:bg-blue-600 disabled:bg-gray-400 transition-colors cursor-pointer disabled:cursor-not-allowed"
-          style={{ fontFamily: "var(--font-utility)" }}
-        >
-          {mutation.isPending ? '...' : 'Subscribe'}
-        </button>
-      </form>
+      <div>
+        <form onSubmit={handleSubmit} className="flex gap-2">
+          <input
+            type="email"
+            required
+            placeholder="Your email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="flex-1 px-3 py-2.5 border border-[var(--border)] rounded-lg bg-[#111] text-[var(--text-primary)] text-sm focus:outline-none focus:border-[var(--accent)] transition-colors placeholder-[var(--text-secondary)]"
+          />
+          <button
+            type="submit"
+            disabled={mutation.isPending}
+            className="px-4 py-2.5 bg-[var(--accent)] text-white text-xs tracking-[0.2em] uppercase rounded-lg hover:bg-blue-600 disabled:bg-gray-400 transition-colors cursor-pointer disabled:cursor-not-allowed"
+            style={{ fontFamily: "var(--font-utility)" }}
+          >
+            {mutation.isPending ? '...' : 'Subscribe'}
+          </button>
+        </form>
+        {success && (
+          <p className="text-xs text-green-500 mt-2">Thanks for subscribing!</p>
+        )}
+        {error && (
+          <p className="text-xs text-red-400 mt-2">{error}</p>
+        )}
+      </div>
     );
   }
 

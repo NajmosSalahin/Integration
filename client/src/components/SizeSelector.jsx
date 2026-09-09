@@ -7,11 +7,11 @@ export default function SizeSelector({ sizes, stock, selectedSize, onSelect }) {
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <span className="text-xs tracking-[0.2em] uppercase text-gray-400">
+        <span className="text-xs tracking-[0.2em] uppercase text-[var(--text-secondary)]">
           Select Size
         </span>
         {selectedSize && (
-          <span className="text-xs text-blue-400">{selectedSize}</span>
+          <span className="text-xs text-[var(--accent)]">{selectedSize}</span>
         )}
       </div>
 
@@ -25,19 +25,20 @@ export default function SizeSelector({ sizes, stock, selectedSize, onSelect }) {
               key={size}
               onClick={() => inStock && onSelect(size)}
               disabled={!inStock}
+              aria-label={inStock ? `Size ${size}` : `Size ${size} — out of stock`}
               className={`
-                relative px-4 py-2 text-sm tracking-wider uppercase rounded-sm border transition-all duration-200
+                relative min-w-[48px] min-h-[48px] px-4 py-2 text-sm tracking-wider uppercase rounded-lg border transition-all duration-200
                 ${isSelected
-                  ? 'border-blue-500 bg-blue-500/10 text-blue-400'
+                  ? 'border-[var(--accent)] bg-[var(--accent)]/10 text-[var(--accent)]'
                   : inStock
-                    ? 'border-gray-700 text-gray-300 hover:border-gray-500 hover:text-white cursor-pointer'
-                    : 'border-gray-800 text-gray-700 cursor-not-allowed line-through'
+                    ? 'border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--text-secondary)] hover:text-[var(--text-primary)] cursor-pointer'
+                    : 'border-[var(--border)] text-[var(--text-secondary)]/40 cursor-not-allowed line-through'
                 }
               `}
             >
               {size}
               {!inStock && (
-                <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-gray-700" />
+                <span className="absolute -top-1.5 -right-1.5 w-3 h-3 rounded-full bg-red-500/80 border-2 border-[var(--bg-primary)]" />
               )}
             </button>
           );

@@ -3,10 +3,12 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
-import { ArrowLeft, ShoppingCart } from 'lucide-react';
+import { ShoppingCart } from 'lucide-react';
 import { fetchProduct } from '../api/products';
 import ProductGallery from '../components/ProductGallery';
 import SizeSelector from '../components/SizeSelector';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 import useCart from '../stores/cartStore';
 
 export default function ProductDetail() {
@@ -24,19 +26,27 @@ export default function ProductDetail() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#0a0a0a] text-[#e8e8e8] flex items-center justify-center">
-        <div className="animate-pulse text-gray-500">Loading...</div>
+      <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
+        <Navbar />
+        <div className="flex items-center justify-center py-32">
+          <div className="animate-pulse text-[var(--text-secondary)]">Loading...</div>
+        </div>
+        <Footer />
       </div>
     );
   }
 
   if (error || !product) {
     return (
-      <div className="min-h-screen bg-[#0a0a0a] text-[#e8e8e8] flex flex-col items-center justify-center gap-4">
-        <p className="text-red-400">Product not found</p>
-        <Link to="/" className="text-sm text-gray-400 hover:text-white transition-colors">
-          Back to collection
-        </Link>
+      <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
+        <Navbar />
+        <div className="flex flex-col items-center justify-center py-32 gap-4">
+          <p className="text-red-400">Product not found</p>
+          <Link to="/" className="text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">
+            Back to collection
+          </Link>
+        </div>
+        <Footer />
       </div>
     );
   }
@@ -50,37 +60,10 @@ export default function ProductDetail() {
         <meta name="description" content={product.description} />
       </Helmet>
 
-      <div className="min-h-screen bg-[#0a0a0a] text-[#e8e8e8]">
-        <header className="px-4 sm:px-6 lg:px-8 py-4 border-b border-gray-800/50">
-          <div className="max-w-7xl mx-auto flex items-center justify-between">
-            <Link
-              to="/"
-              className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors"
-            >
-              <ArrowLeft size={16} />
-              <span className="tracking-wider uppercase">Collection</span>
-            </Link>
-            <div className="flex items-center gap-4">
-              <Link to="/cart" className="relative">
-                <ShoppingCart size={20} className="text-gray-400 hover:text-white transition-colors" />
-                {itemCount > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-blue-600 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center">
-                    {itemCount}
-                  </span>
-                )}
-              </Link>
-              <Link
-                to="/"
-                className="text-lg tracking-[0.2em] uppercase"
-                style={{ fontFamily: "'Bebas Neue', sans-serif" }}
-              >
-                INTEGRATION
-              </Link>
-            </div>
-          </div>
-        </header>
+      <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
+        <Navbar />
 
-        <main className="px-4 sm:px-6 lg:px-8 py-8">
+        <main className="px-4 sm:px-6 lg:px-8 py-10">
           <div className="max-w-7xl mx-auto">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
               <motion.div
@@ -170,6 +153,7 @@ export default function ProductDetail() {
             </div>
           </div>
         </main>
+        <Footer />
       </div>
     </>
   );

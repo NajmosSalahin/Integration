@@ -1,4 +1,4 @@
-import { Navigate } from 'react-router-dom';
+import { Navigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 export default function AdminRoute({ children }) {
@@ -20,9 +20,9 @@ export default function AdminRoute({ children }) {
     return (
       <div className="min-h-screen bg-[#0a0a0a] text-[#e8e8e8] flex flex-col items-center justify-center gap-4">
         <p className="text-red-400">Access denied — admin only</p>
-        <a href="/" className="text-sm text-gray-400 hover:text-white transition-colors">
+        <Link to="/" className="text-sm text-gray-400 hover:text-white transition-colors">
           Back to home
-        </a>
+        </Link>
       </div>
     );
   }
