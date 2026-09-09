@@ -1,1 +1,46 @@
 @import "tailwindcss";
+
+:root {
+  --bg-primary: #0a0a0a;
+  --bg-card: #0a0a0a;
+  --text-primary: #e8e8e8;
+  --text-secondary: #666666;
+  --accent: #3b82f6;
+  --border: #1f1f1f;
+  --font-display: "Bebas Neue", sans-serif;
+  --font-body: "Inter", sans-serif;
+  --font-utility: "Bebas Neue", sans-serif;
+}
+
+html {
+  font-family: var(--font-body);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+@layer base {
+  body {
+    @apply bg-[var(--bg-primary)] text-[var(--text-primary)];
+  }
+}
+
+.hand-drawn-underline {
+  position: relative;
+}
+
+.hand-drawn-underline::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 0;
+  width: 60px;
+  height: 3px;
+  background: currentColor;
+  transform: rotate(-2deg);
+  opacity: 0.6;
+}
+
+.hand-drawn-underline.wide::after {
+  width: 100px;
+  transform: rotate(1.5deg);
+}
