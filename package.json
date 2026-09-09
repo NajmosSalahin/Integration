@@ -10,6 +10,7 @@
     "build": "cd client && npm run build",
     "start": "cd server && node server.js",
     "seed": "cd server && node --input-type=module -e \"import './utils/seed.js'\"",
+    "seed:users": "cd server && node --input-type=module -e \"import './utils/seedUsers.js'\"",
     "prepare": "[ -d .git ] && husky || true"
   },
   "devDependencies": {
