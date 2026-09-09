@@ -12,15 +12,15 @@ const categories = [
 
 export default function CategoryGrid() {
   return (
-    <section className="py-12">
+    <section className="py-6">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2
-          className="hand-drawn-underline text-3xl text-center mb-2"
+          className="hand-drawn-underline text-3xl text-center mb-1"
           style={{ fontFamily: "var(--font-display)" }}
         >
           Shop by Category
         </h2>
-        <p className="text-center text-sm text-[var(--text-secondary)] mb-8">
+        <p className="text-center text-sm text-[var(--text-secondary)] mb-4">
           Each design tells a story — find yours
         </p>
 
@@ -29,13 +29,13 @@ export default function CategoryGrid() {
             <Link
               key={category.tag}
               to={`/?tag=${category.tag}`}
-              className={category.color + ' rounded-xl p-6 flex flex-col items-center text-center group transition-transform hover:scale-105'}
+              className={category.color + ' rounded-xl p-4 flex flex-col items-center text-center group transition-transform hover:scale-105'}
             >
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: i * 0.05 }}
-                className="w-16 h-16 bg-[var(--border)] rounded-full mb-3 flex items-center justify-center group-hover:bg-[var(--accent)] group-hover:text-white transition-colors"
+                className="w-16 h-16 bg-[var(--border)] rounded-full mb-2 flex items-center justify-center group-hover:bg-[var(--accent)] group-hover:text-white transition-colors"
               >
                 <span className="text-xs font-bold text-[var(--text-secondary)] group-hover:text-white">
                   {category.name[0]}

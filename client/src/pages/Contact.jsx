@@ -28,7 +28,7 @@ export default function Contact() {
 
   return (
     <ContentLayout title="Contact Us">
-      <div className="space-y-8">
+      <div className="space-y-6">
         <p className="text-gray-400 leading-relaxed">
           Have a question about an order, a product, or just want to say hello?
           Fill out the form below and we will get back to you as soon as possible.
@@ -48,8 +48,8 @@ export default function Contact() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs tracking-[0.15em] uppercase text-gray-400 mb-1">
                 Name
@@ -59,7 +59,7 @@ export default function Contact() {
                 required
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
-                className="w-full px-4 py-3 bg-[#111] border border-[var(--border)] rounded-lg text-[var(--text-primary)] text-sm focus:outline-none focus:border-[var(--accent)] transition-colors"
+                className="w-full px-3 py-2.5 bg-[#111] border border-[var(--border)] rounded-lg text-[var(--text-primary)] text-sm focus:outline-none focus:border-[var(--accent)] transition-colors"
               />
             </div>
 
@@ -72,7 +72,7 @@ export default function Contact() {
                 required
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
-                className="w-full px-4 py-3 bg-[#111] border border-[var(--border)] rounded-lg text-[var(--text-primary)] text-sm focus:outline-none focus:border-[var(--accent)] transition-colors"
+                className="w-full px-3 py-2.5 bg-[#111] border border-[var(--border)] rounded-lg text-[var(--text-primary)] text-sm focus:outline-none focus:border-[var(--accent)] transition-colors"
               />
             </div>
           </div>
@@ -86,14 +86,14 @@ export default function Contact() {
               rows={6}
               value={form.message}
               onChange={(e) => setForm({ ...form, message: e.target.value })}
-              className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-sm text-white text-sm focus:outline-none focus:border-blue-500 transition-colors resize-none"
+              className="w-full px-3 py-2.5 bg-gray-900 border border-gray-700 rounded-sm text-white text-sm focus:outline-none focus:border-blue-500 transition-colors resize-none"
             />
           </div>
 
           <button
             type="submit"
             disabled={loading}
-              className="px-8 py-3.5 bg-[var(--accent)] hover:bg-blue-500 disabled:bg-gray-800 disabled:text-gray-600 text-white text-sm tracking-[0.2em] uppercase rounded-lg transition-colors cursor-pointer disabled:cursor-not-allowed"
+              className="px-8 py-2.5 bg-[var(--accent)] hover:bg-blue-500 disabled:bg-gray-800 disabled:text-gray-600 text-white text-sm tracking-[0.2em] uppercase rounded-lg transition-colors cursor-pointer disabled:cursor-not-allowed"
           >
             {loading ? 'Sending...' : 'Send Message'}
           </button>

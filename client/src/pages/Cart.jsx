@@ -21,17 +21,17 @@ export default function Cart() {
       <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
         <Navbar />
 
-        <main className="px-4 sm:px-6 lg:px-8 py-10">
+        <main className="px-4 sm:px-6 lg:px-8 py-6">
           <div className="max-w-4xl mx-auto">
             <h1
-              className="text-3xl sm:text-4xl tracking-[0.15em] uppercase mb-8"
+              className="text-3xl sm:text-4xl tracking-[0.15em] uppercase mb-5"
               style={{ fontFamily: "var(--font-utility)" }}
             >
               Your Cart
             </h1>
 
             {items.length === 0 ? (
-              <div className="text-center py-20">
+              <div className="text-center py-12">
                 <ShoppingBag size={48} className="mx-auto text-gray-700 mb-4" />
                 <p className="text-[var(--text-secondary)] mb-2">Your cart is empty</p>
                 <Link
@@ -43,7 +43,7 @@ export default function Cart() {
               </div>
             ) : (
               <>
-                <div className="space-y-4">
+                <div className="space-y-3">
                   {items.map((item) => (
                     <div
                       key={`${item.productId}-${item.size}`}
@@ -115,7 +115,7 @@ export default function Cart() {
                   ))}
                 </div>
 
-                <div className="mt-8 border-t border-[var(--border)] pt-6 space-y-4">
+                <div className="mt-6 border-t border-[var(--border)] pt-4 space-y-3">
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-[var(--text-secondary)]">Subtotal</span>
                     <span
@@ -133,14 +133,14 @@ export default function Cart() {
                   {user ? (
                     <Link
                       to="/checkout"
-                      className="block w-full py-3.5 rounded-lg text-sm tracking-[0.2em] uppercase bg-[var(--accent)] hover:bg-blue-500 text-white text-center transition-all duration-200"
+                      className="block w-full py-2.5 rounded-lg text-sm tracking-[0.2em] uppercase bg-[var(--accent)] hover:bg-blue-500 text-white text-center transition-all duration-200"
                     >
                       Checkout
                     </Link>
                   ) : (
                     <Link
                       to="/login?redirect=/checkout"
-                      className="block w-full py-3.5 rounded-lg text-sm tracking-[0.2em] uppercase bg-[var(--accent)] hover:bg-blue-500 text-white text-center transition-all duration-200"
+                      className="block w-full py-2.5 rounded-lg text-sm tracking-[0.2em] uppercase bg-[var(--accent)] hover:bg-blue-500 text-white text-center transition-all duration-200"
                     >
                       Login to Checkout
                     </Link>

@@ -3,9 +3,9 @@ import NewsletterForm from './NewsletterForm';
 
 export default function Footer() {
   return (
-    <footer className="px-4 sm:px-6 lg:px-8 py-12 border-t border-[var(--border)]">
+    <footer className="px-4 sm:px-6 lg:px-8 py-8 border-t border-[var(--border)]">
       <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-8 mb-10">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 mb-6">
           <div className="col-span-2 sm:col-span-1">
             <Link
               to="/"
@@ -20,10 +20,10 @@ export default function Footer() {
           </div>
 
           <div>
-            <h3 className="text-xs tracking-[0.15em] uppercase text-[var(--text-secondary)] mb-3">
+            <h3 className="text-xs tracking-[0.15em] uppercase text-[var(--text-secondary)] mb-2">
               Shop
             </h3>
-            <ul className="space-y-2">
+            <ul className="space-y-1.5">
               <li>
                 <Link to="/" className="text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">
                   Collection
@@ -38,10 +38,10 @@ export default function Footer() {
           </div>
 
           <div>
-            <h3 className="text-xs tracking-[0.15em] uppercase text-[var(--text-secondary)] mb-3">
+            <h3 className="text-xs tracking-[0.15em] uppercase text-[var(--text-secondary)] mb-2">
               Support
             </h3>
-            <ul className="space-y-2">
+            <ul className="space-y-1.5">
               <li>
                 <Link to="/contact" className="text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">
                   Contact Us
@@ -71,10 +71,10 @@ export default function Footer() {
           </div>
 
           <div>
-            <h3 className="text-xs tracking-[0.15em] uppercase text-[var(--text-secondary)] mb-3">
+            <h3 className="text-xs tracking-[0.15em] uppercase text-[var(--text-secondary)] mb-2">
               About
             </h3>
-            <ul className="space-y-2">
+            <ul className="space-y-1.5">
               <li>
                 <Link to="/about" className="text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">
                   About Us
@@ -99,13 +99,13 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="pt-6 border-t border-[var(--border)] mb-8">
+        <div className="pt-4 border-t border-[var(--border)] mb-6">
           <div className="max-w-md">
             <NewsletterForm />
           </div>
         </div>
 
-        <div className="pt-6 border-t border-[var(--border)] text-center">
+        <div className="pt-4 border-t border-[var(--border)] text-center">
           <p className="text-xs text-[var(--text-secondary)]">
             &copy; {new Date().getFullYear()} Integration. All rights reserved.
           </p>
