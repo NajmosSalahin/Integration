@@ -41,15 +41,12 @@ export default function Hero() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="relative hidden lg:block"
           >
-            <div className="aspect-[3/4] bg-gradient-to-br from-blue-900/20 to-purple-900/20 rounded-2xl flex items-center justify-center border border-[var(--border)]">
-              <img
-                src="/logo.png"
-                alt="Integration"
-                className="max-w-[60%] opacity-30"
-              />
-            </div>
+            <img
+              src="/banner_collage.jpg"
+              alt="Integration collection"
+              className="w-full aspect-[3/4] object-cover rounded-2xl"
+            />
           </motion.div>
         </div>
       </div>
