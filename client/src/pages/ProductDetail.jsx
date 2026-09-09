@@ -28,7 +28,7 @@ export default function ProductDetail() {
     return (
       <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
         <Navbar />
-        <div className="flex items-center justify-center py-32">
+        <div className="flex items-center justify-center py-16">
           <div className="animate-pulse text-[var(--text-secondary)]">Loading...</div>
         </div>
         <Footer />
@@ -40,7 +40,7 @@ export default function ProductDetail() {
     return (
       <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
         <Navbar />
-        <div className="flex flex-col items-center justify-center py-32 gap-4">
+        <div className="flex flex-col items-center justify-center py-16 gap-4">
           <p className="text-red-400">Product not found</p>
           <Link to="/" className="text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">
             Back to collection
@@ -63,9 +63,9 @@ export default function ProductDetail() {
       <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
         <Navbar />
 
-        <main className="px-4 sm:px-6 lg:px-8 py-10">
+        <main className="px-4 sm:px-6 lg:px-8 py-6">
           <div className="max-w-7xl mx-auto">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -75,7 +75,7 @@ export default function ProductDetail() {
               </motion.div>
 
               <motion.div
-                className="space-y-6"
+                className="space-y-4"
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.5, delay: 0.1 }}
@@ -110,7 +110,7 @@ export default function ProductDetail() {
                   {product.description}
                 </p>
 
-                <div className="border-t border-gray-800 pt-6">
+                <div className="border-t border-gray-800 pt-4">
                   <SizeSelector
                     sizes={product.sizes}
                     stock={product.stock}

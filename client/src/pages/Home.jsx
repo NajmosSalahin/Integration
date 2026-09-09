@@ -44,9 +44,9 @@ export default function Home() {
 
         <CategoryGrid />
 
-        <section className="px-4 sm:px-6 lg:px-8 py-12">
+        <section className="px-4 sm:px-6 lg:px-8 py-6">
           <div className="max-w-7xl mx-auto">
-            <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center justify-between mb-5">
               <h2
                 className="text-2xl tracking-[0.15em] uppercase"
                 style={{ fontFamily: "var(--font-utility)" }}
@@ -65,7 +65,7 @@ export default function Home() {
             </div>
 
             {isLoading && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {[...Array(6)].map((_, i) => (
                   <div key={i} className="animate-pulse">
                     <div className="aspect-[3/4] bg-[#111] rounded-sm" />
@@ -77,21 +77,21 @@ export default function Home() {
             )}
 
             {error && (
-              <div className="text-center py-20">
+              <div className="text-center py-12">
                 <p className="text-red-400">Failed to load products</p>
                 <p className="text-sm text-[var(--text-secondary)] mt-2">{error.message}</p>
               </div>
             )}
 
             {filtered && filtered.length === 0 && (
-              <div className="text-center py-20">
+              <div className="text-center py-12">
                 <p className="text-[var(--text-secondary)]">No designs found</p>
               </div>
             )}
 
             {filtered && filtered.length > 0 && (
               <motion.div
-                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
                 initial="hidden"
                 animate="visible"
                 variants={{

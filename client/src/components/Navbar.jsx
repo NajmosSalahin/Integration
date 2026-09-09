@@ -89,7 +89,7 @@ export default function Navbar() {
   return (
     <header className="bg-[var(--bg-primary)] border-b border-[var(--border)] sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="py-3">
+        <div className="py-2">
           <div className="flex items-center justify-between gap-4">
             <Link to="/" className="flex items-center space-x-3 shrink-0">
               <img src="/logo-icon.png" alt="Integration" className="h-8 w-8" />
@@ -194,12 +194,12 @@ export default function Navbar() {
                           </div>
                         </div>
                       )}
-                      <div className="py-1">
+                        <div className="py-0.5">
                         {user ? (
                           <Link
                             to="/orders"
                             onClick={() => setUserMenuOpen(false)}
-                            className="flex items-center gap-3 px-4 py-3 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-primary)] transition-colors"
+                            className="flex items-center gap-3 px-4 py-2 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-primary)] transition-colors"
                             role="menuitem"
                           >
                             <Package size={16} />
@@ -209,7 +209,7 @@ export default function Navbar() {
                           <Link
                             to="/login"
                             onClick={() => setUserMenuOpen(false)}
-                            className="flex items-center gap-3 px-4 py-3 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-primary)] transition-colors"
+                            className="flex items-center gap-3 px-4 py-2 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-primary)] transition-colors"
                             role="menuitem"
                           >
                             <Package size={16} />
@@ -221,7 +221,7 @@ export default function Navbar() {
                             <Link
                               to="/admin/orders"
                               onClick={() => setUserMenuOpen(false)}
-                              className="flex items-center gap-3 px-4 py-3 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-primary)] transition-colors sm:hidden"
+                              className="flex items-center gap-3 px-4 py-2 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-primary)] transition-colors sm:hidden"
                               role="menuitem"
                             >
                               <Package size={16} />
@@ -230,7 +230,7 @@ export default function Navbar() {
                             <Link
                               to="/admin/products"
                               onClick={() => setUserMenuOpen(false)}
-                              className="flex items-center gap-3 px-4 py-3 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-primary)] transition-colors sm:hidden"
+                              className="flex items-center gap-3 px-4 py-2 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-primary)] transition-colors sm:hidden"
                               role="menuitem"
                             >
                               <Package size={16} />
@@ -238,11 +238,11 @@ export default function Navbar() {
                             </Link>
                           </>
                         )}
-                        <div className="border-t border-[var(--border)] my-1" />
+                        <div className="border-t border-[var(--border)] my-0.5" />
                         {user ? (
                           <button
                             onClick={handleLogout}
-                            className="flex items-center gap-3 px-4 py-3 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors w-full"
+                            className="flex items-center gap-3 px-4 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors w-full"
                             role="menuitem"
                           >
                             <LogOut size={16} />
@@ -252,7 +252,7 @@ export default function Navbar() {
                           <Link
                             to="/login"
                             onClick={() => setUserMenuOpen(false)}
-                            className="flex items-center gap-3 px-4 py-3 text-sm text-[var(--accent)] hover:text-blue-400 hover:bg-[var(--bg-primary)] transition-colors"
+                            className="flex items-center gap-3 px-4 py-2 text-sm text-[var(--accent)] hover:text-blue-400 hover:bg-[var(--bg-primary)] transition-colors"
                             role="menuitem"
                           >
                             <LogIn size={16} />
@@ -323,32 +323,32 @@ export default function Navbar() {
               transition={{ duration: 0.2 }}
               className="md:hidden border-t border-[var(--border)] overflow-hidden"
             >
-              <nav className="py-3 space-y-1">
-                <Link to="/" className="block py-2.5 px-1 text-sm text-[var(--text-primary)]">Home</Link>
-                <Link to="/cart" className="block py-2.5 px-1 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">
+              <nav className="py-2 space-y-0.5">
+                <Link to="/" className="block py-2 px-1 text-sm text-[var(--text-primary)]">Home</Link>
+                <Link to="/cart" className="block py-2 px-1 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">
                   Cart {itemCount > 0 && <span className="text-[var(--accent)]">({itemCount})</span>}
                 </Link>
-                <Link to={user ? "/orders" : "/login"} className="block py-2.5 px-1 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">My Orders</Link>
-                <Link to="/about" className="block py-2.5 px-1 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">About</Link>
-                <Link to="/contact" className="block py-2.5 px-1 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">Contact</Link>
-                <Link to="/faq" className="block py-2.5 px-1 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">FAQ</Link>
+                <Link to={user ? "/orders" : "/login"} className="block py-2 px-1 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">My Orders</Link>
+                <Link to="/about" className="block py-2 px-1 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">About</Link>
+                <Link to="/contact" className="block py-2 px-1 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">Contact</Link>
+                <Link to="/faq" className="block py-2 px-1 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">FAQ</Link>
                 {user?.role === 'admin' && (
                   <>
                     <div className="border-t border-[var(--border)] my-2" />
-                    <Link to="/admin/orders" className="block py-2.5 px-1 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">Admin Orders</Link>
-                    <Link to="/admin/products" className="block py-2.5 px-1 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">Admin Products</Link>
+                    <Link to="/admin/orders" className="block py-2 px-1 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">Admin Orders</Link>
+                    <Link to="/admin/products" className="block py-2 px-1 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">Admin Products</Link>
                   </>
                 )}
                 <div className="border-t border-[var(--border)] my-2" />
                 {user ? (
                   <button
                     onClick={handleLogout}
-                    className="block py-2.5 px-1 text-sm text-[var(--text-secondary)] hover:text-red-400 transition-colors w-full text-left"
+                    className="block py-2 px-1 text-sm text-[var(--text-secondary)] hover:text-red-400 transition-colors w-full text-left"
                   >
                     Log Out
                   </button>
                 ) : (
-                  <Link to="/login" className="block py-2.5 px-1 text-sm text-[var(--accent)] hover:text-blue-400 transition-colors">Log In</Link>
+                  <Link to="/login" className="block py-2 px-1 text-sm text-[var(--accent)] hover:text-blue-400 transition-colors">Log In</Link>
                 )}
               </nav>
             </motion.div>
