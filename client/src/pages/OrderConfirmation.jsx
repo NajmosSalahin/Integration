@@ -3,6 +3,8 @@ import { useQuery } from '@tanstack/react-query';
 import { Helmet } from 'react-helmet-async';
 import { CheckCircle } from 'lucide-react';
 import { getOrder } from '../api/orders';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 
 export default function OrderConfirmation() {
   const { id } = useParams();
@@ -18,19 +20,27 @@ export default function OrderConfirmation() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#0a0a0a] text-[#e8e8e8] flex items-center justify-center">
-        <div className="animate-pulse text-gray-500">Loading order...</div>
+      <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
+        <Navbar />
+        <div className="flex items-center justify-center py-32">
+          <div className="animate-pulse text-[var(--text-secondary)]">Loading order...</div>
+        </div>
+        <Footer />
       </div>
     );
   }
 
   if (error || !order) {
     return (
-      <div className="min-h-screen bg-[#0a0a0a] text-[#e8e8e8] flex flex-col items-center justify-center gap-4">
-        <p className="text-red-400">Order not found</p>
-        <Link to="/" className="text-sm text-gray-400 hover:text-white transition-colors">
-          Back to collection
-        </Link>
+      <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
+        <Navbar />
+        <div className="flex flex-col items-center justify-center py-32 gap-4">
+          <p className="text-red-400">Order not found</p>
+          <Link to="/" className="text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">
+            Back to collection
+          </Link>
+        </div>
+        <Footer />
       </div>
     );
   }
@@ -46,21 +56,11 @@ export default function OrderConfirmation() {
         <meta name="description" content="Your order has been placed successfully." />
       </Helmet>
 
-      <div className="min-h-screen bg-[#0a0a0a] text-[#e8e8e8]">
-        <header className="px-4 sm:px-6 lg:px-8 py-4 border-b border-gray-800/50">
-          <div className="max-w-7xl mx-auto flex items-center justify-end">
-            <Link
-              to="/"
-              className="text-lg tracking-[0.2em] uppercase"
-              style={{ fontFamily: "'Bebas Neue', sans-serif" }}
-            >
-              INTEGRATION
-            </Link>
-          </div>
-        </header>
+      <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
+        <Navbar />
 
-        <main className="px-4 sm:px-6 lg:px-8 py-8">
-          <div className="max-w-2xl mx-auto text-center">
+        <main className="px-4 sm:px-6 lg:px-8 py-10">
+          <div className="max-w-3xl mx-auto text-center">
             <CheckCircle size={56} className="mx-auto text-green-500 mb-4" />
             <h1
               className="text-3xl sm:text-4xl tracking-[0.15em] uppercase mb-2"
@@ -166,12 +166,13 @@ export default function OrderConfirmation() {
 
             <Link
               to="/"
-              className="inline-block mt-8 text-sm text-gray-400 hover:text-white transition-colors"
+              className="inline-block mt-8 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
             >
               Back to Collection
             </Link>
           </div>
         </main>
+        <Footer />
       </div>
     </>
   );

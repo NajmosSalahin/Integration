@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, ShoppingCart, User, Menu, X } from 'lucide-react';
+import { Search, ShoppingCart, User, Menu, X, LogOut, Package, LogIn } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { fetchProducts } from '../api/products';
 import useCart from '../stores/cartStore';
@@ -14,9 +14,12 @@ export default function Navbar() {
   const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '');
   const [showResults, setShowResults] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const searchRef = useRef(null);
+  const userMenuRef = useRef(null);
   const itemCount = useCart((s) => s.getItemCount());
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
 
   const { data: products } = useQuery({
     queryKey: ['products'],
@@ -28,10 +31,18 @@ export default function Navbar() {
       if (searchRef.current && !searchRef.current.contains(e.target)) {
         setShowResults(false);
       }
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target)) {
+        setUserMenuOpen(false);
+      }
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  useEffect(() => {
+    setMobileMenuOpen(false);
+    setMobileSearchOpen(false);
+  }, [searchParams]);
 
   const debouncedResults = searchQuery
     ? products?.filter((p) =>
@@ -44,6 +55,8 @@ export default function Navbar() {
     e.preventDefault();
     if (searchQuery.trim()) {
       navigate(`/?q=${encodeURIComponent(searchQuery)}`);
+      setShowResults(false);
+      setMobileSearchOpen(false);
     }
   };
 
@@ -54,23 +67,29 @@ export default function Navbar() {
     }
   };
 
+  const handleLogout = async () => {
+    await logout();
+    setUserMenuOpen(false);
+    navigate('/');
+  };
+
   return (
-    <header className="bg-[var(--bg-card)] border-b border-[var(--border)]">
+    <header className="bg-[var(--bg-primary)] border-b border-[var(--border)] sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="py-3">
           <div className="flex items-center justify-between gap-4">
-            <Link to="/" className="flex items-center space-x-3">
+            <Link to="/" className="flex items-center space-x-3 shrink-0">
               <img src="/logo-icon.png" alt="Integration" className="h-8 w-8" />
               <span
-                className="text-xl"
+                className="text-xl hidden sm:block"
                 style={{ fontFamily: "var(--font-display)" }}
               >
                 Integration
               </span>
             </Link>
 
-            <div className="flex-1 max-w-xl hidden md:block">
-              <form onSubmit={handleSearch} ref={searchRef} className="relative">
+            <div className="flex-1 max-w-xl hidden md:block" ref={searchRef}>
+              <form onSubmit={handleSearch} className="relative">
                 <input
                   type="search"
                   placeholder="Search designs..."
@@ -93,9 +112,17 @@ export default function Navbar() {
               </form>
             </div>
 
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-1">
+              <button
+                onClick={() => setMobileSearchOpen(!mobileSearchOpen)}
+                className="md:hidden p-2.5 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
+                aria-label="Search"
+              >
+                <Search size={20} />
+              </button>
+
               {user?.role === 'admin' && (
-                <div className="hidden sm:flex items-center gap-3 text-sm">
+                <div className="hidden sm:flex items-center gap-3 text-sm mr-2">
                   <Link
                     to="/admin/orders"
                     className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
@@ -111,40 +138,138 @@ export default function Navbar() {
                 </div>
               )}
 
-              <Link to="/cart" className="relative">
+              <Link to="/cart" className="relative p-2.5" aria-label="Cart">
                 <ShoppingCart size={20} className="text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors" />
                 {itemCount > 0 && (
-                  <span className="absolute -top-2 -right-2 w-5 h-5 bg-[var(--accent)] text-white text-[10px] rounded-full flex items-center justify-center">
+                  <span className="absolute top-1 right-1 w-5 h-5 bg-[var(--accent)] text-white text-[10px] rounded-full flex items-center justify-center">
                     {itemCount}
                   </span>
                 )}
               </Link>
 
               {user ? (
-                <button
-                  onClick={() => {}}
-                  className="p-1 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
-                >
-                  <User size={20} />
-                </button>
+                <div className="relative" ref={userMenuRef}>
+                  <button
+                    onClick={() => setUserMenuOpen(!userMenuOpen)}
+                    className="p-2.5 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
+                    aria-label="Account menu"
+                    aria-expanded={userMenuOpen}
+                  >
+                    <User size={20} />
+                  </button>
+
+                  <AnimatePresence>
+                    {userMenuOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -8 }}
+                        transition={{ duration: 0.15 }}
+                        className="absolute right-0 top-full mt-1 w-48 bg-[#111] border border-[var(--border)] rounded-lg shadow-lg overflow-hidden z-50"
+                      >
+                        <div className="px-4 py-3 border-b border-[var(--border)]">
+                          <p className="text-sm text-[var(--text-primary)] truncate">{user.name}</p>
+                          <p className="text-xs text-[var(--text-secondary)] truncate">{user.email}</p>
+                        </div>
+                        <div className="py-1">
+                          <Link
+                            to="/orders"
+                            onClick={() => setUserMenuOpen(false)}
+                            className="flex items-center gap-3 px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-primary)] transition-colors"
+                          >
+                            <Package size={16} />
+                            My Orders
+                          </Link>
+                          {user.role === 'admin' && (
+                            <>
+                              <Link
+                                to="/admin/orders"
+                                onClick={() => setUserMenuOpen(false)}
+                                className="flex items-center gap-3 px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-primary)] transition-colors sm:hidden"
+                              >
+                                <Package size={16} />
+                                Admin Orders
+                              </Link>
+                              <Link
+                                to="/admin/products"
+                                onClick={() => setUserMenuOpen(false)}
+                                className="flex items-center gap-3 px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-primary)] transition-colors sm:hidden"
+                              >
+                                <Package size={16} />
+                                Admin Products
+                              </Link>
+                            </>
+                          )}
+                          <button
+                            onClick={handleLogout}
+                            className="flex items-center gap-3 px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:text-red-400 hover:bg-[var(--bg-primary)] transition-colors w-full"
+                          >
+                            <LogOut size={16} />
+                            Log Out
+                          </button>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
               ) : (
                 <Link
                   to="/login"
-                  className="p-1 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
+                  className="p-2.5 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
+                  aria-label="Log in"
                 >
-                  <User size={20} />
+                  <LogIn size={20} />
                 </Link>
               )}
 
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="md:hidden p-1 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
+                className="md:hidden p-2.5 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
+                aria-label="Menu"
+                aria-expanded={mobileMenuOpen}
               >
-                {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+                  {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
               </button>
             </div>
           </div>
         </div>
+
+        <AnimatePresence>
+          {mobileSearchOpen && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="md:hidden border-t border-[var(--border)] overflow-hidden"
+            >
+              <form onSubmit={handleSearch} className="py-3 relative">
+                <input
+                  type="search"
+                  placeholder="Search designs..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyDown={handleSearchKeyDown}
+                  onFocus={() => setShowResults(true)}
+                  autoFocus
+                  className="w-full pl-10 pr-4 py-2.5 border border-[var(--border)] rounded-lg bg-[#111] text-[var(--text-primary)] text-sm focus:outline-none focus:border-[var(--accent)] transition-colors placeholder-[var(--text-secondary)]"
+                />
+                <Search size={18} className="absolute left-3 top-3.5 text-[var(--text-secondary)]" />
+
+                <div ref={searchRef}>
+                  <AnimatePresence>
+                    {showResults && debouncedResults.length > 0 && (
+                      <SearchResults
+                        results={debouncedResults}
+                        onSelect={() => { setShowResults(false); setMobileSearchOpen(false); }}
+                      />
+                    )}
+                  </AnimatePresence>
+                </div>
+              </form>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         <AnimatePresence>
           {mobileMenuOpen && (
@@ -153,18 +278,36 @@ export default function Navbar() {
               animate={{ height: 'auto', opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className="md:hidden border-t border-[var(--border)]"
+              className="md:hidden border-t border-[var(--border)] overflow-hidden"
             >
-              <nav className="py-3 space-y-2">
-                <Link to="/" className="block py-2 text-sm text-[var(--text-primary)]">Home</Link>
-                <Link to="/about" className="block py-2 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">About</Link>
-                <Link to="/contact" className="block py-2 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">Contact</Link>
-                <Link to="/faq" className="block py-2 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">FAQ</Link>
+              <nav className="py-3 space-y-1">
+                <Link to="/" className="block py-2.5 px-1 text-sm text-[var(--text-primary)]">Home</Link>
+                <Link to="/cart" className="block py-2.5 px-1 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">
+                  Cart {itemCount > 0 && <span className="text-[var(--accent)]">({itemCount})</span>}
+                </Link>
+                {user && (
+                  <Link to="/orders" className="block py-2.5 px-1 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">My Orders</Link>
+                )}
+                <Link to="/about" className="block py-2.5 px-1 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">About</Link>
+                <Link to="/contact" className="block py-2.5 px-1 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">Contact</Link>
+                <Link to="/faq" className="block py-2.5 px-1 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">FAQ</Link>
                 {user?.role === 'admin' && (
                   <>
-                    <Link to="/admin/orders" className="block py-2 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">Orders</Link>
-                    <Link to="/admin/products" className="block py-2 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">Products</Link>
+                    <div className="border-t border-[var(--border)] my-2" />
+                    <Link to="/admin/orders" className="block py-2.5 px-1 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">Admin Orders</Link>
+                    <Link to="/admin/products" className="block py-2.5 px-1 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">Admin Products</Link>
                   </>
+                )}
+                <div className="border-t border-[var(--border)] my-2" />
+                {user ? (
+                  <button
+                    onClick={handleLogout}
+                    className="block py-2.5 px-1 text-sm text-[var(--text-secondary)] hover:text-red-400 transition-colors w-full text-left"
+                  >
+                    Log Out
+                  </button>
+                ) : (
+                  <Link to="/login" className="block py-2.5 px-1 text-sm text-[var(--accent)] hover:text-blue-400 transition-colors">Log In</Link>
                 )}
               </nav>
             </motion.div>

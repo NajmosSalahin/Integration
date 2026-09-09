@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { ArrowLeft } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { createOrder } from '../api/orders';
 import useCart from '../stores/cartStore';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 
 export default function Checkout() {
   const { user } = useAuth();
@@ -23,11 +24,15 @@ export default function Checkout() {
         <Helmet>
           <title>Checkout — Integration</title>
         </Helmet>
-        <div className="min-h-screen bg-[#0a0a0a] text-[#e8e8e8] flex flex-col items-center justify-center gap-4">
-          <p className="text-gray-400">Your cart is empty</p>
-          <Link to="/" className="text-sm text-blue-400 hover:text-blue-300 transition-colors">
-            Browse the collection
-          </Link>
+        <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
+          <Navbar />
+          <div className="flex flex-col items-center justify-center py-32 gap-4">
+            <p className="text-[var(--text-secondary)]">Your cart is empty</p>
+            <Link to="/" className="text-sm text-[var(--accent)] hover:text-blue-400 transition-colors">
+              Browse the collection
+            </Link>
+          </div>
+          <Footer />
         </div>
       </>
     );
@@ -66,27 +71,10 @@ export default function Checkout() {
         <meta name="description" content="Complete your order." />
       </Helmet>
 
-      <div className="min-h-screen bg-[#0a0a0a] text-[#e8e8e8]">
-        <header className="px-4 sm:px-6 lg:px-8 py-4 border-b border-gray-800/50">
-          <div className="max-w-7xl mx-auto flex items-center justify-between">
-            <Link
-              to="/cart"
-              className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors"
-            >
-              <ArrowLeft size={16} />
-              <span className="tracking-wider uppercase">Back to Cart</span>
-            </Link>
-            <Link
-              to="/"
-              className="text-lg tracking-[0.2em] uppercase"
-              style={{ fontFamily: "'Bebas Neue', sans-serif" }}
-            >
-              INTEGRATION
-            </Link>
-          </div>
-        </header>
+      <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
+        <Navbar />
 
-        <main className="px-4 sm:px-6 lg:px-8 py-8">
+        <main className="px-4 sm:px-6 lg:px-8 py-10">
           <div className="max-w-5xl mx-auto">
             <h1
               className="text-3xl sm:text-4xl tracking-[0.15em] uppercase mb-8"
@@ -113,7 +101,7 @@ export default function Checkout() {
                       type="text"
                       value={user?.name || ''}
                       readOnly
-                      className="w-full px-4 py-3 bg-gray-900 border border-gray-800 rounded-sm text-sm text-gray-500 cursor-not-allowed"
+                      className="w-full px-4 py-3 bg-[#111] border border-[var(--border)] rounded-lg text-sm text-[var(--text-secondary)] cursor-not-allowed"
                     />
                   </div>
 
@@ -125,7 +113,7 @@ export default function Checkout() {
                       type="email"
                       value={user?.email || ''}
                       readOnly
-                      className="w-full px-4 py-3 bg-gray-900 border border-gray-800 rounded-sm text-sm text-gray-500 cursor-not-allowed"
+                      className="w-full px-4 py-3 bg-[#111] border border-[var(--border)] rounded-lg text-sm text-[var(--text-secondary)] cursor-not-allowed"
                     />
                   </div>
 
@@ -139,7 +127,7 @@ export default function Checkout() {
                       onChange={(e) => setPhone(e.target.value)}
                       required
                       placeholder="+8801XXXXXXXXX"
-                      className="w-full px-4 py-3 bg-gray-900 border border-gray-800 rounded-sm text-sm text-white placeholder-gray-600 focus:border-blue-500 focus:outline-none transition-colors"
+                      className="w-full px-4 py-3 bg-[#111] border border-[var(--border)] rounded-lg text-sm text-[var(--text-primary)] placeholder-[var(--text-secondary)] focus:border-[var(--accent)] focus:outline-none transition-colors"
                     />
                   </div>
 
@@ -167,9 +155,7 @@ export default function Checkout() {
                 <button
                   type="submit"
                   disabled={submitting || !phone.trim() || !address.trim()}
-                  className={`
-                    w-full py-3 rounded-sm text-sm tracking-[0.2em] uppercase transition-all duration-200
-                    ${submitting || !phone.trim() || !address.trim()
+                                      className={`w-full py-3.5 rounded-lg text-sm tracking-[0.2em] uppercase transition-all duration-200 ${submitting || !phone.trim() || !address.trim()
                       ? 'bg-gray-800 text-gray-600 cursor-not-allowed'
                       : 'bg-blue-600 hover:bg-blue-500 text-white cursor-pointer'
                     }
@@ -236,6 +222,7 @@ export default function Checkout() {
             </div>
           </div>
         </main>
+        <Footer />
       </div>
     </>
   );

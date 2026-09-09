@@ -1,8 +1,10 @@
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { ArrowLeft, Minus, Plus, X, ShoppingBag } from 'lucide-react';
+import { Minus, Plus, X, ShoppingBag } from 'lucide-react';
 import useCart from '../stores/cartStore';
 import { useAuth } from '../context/AuthContext';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 
 export default function Cart() {
   const { items, removeItem, updateQuantity, clearCart, getTotal } = useCart();
@@ -16,31 +18,14 @@ export default function Cart() {
         <meta name="description" content="Review your cart before checkout." />
       </Helmet>
 
-      <div className="min-h-screen bg-[#0a0a0a] text-[#e8e8e8]">
-        <header className="px-4 sm:px-6 lg:px-8 py-4 border-b border-gray-800/50">
-          <div className="max-w-7xl mx-auto flex items-center justify-between">
-            <Link
-              to="/"
-              className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors"
-            >
-              <ArrowLeft size={16} />
-              <span className="tracking-wider uppercase">Continue Shopping</span>
-            </Link>
-            <Link
-              to="/"
-              className="text-lg tracking-[0.2em] uppercase"
-              style={{ fontFamily: "'Bebas Neue', sans-serif" }}
-            >
-              INTEGRATION
-            </Link>
-          </div>
-        </header>
+      <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
+        <Navbar />
 
-        <main className="px-4 sm:px-6 lg:px-8 py-8">
-          <div className="max-w-3xl mx-auto">
+        <main className="px-4 sm:px-6 lg:px-8 py-10">
+          <div className="max-w-4xl mx-auto">
             <h1
               className="text-3xl sm:text-4xl tracking-[0.15em] uppercase mb-8"
-              style={{ fontFamily: "'Bebas Neue', sans-serif" }}
+              style={{ fontFamily: "var(--font-utility)" }}
             >
               Your Cart
             </h1>
@@ -48,25 +33,25 @@ export default function Cart() {
             {items.length === 0 ? (
               <div className="text-center py-20">
                 <ShoppingBag size={48} className="mx-auto text-gray-700 mb-4" />
-                <p className="text-gray-400 mb-2">Your cart is empty</p>
+                <p className="text-[var(--text-secondary)] mb-2">Your cart is empty</p>
                 <Link
                   to="/"
-                  className="text-sm text-blue-400 hover:text-blue-300 transition-colors"
+                  className="text-sm text-[var(--accent)] hover:text-blue-400 transition-colors"
                 >
                   Browse the collection
                 </Link>
               </div>
             ) : (
               <>
-                <div className="space-y-6">
+                <div className="space-y-4">
                   {items.map((item) => (
                     <div
                       key={`${item.productId}-${item.size}`}
-                      className="flex gap-4 p-4 border border-gray-800 rounded-sm"
+                      className="flex gap-4 p-4 border border-[var(--border)] rounded-lg"
                     >
                       <Link
                         to={`/product/${item.productId}`}
-                        className="shrink-0 w-20 h-24 bg-gray-900 rounded-sm overflow-hidden"
+                        className="shrink-0 w-24 h-28 bg-[#111] rounded-lg overflow-hidden"
                       >
                         <img
                           src={item.image}
@@ -80,44 +65,48 @@ export default function Cart() {
                           <div>
                             <Link
                               to={`/product/${item.productId}`}
-                              className="text-sm tracking-[0.15em] uppercase hover:text-blue-400 transition-colors"
-                              style={{ fontFamily: "'Bebas Neue', sans-serif" }}
+                              className="text-sm tracking-[0.15em] uppercase hover:text-[var(--accent)] transition-colors"
+                              style={{ fontFamily: "var(--font-utility)" }}
                             >
                               {item.title}
                             </Link>
-                            <p className="text-xs text-gray-500 mt-0.5">
+                            <p className="text-xs text-[var(--text-secondary)] mt-0.5">
                               Size: {item.size}
                             </p>
                           </div>
                           <button
-                            onClick={() => removeItem(item.productId, item.size)}
-                            className="text-gray-600 hover:text-red-400 transition-colors shrink-0"
+                            onClick={() => {
+                              if (window.confirm(`Remove "${item.title}" (${item.size}) from cart?`)) {
+                                removeItem(item.productId, item.size);
+                              }
+                            }}
+                            className="p-2 text-[var(--text-secondary)] hover:text-red-400 transition-colors shrink-0 min-w-[44px] min-h-[44px] flex items-center justify-center"
+                            aria-label={`Remove ${item.title}`}
                           >
                             <X size={16} />
                           </button>
                         </div>
 
                         <div className="flex items-center justify-between mt-3">
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-1">
                             <button
-                              onClick={() =>
-                                updateQuantity(item.productId, item.size, item.quantity - 1)
-                              }
-                              className="w-7 h-7 flex items-center justify-center border border-gray-700 rounded-sm text-gray-400 hover:border-gray-500 hover:text-white transition-colors"
+                              onClick={() => updateQuantity(item.productId, item.size, item.quantity - 1)}
+                              className="w-11 h-11 flex items-center justify-center border border-[var(--border)] rounded-lg text-[var(--text-secondary)] hover:border-[var(--accent)] hover:text-[var(--text-primary)] transition-colors"
+                              aria-label="Decrease quantity"
                             >
-                              <Minus size={12} />
+                              <Minus size={14} />
                             </button>
-                            <span className="w-8 text-center text-sm">{item.quantity}</span>
+                            <span className="w-10 text-center text-sm tabular-nums">{item.quantity}</span>
                             <button
-                              onClick={() =>
-                                updateQuantity(item.productId, item.size, item.quantity + 1)
-                              }
-                              className="w-7 h-7 flex items-center justify-center border border-gray-700 rounded-sm text-gray-400 hover:border-gray-500 hover:text-white transition-colors"
+                              onClick={() => updateQuantity(item.productId, item.size, item.quantity + 1)}
+                              disabled={item.quantity >= 10}
+                              className="w-11 h-11 flex items-center justify-center border border-[var(--border)] rounded-lg text-[var(--text-secondary)] hover:border-[var(--accent)] hover:text-[var(--text-primary)] transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                              aria-label="Increase quantity"
                             >
-                              <Plus size={12} />
+                              <Plus size={14} />
                             </button>
                           </div>
-                          <p className="text-sm text-gray-300">
+                          <p className="text-sm text-[var(--text-primary)] tabular-nums">
                             ৳{((item.price * item.quantity) / 100).toLocaleString()}
                           </p>
                         </div>
@@ -126,40 +115,44 @@ export default function Cart() {
                   ))}
                 </div>
 
-                <div className="mt-8 border-t border-gray-800 pt-6 space-y-4">
+                <div className="mt-8 border-t border-[var(--border)] pt-6 space-y-4">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-400">Subtotal</span>
+                    <span className="text-sm text-[var(--text-secondary)]">Subtotal</span>
                     <span
-                      className="text-xl text-blue-400"
-                      style={{ fontFamily: "'Bebas Neue', sans-serif" }}
+                      className="text-xl text-[var(--accent)]"
+                      style={{ fontFamily: "var(--font-utility)" }}
                     >
                       ৳{(total / 100).toLocaleString()}
                     </span>
                   </div>
 
-                  <p className="text-xs text-gray-600">
+                  <p className="text-xs text-[var(--text-secondary)]">
                     Payment is manual via bKash. You will be contacted after placing your order.
                   </p>
 
                   {user ? (
                     <Link
                       to="/checkout"
-                      className="block w-full py-3 rounded-sm text-sm tracking-[0.2em] uppercase bg-blue-600 hover:bg-blue-500 text-white text-center transition-all duration-200"
+                      className="block w-full py-3.5 rounded-lg text-sm tracking-[0.2em] uppercase bg-[var(--accent)] hover:bg-blue-500 text-white text-center transition-all duration-200"
                     >
                       Checkout
                     </Link>
                   ) : (
                     <Link
                       to="/login?redirect=/checkout"
-                      className="block w-full py-3 rounded-sm text-sm tracking-[0.2em] uppercase bg-blue-600 hover:bg-blue-500 text-white text-center transition-all duration-200"
+                      className="block w-full py-3.5 rounded-lg text-sm tracking-[0.2em] uppercase bg-[var(--accent)] hover:bg-blue-500 text-white text-center transition-all duration-200"
                     >
                       Login to Checkout
                     </Link>
                   )}
 
                   <button
-                    onClick={clearCart}
-                    className="w-full py-2 text-xs tracking-wider uppercase text-gray-600 hover:text-red-400 transition-colors"
+                    onClick={() => {
+                      if (window.confirm('Clear all items from cart?')) {
+                        clearCart();
+                      }
+                    }}
+                    className="w-full py-2.5 text-xs tracking-wider uppercase text-[var(--text-secondary)] hover:text-red-400 transition-colors"
                   >
                     Clear Cart
                   </button>
@@ -168,6 +161,7 @@ export default function Cart() {
             )}
           </div>
         </main>
+        <Footer />
       </div>
     </>
   );

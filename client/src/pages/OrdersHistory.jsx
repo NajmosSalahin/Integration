@@ -2,8 +2,10 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Helmet } from 'react-helmet-async';
-import { ArrowLeft, Package } from 'lucide-react';
+import { Package } from 'lucide-react';
 import { getMyOrders } from '../api/orders';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 
 const STATUS_LABELS = {
   pending_payment: 'Pending Payment',
@@ -49,27 +51,10 @@ export default function OrdersHistory() {
         <title>My Orders — Integration</title>
       </Helmet>
 
-      <div className="min-h-screen bg-[#0a0a0a] text-[#e8e8e8]">
-        <header className="px-4 sm:px-6 lg:px-8 py-4 border-b border-gray-800/50">
-          <div className="max-w-7xl mx-auto flex items-center justify-between">
-            <Link
-              to="/"
-              className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors"
-            >
-              <ArrowLeft size={16} />
-              <span className="tracking-wider uppercase">Collection</span>
-            </Link>
-            <Link
-              to="/"
-              className="text-lg tracking-[0.2em] uppercase"
-              style={{ fontFamily: "'Bebas Neue', sans-serif" }}
-            >
-              INTEGRATION
-            </Link>
-          </div>
-        </header>
+      <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
+        <Navbar />
 
-        <main className="px-4 sm:px-6 lg:px-8 py-8">
+        <main className="px-4 sm:px-6 lg:px-8 py-10">
           <div className="max-w-4xl mx-auto">
             <h1
               className="text-3xl sm:text-4xl tracking-[0.15em] uppercase mb-6"
@@ -167,6 +152,7 @@ export default function OrdersHistory() {
             )}
           </div>
         </main>
+        <Footer />
       </div>
     </>
   );
