@@ -24,6 +24,6 @@ services:
       - key: CLOUDINARY_API_SECRET
         sync: false
       - key: CLIENT_URL
-        value: https://integration.onrender.com
+        value: https://integration-3j28.onrender.com/
       - key: NODE_ENV
         value: production
