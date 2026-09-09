@@ -101,7 +101,7 @@ export default function Footer() {
 
         <div className="pt-6 border-t border-[var(--border)] mb-8">
           <div className="max-w-md">
-            <NewsletterForm compact />
+            <NewsletterForm />
           </div>
         </div>
 
