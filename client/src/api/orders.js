@@ -1,12 +1,4 @@
-let accessToken = null;
-
-export function setAccessToken(token) {
-  accessToken = token;
-}
-
-export function getAccessToken() {
-  return accessToken;
-}
+import { getAccessToken } from './token';
 
 async function request(url, options = {}) {
   const res = await fetch(url, {
@@ -14,7 +6,7 @@ async function request(url, options = {}) {
     credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
-      ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
+      ...(getAccessToken() && { Authorization: `Bearer ${getAccessToken()}` }),
       ...options.headers,
     },
   });
