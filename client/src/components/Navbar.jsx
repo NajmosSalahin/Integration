@@ -134,6 +134,13 @@ export default function Navbar() {
                 <Search size={20} />
               </button>
 
+              <Link
+                to="/shop"
+                className="hidden sm:block text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors text-sm mr-2"
+              >
+                Shop
+              </Link>
+
               {user?.role === 'admin' && (
                 <div className="hidden sm:flex items-center gap-3 text-sm mr-2">
                   <Link
@@ -325,6 +332,7 @@ export default function Navbar() {
             >
               <nav className="py-2 space-y-0.5">
                 <Link to="/" className="block py-2 px-1 text-sm text-[var(--text-primary)]">Home</Link>
+                <Link to="/shop" className="block py-2 px-1 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">Shop</Link>
                 <Link to="/cart" className="block py-2 px-1 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">
                   Cart {itemCount > 0 && <span className="text-[var(--accent)]">({itemCount})</span>}
                 </Link>
