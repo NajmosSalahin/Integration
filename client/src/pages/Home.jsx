@@ -1,7 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, Link } from 'react-router-dom';
+import { ArrowRight } from 'lucide-react';
 import { fetchProducts } from '../api/products';
 import ProductCard from '../components/ProductCard';
 import Navbar from '../components/Navbar';
@@ -30,6 +31,10 @@ export default function Home() {
     return matchesSearch && matchesTag;
   });
 
+  const featured = products?.filter((p) =>
+    p.tags?.some((t) => t.toLowerCase() === 'popular')
+  ).slice(0, 4);
+
   return (
     <>
       <Helmet>
@@ -44,12 +49,41 @@ export default function Home() {
 
         <CategoryGrid />
 
-        <section className="px-4 sm:px-6 lg:px-8 py-6">
-          <div className="max-w-7xl mx-auto">
-            <div className="flex items-center justify-between mb-5">
+        {featured && featured.length > 0 && (
+          <section className="py-12 sm:py-8 lg:py-20">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="flex items-center justify-between mb-6">
+                <h2
+                  className="text-[26px] sm:text-[20px] font-bold text-[var(--text-primary)]"
+                  style={{ fontFamily: 'var(--font-utility)' }}
+                >
+                  Featured Products
+                </h2>
+                <Link
+                  to="/"
+                  className="inline-flex items-center gap-1.5 text-[14px] text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors"
+                  style={{ fontFamily: 'var(--font-body)' }}
+                >
+                  View All
+                  <ArrowRight size={14} />
+                </Link>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+                {featured.map((product, i) => (
+                  <ProductCard key={product._id} product={product} index={i} />
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
+        <section className="py-12 sm:py-8 lg:py-20">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between mb-6">
               <h2
-                className="text-2xl tracking-[0.15em] uppercase"
-                style={{ fontFamily: "var(--font-utility)" }}
+                className="text-[26px] sm:text-[20px] font-bold text-[var(--text-primary)]"
+                style={{ fontFamily: 'var(--font-utility)' }}
               >
                 {searchQuery
                   ? `Results for "${searchQuery}"`
@@ -58,17 +92,17 @@ export default function Home() {
                     : 'Collection'}
               </h2>
               {filtered && (
-                <span className="text-xs text-[var(--text-secondary)] tracking-wider">
+                <span className="text-[14px] text-[var(--text-secondary)]">
                   {filtered.length} design{filtered.length !== 1 ? 's' : ''}
                 </span>
               )}
             </div>
 
             {isLoading && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {[...Array(6)].map((_, i) => (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+                {[...Array(8)].map((_, i) => (
                   <div key={i} className="animate-pulse">
-                    <div className="aspect-[3/4] bg-[#111] rounded-sm" />
+                    <div className="aspect-[4/5] bg-[#111] rounded-[10px]" />
                     <div className="mt-3 h-4 bg-[#111] rounded w-2/3" />
                     <div className="mt-2 h-3 bg-[#111] rounded w-1/3" />
                   </div>
@@ -91,7 +125,7 @@ export default function Home() {
 
             {filtered && filtered.length > 0 && (
               <motion.div
-                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6"
                 initial="hidden"
                 animate="visible"
                 variants={{
