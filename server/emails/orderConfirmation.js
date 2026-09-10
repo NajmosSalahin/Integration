@@ -11,7 +11,8 @@ export async function sendOrderConfirmationEmail({ order, customerEmail, custome
   const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
   const orderUrl = `${clientUrl}/order-confirmation/${order._id}`;
 
-  const whatsappNumber = process.env.WHATSAPP_NUMBER || '00000000000';
+  const rawNumbers = process.env.WHATSAPP_NUMBER || '00000000000';
+  const whatsappNumber = rawNumbers.split(',')[0].trim();
   const waMessage = encodeURIComponent(`Hi, I placed order #${String(order._id).slice(-8).toUpperCase()} on Integration. Total: ৳${(order.totalAmount / 100).toLocaleString()}. Looking forward to hearing from you.`);
   const waLink = `https://wa.me/${whatsappNumber}?text=${waMessage}`;
 
