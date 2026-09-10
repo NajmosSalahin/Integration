@@ -1,9 +1,12 @@
 import { BrevoClient } from '@getbrevo/brevo';
 
 export async function sendOrderNotificationEmail({ order, customerName, customerEmail, pdfBuffer }) {
-  const ownerEmail = process.env.OWNER_EMAIL;
+  const rawEmails = process.env.OWNER_EMAIL;
+  const ownerEmails = rawEmails
+    ? rawEmails.split(',').map((e) => e.trim()).filter(Boolean)
+    : [];
 
-  if (!ownerEmail || ownerEmail === 'your-email@example.com') {
+  if (ownerEmails.length === 0 || (ownerEmails.length === 1 && ownerEmails[0] === 'your-email@example.com')) {
     console.log(`[DEV] Order notification — Order #${order._id}`);
     console.log(`  Customer: ${customerName} (${customerEmail})`);
     console.log(`  Phone: ${order.contactPhone}`);
@@ -15,7 +18,7 @@ export async function sendOrderNotificationEmail({ order, customerName, customer
   }
 
   if (!process.env.BREVO_API_KEY || process.env.BREVO_API_KEY === 'your-brevo-api-key') {
-    console.log(`[DEV] Would send order notification to ${ownerEmail} for order #${order._id}`);
+    console.log(`[DEV] Would send order notification to ${ownerEmails.join(', ')} for order #${order._id}`);
     return;
   }
 
@@ -25,14 +28,15 @@ export async function sendOrderNotificationEmail({ order, customerName, customer
     .map((i) => `<tr><td style="padding:6px 12px;border-bottom:1px solid #222">${i.title}</td><td style="padding:6px 12px;border-bottom:1px solid #222">${i.size}</td><td style="padding:6px 12px;border-bottom:1px solid #222;text-align:center">${i.quantity}</td><td style="padding:6px 12px;border-bottom:1px solid #222;text-align:right">৳${((i.priceAtOrder * i.quantity) / 100).toLocaleString()}</td></tr>`)
     .join('');
 
-  const whatsappNumber = process.env.WHATSAPP_NUMBER || '00000000000';
+  const rawNumbers = process.env.WHATSAPP_NUMBER || '00000000000';
+  const whatsappNumber = rawNumbers.split(',')[0].trim();
   const waMessage = encodeURIComponent(`New order #${order._id} from ${customerName}. Total: ৳${(order.totalAmount / 100).toLocaleString()}. Phone: ${order.contactPhone}. Address: ${order.deliveryAddress}`);
   const waLink = `https://wa.me/${whatsappNumber}?text=${waMessage}`;
 
   await brevo.transactionalEmails.sendTransacEmail({
     subject: `New Order — #${String(order._id).slice(-8).toUpperCase()}`,
     sender: { name: 'Integration', email: 'najmussalahin.adib@gmail.com' },
-    to: [{ email: ownerEmail }],
+    to: ownerEmails.map((email) => ({ email })),
     htmlContent: `
       <!DOCTYPE html>
       <html>
