@@ -1,3 +1,15 @@
+export function buildWhatsappLinks(rawNumbers, message) {
+  if (!rawNumbers) return [];
+  const encoded = message ? `?text=${encodeURIComponent(message)}` : '';
+  return rawNumbers.split(',').map((n) => {
+    const num = n.trim();
+    if (!num) return null;
+    const local = num.startsWith('0') ? num.slice(1) : num;
+    const full = `880${local}`;
+    return { url: `https://wa.me/${full}${encoded}`, label: num };
+  }).filter(Boolean);
+}
+
 const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
 const LOGO_URL = `${CLIENT_URL}/logo.png`;
 
@@ -149,9 +161,17 @@ export function step(num, text) {
   </table>`;
 }
 
-export function contactButtons(waLink, messengerLink, emailLink) {
+export function whatsappButtons(waLinks) {
+  if (!waLinks || waLinks.length === 0) return '';
+  return waLinks.map((link) => {
+    const label = link.label ? `WhatsApp · ${link.label}` : 'WhatsApp';
+    return button(label, link.url, colors.success);
+  }).join(' ');
+}
+
+export function contactButtons(waLinks, messengerLink, emailLink) {
   let btns = '';
-  if (waLink) btns += button('WhatsApp', waLink, colors.success) + ' ';
+  if (waLinks && waLinks.length > 0) btns += whatsappButtons(waLinks) + ' ';
   if (messengerLink) btns += button('Messenger', messengerLink, '#0084ff') + ' ';
   if (emailLink) btns += button('Email', emailLink, '#555555');
   return `<div style="margin:16px 0;">${btns}</div>`;

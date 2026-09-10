@@ -1,5 +1,5 @@
 import { BrevoClient } from '@getbrevo/brevo';
-import { wrap, heading, sectionLabel, detailRow, itemsTable, orderTotal, button, spacer, divider } from './template.js';
+import { wrap, heading, sectionLabel, detailRow, itemsTable, orderTotal, spacer, divider, buildWhatsappLinks, whatsappButtons } from './template.js';
 
 export async function sendOrderNotificationEmail({ order, customerName, customerEmail, pdfBuffer }) {
   const rawEmails = process.env.OWNER_EMAIL;
@@ -26,9 +26,8 @@ export async function sendOrderNotificationEmail({ order, customerName, customer
   const brevo = new BrevoClient({ apiKey: process.env.BREVO_API_KEY });
 
   const rawNumbers = process.env.WHATSAPP_NUMBER || '00000000000';
-  const whatsappNumber = rawNumbers.split(',')[0].trim();
-  const waMessage = encodeURIComponent(`New order #${String(order._id).slice(-8).toUpperCase()} from ${customerName}. Total: ৳${(order.totalAmount / 100).toLocaleString()}. Phone: ${order.contactPhone}. Address: ${order.deliveryAddress}`);
-  const waLink = `https://wa.me/${whatsappNumber}?text=${waMessage}`;
+  const waMessage = `New order #${String(order._id).slice(-8).toUpperCase()} from ${customerName}. Total: ৳${(order.totalAmount / 100).toLocaleString()}. Phone: ${order.contactPhone}. Address: ${order.deliveryAddress}`;
+  const waLinks = buildWhatsappLinks(rawNumbers, waMessage);
 
   const content = `
     ${heading('New Order Received', `#${String(order._id).slice(-8).toUpperCase()}`)}
@@ -54,7 +53,7 @@ export async function sendOrderNotificationEmail({ order, customerName, customer
 
     ${spacer(8)}
     <div style="text-align:center;">
-      ${button('Contact on WhatsApp', waLink, '#22c55e')}
+      ${whatsappButtons(waLinks)}
     </div>
 
     ${divider()}
