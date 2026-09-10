@@ -49,7 +49,7 @@ export default function Hero() {
             </p>
             <div className="pt-2">
               <Link
-                to="/"
+                to="/shop"
                 className="inline-flex items-center gap-2 bg-[var(--accent)] hover:bg-[var(--accent)]/90 text-white px-7 py-[11px] text-sm font-medium transition-colors"
                 style={{ fontFamily: 'var(--font-body)' }}
               >

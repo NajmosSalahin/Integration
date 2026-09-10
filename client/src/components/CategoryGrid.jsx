@@ -39,7 +39,7 @@ export default function CategoryGrid() {
             return (
               <Link
                 key={category.tag}
-                to={`/?tag=${category.tag}`}
+                to={`/shop?tag=${category.tag}`}
                 className="group relative overflow-hidden rounded-[10px] border border-[var(--border)] bg-[#111] transition-all duration-300 hover:border-[var(--accent)]"
               >
                 <div className="flex items-center min-h-[140px]">
