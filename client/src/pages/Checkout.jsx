@@ -15,6 +15,7 @@ export default function Checkout() {
 
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState('bkash');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
 
@@ -52,6 +53,7 @@ export default function Checkout() {
         })),
         deliveryAddress: address,
         contactPhone: phone,
+        paymentMethod,
       };
 
       const order = await createOrder(orderData);
@@ -144,6 +146,36 @@ export default function Checkout() {
                       className="w-full px-3 py-2.5 bg-gray-900 border border-gray-800 rounded-sm text-sm text-white placeholder-gray-600 focus:border-blue-500 focus:outline-none transition-colors resize-none"
                     />
                   </div>
+
+                  <div className="space-y-2">
+                    <label className="block text-xs tracking-[0.15em] uppercase text-gray-400 mb-2">
+                      Payment Method *
+                    </label>
+                    <div className="flex gap-3">
+                      <button
+                        type="button"
+                        onClick={() => setPaymentMethod('bkash')}
+                        className={`flex-1 py-3 px-4 rounded-lg border text-sm tracking-wider uppercase transition-all duration-200 ${
+                          paymentMethod === 'bkash'
+                            ? 'border-blue-500 bg-blue-500/10 text-blue-400'
+                            : 'border-gray-800 text-gray-500 hover:border-gray-600 hover:text-gray-300'
+                        }`}
+                      >
+                        bKash
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setPaymentMethod('cod')}
+                        className={`flex-1 py-3 px-4 rounded-lg border text-sm tracking-wider uppercase transition-all duration-200 ${
+                          paymentMethod === 'cod'
+                            ? 'border-blue-500 bg-blue-500/10 text-blue-400'
+                            : 'border-gray-800 text-gray-500 hover:border-gray-600 hover:text-gray-300'
+                        }`}
+                      >
+                        Cash on Delivery
+                      </button>
+                    </div>
+                  </div>
                 </div>
 
                 {error && (
@@ -215,7 +247,9 @@ export default function Checkout() {
                   </div>
 
                   <p className="text-xs text-gray-600">
-                    Payment is manual via bKash. You will be contacted after placing your order.
+                    {paymentMethod === 'cod'
+                      ? 'Pay when your order arrives. No advance payment required.'
+                      : 'Payment is manual via bKash. You will be contacted after placing your order.'}
                   </p>
                 </div>
               </div>

@@ -117,6 +117,7 @@ export default function Orders() {
                         <th className="text-left py-3 px-3 text-xs tracking-wider uppercase text-gray-500 font-normal">Customer</th>
                         <th className="text-left py-3 px-3 text-xs tracking-wider uppercase text-gray-500 font-normal hidden sm:table-cell">Items</th>
                         <th className="text-right py-3 px-3 text-xs tracking-wider uppercase text-gray-500 font-normal">Total</th>
+                        <th className="text-left py-3 px-3 text-xs tracking-wider uppercase text-gray-500 font-normal hidden md:table-cell">Payment</th>
                         <th className="text-left py-3 px-3 text-xs tracking-wider uppercase text-gray-500 font-normal hidden md:table-cell">Date</th>
                         <th className="text-left py-3 px-3 text-xs tracking-wider uppercase text-gray-500 font-normal">Status</th>
                       </tr>
@@ -143,6 +144,15 @@ export default function Orders() {
                           <td className="py-3 px-3 text-right">
                             <span className="text-gray-300">
                               ৳{(order.totalAmount / 100).toLocaleString()}
+                            </span>
+                          </td>
+                          <td className="py-3 px-3 hidden md:table-cell">
+                            <span className={`text-xs px-2 py-0.5 rounded-sm ${
+                              order.paymentMethod === 'cod'
+                                ? 'bg-orange-500/10 text-orange-400'
+                                : 'bg-blue-500/10 text-blue-400'
+                            }`}>
+                              {order.paymentMethod === 'cod' ? 'COD' : 'bKash'}
                             </span>
                           </td>
                           <td className="py-3 px-3 hidden md:table-cell">

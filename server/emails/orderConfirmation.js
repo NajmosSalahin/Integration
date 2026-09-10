@@ -38,9 +38,14 @@ export async function sendOrderConfirmationEmail({ order, customerEmail, custome
     ${divider()}
 
     ${sectionLabel('What Happens Next')}
-    ${step(1, "We'll contact you shortly to confirm your order details.")}
-    ${step(2, 'Send your payment via <strong>bKash</strong> to the number we provide.')}
-    ${step(3, 'Once payment is confirmed, your order ships within 2-3 business days.')}
+    ${order.paymentMethod === 'cod'
+      ? `${step(1, "We'll contact you shortly to confirm your order details.")}
+         ${step(2, 'Your order ships within 2-3 business days after confirmation.')}
+         ${step(3, 'Pay <strong>cash on delivery</strong> when your order arrives. No advance payment required.')}`
+      : `${step(1, "We'll contact you shortly to confirm your order details.")}
+         ${step(2, 'Send your payment via <strong>bKash</strong> to the number we provide.')}
+         ${step(3, 'Once payment is confirmed, your order ships within 2-3 business days.')}`
+    }
 
     ${divider()}
 
