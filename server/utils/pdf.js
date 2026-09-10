@@ -1,9 +1,29 @@
 import PDFDocument from 'pdfkit';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
+import { readFileSync } from 'fs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const NOTO_FONT = join(__dirname, '..', 'fonts', 'NotoSans-Regular.ttf');
+const LOGO_PATH = join(__dirname, '..', '..', '..', 'client', 'public', 'logo.png');
+
+const C = {
+  bg: '#0a0a0a',
+  card: '#141414',
+  cardAlt: '#1a1a1a',
+  accent: '#3b82f6',
+  text: '#e8e8e8',
+  textSecondary: '#888888',
+  muted: '#555555',
+  border: '#222222',
+};
+
+function hexToRgb(hex) {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return { r, g, b };
+}
 
 export function generateOrderPdf({ order, customerName, customerEmail }) {
   return new Promise((resolve, reject) => {
@@ -15,72 +35,148 @@ export function generateOrderPdf({ order, customerName, customerEmail }) {
     doc.on('end', () => resolve(Buffer.concat(chunks)));
     doc.on('error', reject);
 
-    doc.fontSize(20).font('Helvetica-Bold').text('INTEGRATION', { continued: false });
-    doc.moveDown(0.3);
-    doc.fontSize(10).font('Helvetica').fillColor('#666666').text('Different Styles, One Identity');
-    doc.moveDown(1);
+    const bg = hexToRgb(C.bg);
+    const card = hexToRgb(C.card);
+    const accent = hexToRgb(C.accent);
+    const textPrimary = hexToRgb(C.text);
+    const textSecondary = hexToRgb(C.textSecondary);
+    const muted = hexToRgb(C.muted);
+    const border = hexToRgb(C.border);
+    const cardAlt = hexToRgb(C.cardAlt);
 
-    doc.fontSize(16).font('Helvetica-Bold').fillColor('#000000').text('Order Receipt');
-    doc.moveDown(0.5);
+    const pageW = doc.page.width;
+    const margin = 50;
+    const contentW = pageW - margin * 2;
 
-    doc.fontSize(10).font('Helvetica');
-    doc.text(`Order ID:    ${order._id}`);
-    doc.text(`Date:        ${new Date(order.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}`);
-    doc.text(`Status:      ${order.status.replace(/_/g, ' ').toUpperCase()}`);
-    doc.text(`Payment:     ${order.paymentMethod.toUpperCase()}`);
-    doc.moveDown(1);
+    doc.rect(0, 0, pageW, doc.page.height).fill(bg);
 
-    doc.fontSize(12).font('Helvetica-Bold').text('Customer');
-    doc.moveDown(0.3);
-    doc.fontSize(10).font('Helvetica');
-    doc.text(`Name:    ${customerName}`);
-    doc.text(`Email:   ${customerEmail}`);
-    doc.text(`Phone:   ${order.contactPhone}`);
-    doc.text(`Address: ${order.deliveryAddress}`);
-    doc.moveDown(1);
+    let y = margin;
 
-    doc.fontSize(12).font('Helvetica-Bold').text('Items');
-    doc.moveDown(0.3);
+    try {
+      const logoData = readFileSync(LOGO_PATH);
+      doc.image(logoData, margin, y, { width: 36, height: 36 });
+    } catch {}
 
-    const tableTop = doc.y;
-    const colWidths = { title: 200, size: 60, qty: 50, price: 80, total: 80 };
-    const startX = 50;
+    doc.font('Helvetica-Bold').fontSize(16).fillColor(textPrimary.r, textPrimary.g, textPrimary.b);
+    doc.text('INTEGRATION', margin + 44, y + 6);
+    doc.font('Helvetica').fontSize(8).fillColor(textSecondary.r, textSecondary.g, textSecondary.b);
+    doc.text('Different Styles, One Identity', margin + 44, y + 26);
+    y += 50;
 
-    doc.fontSize(9).font('Helvetica-Bold');
-    doc.text('ITEM', startX, tableTop, { width: colWidths.title });
-    doc.text('SIZE', startX + colWidths.title, tableTop, { width: colWidths.size });
-    doc.text('QTY', startX + colWidths.title + colWidths.size, tableTop, { width: colWidths.qty });
-    doc.text('PRICE', startX + colWidths.title + colWidths.size + colWidths.qty, tableTop, { width: colWidths.price });
-    doc.text('TOTAL', startX + colWidths.title + colWidths.size + colWidths.qty + colWidths.price, tableTop, { width: colWidths.total });
+    doc.moveTo(margin, y).lineTo(pageW - margin, y).strokeColor(accent.r, accent.g, accent.b).lineWidth(1.5).stroke();
+    y += 20;
 
-    doc.moveTo(startX, tableTop + 15).lineTo(545, tableTop + 15).stroke('#cccccc');
+    doc.font('Helvetica-Bold').fontSize(14).fillColor(textPrimary.r, textPrimary.g, textPrimary.b);
+    doc.text('ORDER RECEIPT', margin, y);
+    y += 24;
 
-    let y = tableTop + 25;
-    doc.font('Helvetica').fontSize(10);
+    const cardX = margin;
+    const cardW = contentW;
+    const cardPad = 14;
 
-    for (const item of order.items) {
+    doc.roundedRect(cardX, y, cardW, 72, 6).fill(card.r, card.g, card.b);
+    let cy = y + cardPad;
+
+    doc.font('Helvetica').fontSize(9).fillColor(textSecondary.r, textSecondary.g, textSecondary.b);
+    doc.text('ORDER ID', cardX + cardPad, cy);
+    doc.text('DATE', cardX + cardPad + 140, cy);
+    doc.text('STATUS', cardX + cardPad + 300, cy);
+    doc.text('PAYMENT', cardX + cardPad + 400, cy);
+    cy += 14;
+
+    doc.font('Helvetica-Bold').fontSize(10).fillColor(textPrimary.r, textPrimary.g, textPrimary.b);
+    doc.text(`#${String(order._id).slice(-8).toUpperCase()}`, cardX + cardPad, cy);
+    doc.text(new Date(order.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }), cardX + cardPad + 140, cy);
+    doc.font('Noto').text(order.status.replace(/_/g, ' ').toUpperCase(), cardX + cardPad + 300, cy);
+    doc.font('Helvetica').text(order.paymentMethod.toUpperCase(), cardX + cardPad + 400, cy);
+    y += 88;
+
+    doc.roundedRect(cardX, y, cardW, 80, 6).fill(card.r, card.g, card.b);
+    cy = y + cardPad;
+
+    doc.font('Helvetica-Bold').fontSize(10).fillColor(textPrimary.r, textPrimary.g, textPrimary.b);
+    doc.text('CUSTOMER', cardX + cardPad, cy);
+    cy += 16;
+
+    doc.font('Helvetica').fontSize(9).fillColor(textSecondary.r, textSecondary.g, textSecondary.b);
+    doc.text('Name', cardX + cardPad, cy);
+    doc.text('Email', cardX + cardPad + 140, cy);
+    doc.text('Phone', cardX + cardPad + 300, cy);
+    cy += 12;
+
+    doc.font('Helvetica').fontSize(10).fillColor(textPrimary.r, textPrimary.g, textPrimary.b);
+    doc.text(customerName, cardX + cardPad, cy, { width: 120 });
+    doc.text(customerEmail, cardX + cardPad + 140, cy, { width: 140 });
+    doc.text(order.contactPhone, cardX + cardPad + 300, cy, { width: 120 });
+    cy += 16;
+
+    doc.font('Helvetica').fontSize(9).fillColor(textSecondary.r, textSecondary.g, textSecondary.b);
+    doc.text('Address', cardX + cardPad, cy);
+    cy += 12;
+    doc.font('Helvetica').fontSize(10).fillColor(textPrimary.r, textPrimary.g, textPrimary.b);
+    doc.text(order.deliveryAddress, cardX + cardPad, cy, { width: cardW - cardPad * 2 });
+    y += 96;
+
+    y += 12;
+
+    doc.font('Helvetica-Bold').fontSize(10).fillColor(textPrimary.r, textPrimary.g, textPrimary.b);
+    doc.text('ITEMS', margin, y);
+    y += 18;
+
+    const colX = {
+      title: margin,
+      size: margin + 230,
+      qty: margin + 310,
+      total: margin + 380,
+    };
+    const colW = { title: 220, size: 70, qty: 60, total: 100 };
+
+    doc.rect(margin, y, contentW, 22).fill(card.r, card.g, card.b);
+    doc.font('Helvetica-Bold').fontSize(8).fillColor(textSecondary.r, textSecondary.g, textSecondary.b);
+    doc.text('ITEM', colX.title + 8, y + 7, { width: colW.title });
+    doc.text('SIZE', colX.size, y + 7, { width: colW.size });
+    doc.text('QTY', colX.qty, y + 7, { width: colW.qty, align: 'center' });
+    doc.text('TOTAL', colX.total, y + 7, { width: colW.total, align: 'right' });
+    y += 22;
+
+    doc.moveTo(margin, y).lineTo(pageW - margin, y).strokeColor(border.r, border.g, border.b).lineWidth(0.5).stroke();
+    y += 2;
+
+    for (let i = 0; i < order.items.length; i++) {
+      const item = order.items[i];
+      const rowBg = i % 2 === 0 ? card : cardAlt;
       const lineTotal = item.priceAtOrder * item.quantity;
-      doc.font('Helvetica').text(item.title, startX, y, { width: colWidths.title });
-      doc.font('Helvetica').text(item.size, startX + colWidths.title, y, { width: colWidths.size });
-      doc.font('Helvetica').text(String(item.quantity), startX + colWidths.title + colWidths.size, y, { width: colWidths.qty });
-      doc.font('Noto').text(`৳${(item.priceAtOrder / 100).toLocaleString()}`, startX + colWidths.title + colWidths.size + colWidths.qty, y, { width: colWidths.price });
-      doc.font('Noto').text(`৳${(lineTotal / 100).toLocaleString()}`, startX + colWidths.title + colWidths.size + colWidths.qty + colWidths.price, y, { width: colWidths.total });
-      y += 20;
+
+      doc.rect(margin, y, contentW, 24).fill(rowBg.r, rowBg.g, rowBg.b);
+
+      doc.font('Helvetica').fontSize(10).fillColor(textPrimary.r, textPrimary.g, textPrimary.b);
+      doc.text(item.title, colX.title + 8, y + 6, { width: colW.title });
+      doc.fillColor(textSecondary.r, textSecondary.g, textSecondary.b);
+      doc.text(item.size, colX.size, y + 6, { width: colW.size });
+      doc.fillColor(textPrimary.r, textPrimary.g, textPrimary.b);
+      doc.text(String(item.quantity), colX.qty, y + 6, { width: colW.qty, align: 'center' });
+      doc.font('Noto').text(`৳${(lineTotal / 100).toLocaleString()}`, colX.total, y + 6, { width: colW.total, align: 'right' });
+
+      y += 24;
     }
 
-    doc.moveTo(startX, y).lineTo(545, y).stroke('#cccccc');
-    y += 10;
+    doc.moveTo(margin, y).lineTo(pageW - margin, y).strokeColor(border.r, border.g, border.b).lineWidth(0.5).stroke();
+    y += 4;
 
-    doc.font('Helvetica-Bold').fontSize(12);
-    doc.text('TOTAL', startX + colWidths.title + colWidths.size + colWidths.qty, y, { width: colWidths.price, align: 'right' });
-    doc.font('Noto').fontSize(12);
-    doc.text(`৳${(order.totalAmount / 100).toLocaleString()}`, startX + colWidths.title + colWidths.size + colWidths.qty + colWidths.price, y, { width: colWidths.total });
+    doc.rect(margin, y, contentW, 30).fill(accent.r, accent.g, accent.b);
+    doc.font('Helvetica-Bold').fontSize(11).fillColor(255, 255, 255);
+    doc.text('TOTAL', colX.qty, y + 9, { width: colW.qty + (colX.total - colX.qty), align: 'right' });
+    doc.font('Noto').text(`৳${(order.totalAmount / 100).toLocaleString()}`, colX.total - 10, y + 8, { width: colW.total + 10, align: 'right' });
+    y += 44;
 
-    y += 30;
-    doc.fontSize(9).font('Helvetica').fillColor('#666666');
-    doc.text('Payment is manual via bKash. Customer will be contacted to arrange payment.', startX, y);
-    doc.moveDown(2);
-    doc.text('Generated by Integration — Different Styles, One Identity.', startX, doc.y, { align: 'center' });
+    doc.moveTo(margin, y).lineTo(pageW - margin, y).strokeColor(accent.r, accent.g, accent.b).lineWidth(1).stroke();
+    y += 16;
+
+    doc.font('Helvetica').fontSize(9).fillColor(textSecondary.r, textSecondary.g, textSecondary.b);
+    doc.text('Payment is manual via bKash. You will be contacted to arrange payment.', margin, y);
+    y += 20;
+    doc.font('Helvetica').fontSize(8).fillColor(muted.r, muted.g, muted.b);
+    doc.text('Generated by Integration — Different Styles, One Identity.', margin, y, { align: 'center', width: contentW });
 
     doc.end();
   });
