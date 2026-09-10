@@ -249,7 +249,7 @@ export default function Checkout() {
                   <p className="text-xs text-gray-600">
                     {paymentMethod === 'cod'
                       ? 'Pay when your order arrives. No advance payment required.'
-                      : 'Payment is manual via bKash. You will be contacted after placing your order.'}
+                      : 'Pay instantly via bKash for faster delivery. You will be contacted after placing your order.'}
                   </p>
                 </div>
               </div>
