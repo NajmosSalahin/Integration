@@ -1,8 +1,14 @@
 import PDFDocument from 'pdfkit';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const NOTO_FONT = join(__dirname, '..', 'fonts', 'NotoSans-Regular.ttf');
 
 export function generateOrderPdf({ order, customerName, customerEmail }) {
   return new Promise((resolve, reject) => {
     const doc = new PDFDocument({ size: 'A4', margin: 50 });
+    doc.registerFont('Noto', NOTO_FONT);
     const chunks = [];
 
     doc.on('data', (chunk) => chunks.push(chunk));
@@ -54,11 +60,11 @@ export function generateOrderPdf({ order, customerName, customerEmail }) {
 
     for (const item of order.items) {
       const lineTotal = item.priceAtOrder * item.quantity;
-      doc.text(item.title, startX, y, { width: colWidths.title });
-      doc.text(item.size, startX + colWidths.title, y, { width: colWidths.size });
-      doc.text(String(item.quantity), startX + colWidths.title + colWidths.size, y, { width: colWidths.qty });
-      doc.text(`৳${(item.priceAtOrder / 100).toLocaleString()}`, startX + colWidths.title + colWidths.size + colWidths.qty, y, { width: colWidths.price });
-      doc.text(`৳${(lineTotal / 100).toLocaleString()}`, startX + colWidths.title + colWidths.size + colWidths.qty + colWidths.price, y, { width: colWidths.total });
+      doc.font('Helvetica').text(item.title, startX, y, { width: colWidths.title });
+      doc.font('Helvetica').text(item.size, startX + colWidths.title, y, { width: colWidths.size });
+      doc.font('Helvetica').text(String(item.quantity), startX + colWidths.title + colWidths.size, y, { width: colWidths.qty });
+      doc.font('Noto').text(`৳${(item.priceAtOrder / 100).toLocaleString()}`, startX + colWidths.title + colWidths.size + colWidths.qty, y, { width: colWidths.price });
+      doc.font('Noto').text(`৳${(lineTotal / 100).toLocaleString()}`, startX + colWidths.title + colWidths.size + colWidths.qty + colWidths.price, y, { width: colWidths.total });
       y += 20;
     }
 
@@ -67,6 +73,7 @@ export function generateOrderPdf({ order, customerName, customerEmail }) {
 
     doc.font('Helvetica-Bold').fontSize(12);
     doc.text('TOTAL', startX + colWidths.title + colWidths.size + colWidths.qty, y, { width: colWidths.price, align: 'right' });
+    doc.font('Noto').fontSize(12);
     doc.text(`৳${(order.totalAmount / 100).toLocaleString()}`, startX + colWidths.title + colWidths.size + colWidths.qty + colWidths.price, y, { width: colWidths.total });
 
     y += 30;
