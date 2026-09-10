@@ -1,9 +1,13 @@
 import { BrevoClient } from '@getbrevo/brevo';
+import { wrap, heading, sectionLabel, messageBox, divider } from './template.js';
 
 export async function sendContactEmail({ name, email, message }) {
-  const ownerEmail = process.env.OWNER_EMAIL;
+  const rawEmails = process.env.OWNER_EMAIL;
+  const ownerEmails = rawEmails
+    ? rawEmails.split(',').map((e) => e.trim()).filter(Boolean)
+    : [];
 
-  if (!ownerEmail || ownerEmail === 'your-email@example.com') {
+  if (ownerEmails.length === 0 || (ownerEmails.length === 1 && ownerEmails[0] === 'your-email@example.com')) {
     console.log(`[DEV] Contact form submission`);
     console.log(`  Name: ${name}`);
     console.log(`  Email: ${email}`);
@@ -12,58 +16,30 @@ export async function sendContactEmail({ name, email, message }) {
   }
 
   if (!process.env.BREVO_API_KEY || process.env.BREVO_API_KEY === 'your-brevo-api-key') {
-    console.log(`[DEV] Would send contact email to ${ownerEmail} from ${name}`);
+    console.log(`[DEV] Would send contact email to ${ownerEmails.join(', ')} from ${name}`);
     return;
   }
 
   const brevo = new BrevoClient({ apiKey: process.env.BREVO_API_KEY });
 
+  const content = `
+    ${heading('New Contact Submission')}
+
+    ${sectionLabel('From')}
+    <p style="margin:2px 0;font-size:14px;color:#1a1a1a;"><strong>${name}</strong></p>
+    <p style="margin:2px 0;font-size:14px;"><a href="mailto:${email}" style="color:#3b82f6;text-decoration:none;">${email}</a></p>
+
+    ${divider()}
+
+    ${sectionLabel('Message')}
+    ${messageBox(message.replace(/\n/g, '<br>'))}
+  `;
+
   await brevo.transactionalEmails.sendTransacEmail({
     subject: `Contact Form — ${name}`,
     sender: { name: 'Integration Website', email: 'najmussalahin.adib@gmail.com' },
-    to: [{ email: ownerEmail }],
+    to: ownerEmails.map((email) => ({ email })),
     replyTo: { email, name },
-    htmlContent: `
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <style>
-          body { font-family: Arial, sans-serif; background: #0a0a0a; color: #e8e8e8; padding: 40px; }
-          .container { max-width: 500px; margin: 0 auto; }
-          h1 { font-size: 24px; letter-spacing: 0.1em; text-transform: uppercase; }
-          .field { margin: 12px 0; }
-          .label { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: #888; }
-          .value { font-size: 14px; margin-top: 4px; }
-          .message { background: #111; padding: 16px; border-left: 3px solid #3b82f6; white-space: pre-wrap; }
-          .footer { margin-top: 40px; font-size: 12px; color: #666; }
-        </style>
-      </head>
-      <body>
-        <div class="container">
-          <h1>INTEGRATION</h1>
-          <p style="color:#3b82f6">New contact form submission</p>
-
-          <div class="field">
-            <div class="label">Name</div>
-            <div class="value">${name}</div>
-          </div>
-
-          <div class="field">
-            <div class="label">Email</div>
-            <div class="value"><a href="mailto:${email}" style="color:#3b82f6">${email}</a></div>
-          </div>
-
-          <div class="field">
-            <div class="label">Message</div>
-            <div class="message">${message.replace(/\n/g, '<br>')}</div>
-          </div>
-
-          <div class="footer">
-            <p>Different Styles, One Identity.</p>
-          </div>
-        </div>
-      </body>
-      </html>
-    `,
+    htmlContent: wrap(content),
   });
 }
