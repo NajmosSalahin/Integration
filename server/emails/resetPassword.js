@@ -13,7 +13,7 @@ export async function sendResetPasswordEmail(email, token) {
 
   await brevo.transactionalEmails.sendTransacEmail({
     subject: 'Reset your Integration password',
-    sender: { name: 'Integration', email: 'noreply@integration.com' },
+    sender: { name: 'Integration', email: 'najmussalahin.adib@gmail.com' },
     to: [{ email }],
     htmlContent: `
       <!DOCTYPE html>

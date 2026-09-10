@@ -31,7 +31,7 @@ export async function sendOrderNotificationEmail({ order, customerName, customer
 
   await brevo.transactionalEmails.sendTransacEmail({
     subject: `New Order — #${String(order._id).slice(-8).toUpperCase()}`,
-    sender: { name: 'Integration', email: 'noreply@integration.com' },
+    sender: { name: 'Integration', email: 'najmussalahin.adib@gmail.com' },
     to: [{ email: ownerEmail }],
     htmlContent: `
       <!DOCTYPE html>

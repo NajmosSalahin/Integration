@@ -13,7 +13,7 @@ export async function sendVerificationEmail(email, token) {
 
   await brevo.transactionalEmails.sendTransacEmail({
     subject: 'Verify your Integration account',
-    sender: { name: 'Integration', email: 'noreply@integration.com' },
+    sender: { name: 'Integration', email: 'najmussalahin.adib@gmail.com' },
     to: [{ email }],
     htmlContent: `
       <!DOCTYPE html>
