@@ -12,7 +12,7 @@ export async function createOrder(req, res) {
       return res.status(503).json({ error: 'Database not connected' });
     }
 
-    const { items, deliveryAddress, contactPhone } = req.body;
+    const { items, deliveryAddress, contactPhone, paymentMethod } = req.body;
 
     const productIds = [...new Set(items.map((i) => i.productId))];
     const products = await Product.find({ _id: { $in: productIds }, active: true });
@@ -54,6 +54,8 @@ export async function createOrder(req, res) {
       totalAmount,
       deliveryAddress,
       contactPhone,
+      paymentMethod: paymentMethod || 'bkash',
+      status: paymentMethod === 'cod' ? 'awaiting_confirmation' : 'pending_payment',
     });
 
     const pdfBuffer = await generateOrderPdf({

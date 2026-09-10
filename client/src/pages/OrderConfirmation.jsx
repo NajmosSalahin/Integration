@@ -115,18 +115,37 @@ export default function OrderConfirmation() {
                   What Happens Next
                 </h2>
                 <div className="space-y-3">
-                  <div className="flex gap-3 items-start">
-                    <span className="text-blue-400 font-bold shrink-0">1.</span>
-                    <p className="text-sm text-gray-300">We'll contact you shortly to confirm your order details.</p>
-                  </div>
-                  <div className="flex gap-3 items-start">
-                    <span className="text-blue-400 font-bold shrink-0">2.</span>
-                    <p className="text-sm text-gray-300">Send your payment via <strong>bKash</strong> to the number we provide.</p>
-                  </div>
-                  <div className="flex gap-3 items-start">
-                    <span className="text-blue-400 font-bold shrink-0">3.</span>
-                    <p className="text-sm text-gray-300">Once payment is confirmed, your order ships within 2-3 business days.</p>
-                  </div>
+                  {order.paymentMethod === 'cod' ? (
+                    <>
+                      <div className="flex gap-3 items-start">
+                        <span className="text-blue-400 font-bold shrink-0">1.</span>
+                        <p className="text-sm text-gray-300">We'll contact you shortly to confirm your order details.</p>
+                      </div>
+                      <div className="flex gap-3 items-start">
+                        <span className="text-blue-400 font-bold shrink-0">2.</span>
+                        <p className="text-sm text-gray-300">Your order ships within 2-3 business days after confirmation.</p>
+                      </div>
+                      <div className="flex gap-3 items-start">
+                        <span className="text-blue-400 font-bold shrink-0">3.</span>
+                        <p className="text-sm text-gray-300">Pay <strong>cash on delivery</strong> when your order arrives. No advance payment required.</p>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="flex gap-3 items-start">
+                        <span className="text-blue-400 font-bold shrink-0">1.</span>
+                        <p className="text-sm text-gray-300">We'll contact you shortly to confirm your order details.</p>
+                      </div>
+                      <div className="flex gap-3 items-start">
+                        <span className="text-blue-400 font-bold shrink-0">2.</span>
+                        <p className="text-sm text-gray-300">Send your payment via <strong>bKash</strong> to the number we provide.</p>
+                      </div>
+                      <div className="flex gap-3 items-start">
+                        <span className="text-blue-400 font-bold shrink-0">3.</span>
+                        <p className="text-sm text-gray-300">Once payment is confirmed, your order ships within 2-3 business days.</p>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
 

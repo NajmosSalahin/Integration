@@ -42,6 +42,7 @@ export const createOrderSchema = z.object({
   })).min(1, 'Cart must not be empty'),
   deliveryAddress: z.string().min(5, 'Delivery address is required'),
   contactPhone: z.string().min(5, 'Phone number is required'),
+  paymentMethod: z.enum(['bkash', 'cod']).optional().default('bkash'),
 });
 
 export const updateStatusSchema = z.object({

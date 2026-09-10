@@ -37,6 +37,7 @@ export async function sendOrderNotificationEmail({ order, customerName, customer
     ${detailRow('Order ID', `#${String(order._id).slice(-8).toUpperCase()}`)}
     ${detailRow('Date', new Date(order.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }))}
     ${detailRow('Status', order.status.replace(/_/g, ' ').toUpperCase())}
+    ${detailRow('Payment', order.paymentMethod === 'cod' ? 'Cash on Delivery' : 'bKash')}
 
     ${divider()}
 
