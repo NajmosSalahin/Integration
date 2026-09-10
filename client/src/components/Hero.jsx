@@ -26,8 +26,8 @@ export default function Hero() {
 
   return (
     <section className="relative bg-[var(--bg-primary)]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-[45%_55%] gap-8 lg:gap-12 items-center min-h-[400px] lg:min-h-[520px]">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-10">
+        <div className="grid grid-cols-1 lg:grid-cols-[45%_55%] gap-8 lg:gap-12 items-center min-h-[300px] lg:min-h-[400px]">
           <div className="flex flex-col justify-center space-y-3">
             <p
               className="text-[var(--text-secondary)] text-[13px] sm:text-[12px] tracking-[1.5px] uppercase"
@@ -59,7 +59,7 @@ export default function Hero() {
             </div>
           </div>
 
-          <div className="relative aspect-[4/5] w-full overflow-hidden">
+          <div className="relative aspect-[3/2] w-full overflow-hidden">
             {slides.map((slide, i) => (
               <img
                 key={i}
