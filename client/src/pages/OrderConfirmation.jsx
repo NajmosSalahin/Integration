@@ -45,8 +45,8 @@ export default function OrderConfirmation() {
     );
   }
 
-  const whatsappNumber = '00000000000';
-  const messengerPage = 'placeholder';
+  const whatsappNumber = '01604524084';
+  const messengerPage = '61594204353841';
   const orderShort = String(order._id).slice(-8).toUpperCase();
 
   return (
@@ -155,7 +155,7 @@ export default function OrderConfirmation() {
                     Messenger
                   </a>
                   <a
-                    href="mailto:noreply@integration.com"
+                    href="mailto:najmussalahin.adib@gmail.com"
                     className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white text-sm rounded-sm transition-colors"
                   >
                     Email
