@@ -41,37 +41,15 @@ export default function Hero() {
 
       <div className="absolute inset-0 bg-black/40" />
 
-      <div className="relative z-10 h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center">
-        <div className="space-y-3">
-          <p
-            className="text-[var(--text-secondary)] text-[13px] sm:text-[12px] tracking-[1.5px] uppercase"
-            style={{ fontFamily: 'var(--font-utility)' }}
-          >
-            Simple. Comfortable. Everyday.
-          </p>
-          <h1
-            className="text-[var(--text-primary)] text-[56px] sm:text-[34px] lg:text-[56px] leading-none font-bold"
-            style={{ fontFamily: 'var(--font-display)' }}
-          >
-            INTEGRATION
-          </h1>
-          <p
-            className="text-[var(--text-secondary)] text-[18px] sm:text-[15px]"
-            style={{ fontFamily: 'var(--font-body)' }}
-          >
-            Different Styles, One Identity
-          </p>
-          <div className="pt-2">
-            <Link
-              to="/shop"
-              className="inline-flex items-center gap-2 bg-[var(--accent)] hover:bg-[var(--accent)]/90 text-white px-7 py-[11px] text-sm font-medium transition-colors"
-              style={{ fontFamily: 'var(--font-body)' }}
-            >
-              Shop Now
-              <ArrowRight size={16} />
-            </Link>
-          </div>
-        </div>
+      <div className="absolute inset-0 z-10 flex items-end justify-center pb-10">
+        <Link
+          to="/shop"
+          className="inline-flex items-center gap-2 bg-[var(--accent)] hover:bg-[var(--accent)]/90 text-white px-7 py-[11px] text-sm font-medium transition-colors"
+          style={{ fontFamily: 'var(--font-body)' }}
+        >
+          Shop Now
+          <ArrowRight size={16} />
+        </Link>
       </div>
 
       <button
