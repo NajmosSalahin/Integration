@@ -8,17 +8,18 @@ Complete reference for all image assets required by the Integration storefront.
 
 | Property | Value |
 |----------|-------|
-| Dimensions | 1400 × 933 px |
-| Aspect Ratio | 3:2 (landscape) |
+| Dimensions | 1920 × 800 px |
+| Aspect Ratio | 2.4:1 (wide landscape) |
 | Format | JPG |
 | Quantity | 3 unique images |
 | File Paths | `banner1.jpg`, `banner2.jpg`, `banner3.jpg` |
 | Object Fit | `object-cover` (center-crop expected) |
 
 **Notes:**
-- Each slide now uses a unique image file
-- Desktop renders at ~616px wide; 1400px provides 2x retina clarity
-- Min height: 400px mobile, 520px desktop
+- Full-width edge-to-edge layout with text overlay
+- 1920px covers standard desktop width; `object-cover` handles smaller screens
+- Text overlaid with `bg-black/40` dark overlay for readability
+- Section heights: 400px (mobile), 500px (sm), 600px (lg+)
 
 ---
 
@@ -133,7 +134,7 @@ Complete reference for all image assets required by the Integration storefront.
 - [ ] Product images via admin panel (800 × 1000 px JPG/WebP)
 
 ### Already Exist
-- [x] Hero banner images (1400 × 933 px JPG) ×3
+- [x] Hero banner images (1920 × 800 px JPG) ×3
 - [x] Logo icon (64 × 64 px PNG)
 - [x] Favicon (32 × 32 px ICO)
 - [x] OG image (1200 × 630 px PNG) for social sharing
@@ -146,7 +147,7 @@ Complete reference for all image assets required by the Integration storefront.
 ## Quick Reference
 
 ```
-Hero Banner:     1400 ×  933 px  (3:2)   JPG     ×3
+Hero Banner:     1920 ×  800 px  (2.4:1) JPG     ×3
 Product Image:    800 × 1000 px  (4:5)   JPG/WebP ×3-5 per product
 Category Image:   500 ×  500 px  (1:1)   Auto-pulled
 Logo Icon:         64 ×   64 px  (1:1)   PNG      ×1
