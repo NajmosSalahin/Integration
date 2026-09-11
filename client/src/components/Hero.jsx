@@ -3,9 +3,9 @@ import { ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const slides = [
-  { image: '/banner.collage.jpg', alt: 'Integration Collection' },
-  { image: '/banner.collage.jpg', alt: 'New Arrivals' },
-  { image: '/banner.collage.jpg', alt: 'Featured Designs' },
+  { image: '/banner1.jpg', alt: 'New Collection' },
+  { image: '/banner2.jpg', alt: 'Street Essentials' },
+  { image: '/banner3.jpg', alt: 'Featured Designs' },
 ];
 
 export default function Hero() {
