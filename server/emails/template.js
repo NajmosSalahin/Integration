@@ -110,7 +110,7 @@ export function messageBox(content, borderColor = colors.accent) {
 export function itemsTable(items, showPriceEach = true) {
   const rows = items.map((item, i) => {
     const bg = i % 2 === 0 ? colors.card : colors.tableAlt;
-    const priceEach = showPriceEach ? `<td style="padding:10px 12px;border-bottom:1px solid ${colors.border};font-size:13px;color:${colors.text};text-align:right;">৳${((item.priceAtOrder / 100).toLocaleString())}</td>` : '';
+    const priceEach = showPriceEach ? `<td style="padding:10px 12px;border-bottom:1px solid ${colors.border};font-size:13px;color:${colors.text};text-align:right;">৳${(item.priceAtOrder).toLocaleString()}</td>` : '';
     return `<tr style="background:${bg};">
       <td style="padding:10px 12px;border-bottom:1px solid ${colors.border};font-size:13px;color:${colors.text};">${item.title}</td>
       <td style="padding:10px 12px;border-bottom:1px solid ${colors.border};font-size:13px;color:${colors.textSecondary};">${item.size}</td>
@@ -143,7 +143,7 @@ export function orderTotal(totalAmount) {
     <tr>
       <td style="padding:12px;border-top:2px solid ${colors.border};text-align:right;">
         <span style="font-size:13px;color:${colors.textSecondary};text-transform:uppercase;letter-spacing:0.06em;">Total</span>
-        <span style="margin-left:12px;font-size:20px;font-weight:700;color:${colors.accent};">৳${(totalAmount / 100).toLocaleString()}</span>
+        <span style="margin-left:12px;font-size:20px;font-weight:700;color:${colors.accent};">৳${(totalAmount).toLocaleString()}</span>
       </td>
     </tr>
   </table>`;

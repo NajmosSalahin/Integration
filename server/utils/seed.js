@@ -10,8 +10,8 @@ dotenv.config({ path: join(__dirname, '../../.env.development') });
 
 const MONGO_URI = process.env.MONGO_URI;
 
-const PRICE = 45000;
-const HOODIE_PRICE = 95000;
+const PRICE = 450;
+const HOODIE_PRICE = 950;
 
 const plainTees = [
   { name: 'Integration ~ Premium Solid Black T-shirt', color: 'Black', tags: ['plain', 'solid', 'black'] },

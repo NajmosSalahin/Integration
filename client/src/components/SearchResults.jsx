@@ -30,7 +30,7 @@ export default function SearchResults({ results, onSelect }) {
                   {product.title}
                 </p>
                 <p className="text-xs text-[var(--text-secondary)]">
-                  ৳{(product.price / 100).toLocaleString()}
+                  ৳{product.price.toLocaleString()}
                 </p>
               </div>
             </Link>

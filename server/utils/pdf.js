@@ -139,7 +139,7 @@ export function generateOrderPdf({ order, customerName, customerEmail }) {
       doc.text(item.size, colX.size, y + 6, { width: colW.size });
       doc.fillColor(C.text);
       doc.text(String(item.quantity), colX.qty, y + 6, { width: colW.qty, align: 'center' });
-      doc.font('Noto').text(`৳${(lineTotal / 100).toLocaleString()}`, colX.total, y + 6, { width: colW.total, align: 'right' });
+      doc.font('Noto').text(`৳${lineTotal.toLocaleString()}`, colX.total, y + 6, { width: colW.total, align: 'right' });
 
       y += 24;
     }
@@ -150,7 +150,7 @@ export function generateOrderPdf({ order, customerName, customerEmail }) {
     doc.rect(margin, y, contentW, 30).fill(C.accent);
     doc.font('Helvetica-Bold').fontSize(11).fillColor('#ffffff');
     doc.text('TOTAL', colX.qty, y + 9, { width: colW.qty + (colX.total - colX.qty), align: 'right' });
-    doc.font('Noto').text(`৳${(order.totalAmount / 100).toLocaleString()}`, colX.total - 10, y + 8, { width: colW.total + 10, align: 'right' });
+    doc.font('Noto').text(`৳${order.totalAmount.toLocaleString()}`, colX.total - 10, y + 8, { width: colW.total + 10, align: 'right' });
     y += 44;
 
     doc.moveTo(margin, y).lineTo(pageW - margin, y).strokeColor(C.accent).lineWidth(1).stroke();

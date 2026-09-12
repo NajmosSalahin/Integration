@@ -143,7 +143,7 @@ export default function OrdersHistory() {
                         className="text-blue-400"
                         style={{ fontFamily: "'Bebas Neue', sans-serif" }}
                       >
-                        ৳{(order.totalAmount / 100).toLocaleString()}
+                        ৳{order.totalAmount.toLocaleString()}
                       </span>
                     </div>
                   </button>

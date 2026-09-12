@@ -51,7 +51,7 @@ export default function ProductDetail() {
     );
   }
 
-  const formatPrice = (price) => `৳${(price / 100).toLocaleString()}`;
+  const formatPrice = (price) => `৳${price.toLocaleString()}`;
 
   return (
     <>
