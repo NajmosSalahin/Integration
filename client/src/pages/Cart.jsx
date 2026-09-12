@@ -51,7 +51,7 @@ export default function Cart() {
                     >
                       <Link
                         to={`/product/${item.productId}`}
-                        className="shrink-0 w-24 h-28 bg-[#111] rounded-lg overflow-hidden"
+                        className="shrink-0 w-24 h-24 bg-[#111] rounded-lg overflow-hidden"
                       >
                         <img
                           src={item.image}

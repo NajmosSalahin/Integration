@@ -23,7 +23,7 @@ export default function ProductCard({ product, index }) {
     >
       <Link to={`/product/${product._id}`} className="group block">
         <div className="relative overflow-hidden rounded-[10px] border border-[var(--border)] bg-[#111] transition-all duration-300 group-hover:border-[var(--accent)]">
-          <div className="aspect-[4/5] overflow-hidden">
+          <div className="aspect-square overflow-hidden">
             <img
               src={product.images[0]}
               alt={product.title}

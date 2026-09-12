@@ -197,7 +197,7 @@ export default function Products() {
                         className={`border-b border-gray-800/50 ${!product.active ? 'opacity-40' : 'hover:bg-gray-900/30'}`}
                       >
                         <td className="py-3 px-3">
-                          <div className="w-10 h-12 bg-gray-900 rounded-sm overflow-hidden">
+                          <div className="w-10 h-10 bg-gray-900 rounded-sm overflow-hidden">
                             <img
                               src={product.images[0]}
                               alt={product.title}

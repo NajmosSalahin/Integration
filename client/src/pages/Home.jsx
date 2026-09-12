@@ -102,7 +102,7 @@ export default function Home() {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
                 {[...Array(8)].map((_, i) => (
                   <div key={i} className="animate-pulse">
-                    <div className="aspect-[4/5] bg-[#111] rounded-[10px]" />
+                    <div className="aspect-square bg-[#111] rounded-[10px]" />
                     <div className="mt-3 h-4 bg-[#111] rounded w-2/3" />
                     <div className="mt-2 h-3 bg-[#111] rounded w-1/3" />
                   </div>
