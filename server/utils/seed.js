@@ -11,6 +11,7 @@ dotenv.config({ path: join(__dirname, '../../.env.development') });
 const MONGO_URI = process.env.MONGO_URI;
 
 const PRICE = 45000;
+const HOODIE_PRICE = 95000;
 
 const plainTees = [
   { name: 'Integration ~ Premium Solid Black T-shirt', color: 'Black', tags: ['plain', 'solid', 'black'] },
@@ -31,8 +32,13 @@ const iuTees = [
   { name: 'IUian Grunge Element Strips ~ Islamic University ~ Premium Black T-shirt', design: 'Grunge Element Strips', tags: ['iu', 'grunge', 'strips'] },
   { name: 'IUian Festival Doodle Art ~ Islamic University ~ Premium Black T-shirt', design: 'Festival Doodle Art', tags: ['iu', 'doodle', 'festival'] },
   { name: 'IU Gate ~ Islamic University ~ Premium Black T-shirt', design: 'IU Gate', tags: ['iu', 'gate', 'landmark'] },
+  { name: 'SDS ~ Islamic University ~ Premium Black T-shirt', design: 'SDS', tags: ['iu', 'sds', 'typography'] },
   { name: 'Islamic University ~ Horizontal Strips ~ Premium Black T-shirt.png', display: 'Islamic University ~ Horizontal Strips ~ Premium Black T-shirt', design: 'Horizontal Strips', tags: ['iu', 'strips', 'minimal'] },
   { name: 'Central Mosque ~ Islamic University ~ Premium Black T-shirt', design: 'Central Mosque', tags: ['iu', 'mosque', 'landmark'] },
+];
+
+const hoodies = [
+  { name: 'Integration ~ Premium Chocolate Brown Hoodie', color: 'Chocolate Brown', price: HOODIE_PRICE, tags: ['premium', 'chocolate', 'brown'] },
 ];
 
 function loadUrls() {
@@ -47,7 +53,7 @@ function buildProducts(urls) {
     products.push({
       title: tee.name,
       description: `Premium solid ${tee.color} t-shirt from Integration. Heavy cotton, clean finish. A versatile essential that works across every setting — minimal design, maximum quality.`,
-      price: PRICE,
+      price: tee.price || PRICE,
       images: urls[tee.name] || [],
       sizes: ['S', 'M', 'L', 'XL'],
       sizeGuideNote: 'Standard fit. True to size.',
@@ -66,7 +72,7 @@ function buildProducts(urls) {
     products.push({
       title: tee.display || tee.name,
       description: `Premium black t-shirt featuring the "${tee.design}" design representing Islamic University. Heavy cotton, bold print. For those who carry their campus pride everywhere.`,
-      price: PRICE,
+      price: tee.price || PRICE,
       images: urls[tee.name] || [],
       sizes: ['S', 'M', 'L', 'XL'],
       sizeGuideNote: 'Standard fit. True to size.',
@@ -77,6 +83,25 @@ function buildProducts(urls) {
         { size: 'XL', inStock: true },
       ],
       tags: ['iu-tshirts', ...tee.tags],
+      active: true,
+    });
+  }
+
+  for (const item of hoodies) {
+    products.push({
+      title: item.name,
+      description: `Premium ${item.color} hoodie from Integration. Heavy fleece, clean cut, everyday comfort. The layer you reach for when you want both warmth and style.`,
+      price: item.price,
+      images: urls[item.name] || [],
+      sizes: ['S', 'M', 'L', 'XL'],
+      sizeGuideNote: 'Standard fit. True to size.',
+      stock: [
+        { size: 'S', inStock: true },
+        { size: 'M', inStock: true },
+        { size: 'L', inStock: true },
+        { size: 'XL', inStock: true },
+      ],
+      tags: ['hoodies', ...item.tags],
       active: true,
     });
   }

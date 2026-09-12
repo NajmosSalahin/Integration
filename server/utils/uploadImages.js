@@ -8,7 +8,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const IMAGES_ROOT = join(__dirname, '../../Product Images');
 const TEMP_DIR = join(__dirname, '../../temp_uploads');
 
-const CATEGORIES = ['Plain_Tshirt_image', 'IU_Tshirt_image'];
+const CATEGORIES = ['Plain_Tshirt_image', 'IU_Tshirt_image', 'Hoodies'];
 
 async function ensureDir(dir) {
   await mkdir(dir, { recursive: true });
