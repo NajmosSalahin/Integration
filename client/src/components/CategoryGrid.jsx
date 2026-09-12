@@ -1,13 +1,10 @@
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Shirt, Shield, Crown, Footprints, ShoppingBag, Backpack, BaggageClaim, Briefcase, TvMinimal } from 'lucide-react';
 import { fetchProducts } from '../api/products';
+import { categories } from '../data/categories';
 
-const categories = [
-  { name: 'T-Shirts', tag: 't-shirts' },
-  { name: 'Hoodies', tag: 'hoodies' },
-  { name: 'Shirts', tag: 'shirts' },
-];
+const iconMap = { Shirt, Shield, Crown, Footprints, ShoppingBag, Backpack, BaggageClaim, Briefcase, TvMinimal };
 
 export default function CategoryGrid() {
   const { data: products } = useQuery({
@@ -23,6 +20,8 @@ export default function CategoryGrid() {
     return match?.images?.[0] || null;
   };
 
+  const homeCategories = categories.filter((c) => c.home);
+
   return (
     <section className="py-8 lg:py-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -34,8 +33,9 @@ export default function CategoryGrid() {
         </h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-          {categories.map((category) => {
+          {homeCategories.map((category) => {
             const image = getCategoryImage(category.tag);
+            const Icon = iconMap[category.icon];
             return (
               <Link
                 key={category.tag}
@@ -52,7 +52,9 @@ export default function CategoryGrid() {
                         loading="lazy"
                       />
                     ) : (
-                      <div className="w-full h-full bg-[var(--border)] animate-pulse" />
+                      <div className="w-full h-full flex items-center justify-center text-[var(--text-secondary)] bg-[var(--border)]">
+                        <Icon size={40} strokeWidth={1.5} className="transition-colors group-hover:text-[var(--accent)]" />
+                      </div>
                     )}
                   </div>
                   <div className="flex-1 px-6 py-5">
