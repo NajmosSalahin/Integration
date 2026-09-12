@@ -209,7 +209,7 @@ export default function Checkout() {
                   <div className="space-y-2">
                     {items.map((item) => (
                       <div key={`${item.productId}-${item.size}`} className="flex gap-3">
-                        <div className="shrink-0 w-12 h-14 bg-gray-900 rounded-sm overflow-hidden">
+                        <div className="shrink-0 w-12 h-12 bg-gray-900 rounded-sm overflow-hidden">
                           <img
                             src={item.image}
                             alt={item.title}

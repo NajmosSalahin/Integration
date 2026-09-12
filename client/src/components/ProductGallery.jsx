@@ -8,7 +8,7 @@ export default function ProductGallery({ images }) {
 
   return (
     <div className="space-y-3">
-      <div className="relative aspect-[3/4] overflow-hidden rounded-sm bg-gray-900 border border-gray-800">
+      <div className="relative aspect-square overflow-hidden rounded-sm bg-gray-900 border border-gray-800">
         <AnimatePresence mode="wait">
           <motion.img
             key={selectedIndex}
@@ -29,7 +29,7 @@ export default function ProductGallery({ images }) {
             <button
               key={i}
               onClick={() => setSelectedIndex(i)}
-              className={`flex-shrink-0 w-16 h-20 rounded-sm overflow-hidden border-2 transition-colors duration-200 ${
+              className={`flex-shrink-0 w-16 h-16 rounded-sm overflow-hidden border-2 transition-colors duration-200 ${
                 i === selectedIndex
                   ? 'border-blue-500'
                   : 'border-gray-800 hover:border-gray-600'
