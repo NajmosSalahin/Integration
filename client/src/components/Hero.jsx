@@ -39,7 +39,7 @@ export default function Hero() {
         ))}
       </div>
 
-      <div className="absolute inset-0 bg-black/40" />
+      <div className="absolute inset-0 bg-black/10" />
 
       <div className="absolute inset-0 z-10 flex items-end justify-center pb-10">
         <Link
@@ -54,14 +54,14 @@ export default function Hero() {
 
       <button
         onClick={prev}
-        className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20 w-[44px] h-[44px] flex items-center justify-center bg-black/50 hover:bg-black/70 text-white rounded-full transition-colors"
+        className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20 w-[44px] h-[44px] flex items-center justify-center bg-black/20 hover:bg-black/35 text-white rounded-full transition-colors"
         aria-label="Previous slide"
       >
         <ChevronLeft size={22} />
       </button>
       <button
         onClick={next}
-        className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20 w-[44px] h-[44px] flex items-center justify-center bg-black/50 hover:bg-black/70 text-white rounded-full transition-colors"
+        className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20 w-[44px] h-[44px] flex items-center justify-center bg-black/20 hover:bg-black/35 text-white rounded-full transition-colors"
         aria-label="Next slide"
       >
         <ChevronRight size={22} />
