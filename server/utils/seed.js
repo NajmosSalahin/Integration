@@ -62,6 +62,22 @@ const aestheticTees = [
   { name: 'Meet You Like The Wind ~ Premium Solid Black T-shirt', design: 'Meet You Like The Wind', tags: ['romantic', 'text', 'minimal', 'quote'] },
   { name: 'Night Village ~ Premium Solid Black T-shirt', design: 'Night Village', tags: ['japanese', 'landscape', 'night', 'nature'] },
   { name: 'Ponyo Comic Panel ~ Premium Solid Black T-shirt', design: 'Ponyo Comic Panel', tags: ['japanese', 'anime', 'film', 'illustration'] },
+  { name: 'Focus Quiet Desk ~ Premium Solid Black T-shirt', design: 'Focus Quiet Desk', tags: ['focus', 'calm', 'minimal', 'desk'] },
+  { name: 'Im Proud Of You Anime ~ Premium Solid Black T-shirt', design: 'Im Proud Of You Anime', tags: ['anime', 'affection', 'emotional', 'illustration'] },
+  { name: 'Melancholy Rushing Water ~ Premium Solid Black T-shirt', design: 'Melancholy Rushing Water', tags: ['japanese', 'melancholy', 'water', 'landscape'] },
+  { name: 'Metanoia  ~ Premium Solid Black T-shirt', design: 'Metanoia', tags: ['introspective', 'minimal', 'text', 'change'] },
+  { name: 'Mt Fuji Lawson Convenience Store ~ Premium Solid Black T-shirt', design: 'Mt Fuji Lawson Convenience Store', tags: ['japanese', 'fuji', 'convenience', 'retro'] },
+  { name: 'No Internet Bench Rain - 2 ~ Premium Solid Black T-shirt', design: 'No Internet Bench Rain - 2', tags: ['sad', 'rain', 'bench', 'illustration'] },
+  { name: 'No Internet Bench Rain ~ Premium Solid Black T-shirt', design: 'No Internet Bench Rain', tags: ['sad', 'rain', 'bench', 'illustration'] },
+  { name: 'No Internet Dino ~ Premium Solid Black T-shirt', design: 'No Internet Dino', tags: ['dino', 'nostalgia', 'fun', 'illustration'] },
+  { name: 'No Internet Night City ~ Premium Solid Black T-shirt', design: 'No Internet Night City', tags: ['night', 'city', 'cyberpunk', 'illustration'] },
+  { name: 'Peaked Mountaineer ~ Premium Solid Black T-shirt', design: 'Peaked Mountaineer', tags: ['mountain', 'peak', 'achievement', 'illustration'] },
+  { name: 'Preserve My Memories Liquifies ~ Premium Solid Black T-shirt', design: 'Preserve My Memories Liquifies', tags: ['nostalgia', 'melancholy', 'memory', 'text'] },
+  { name: 'The World Is Too Noisy Take Care Of Yourself ~ Premium Solid Black T-shirt', design: 'The World Is Too Noisy Take Care Of Yourself', tags: ['selfcare', 'quiet', 'encouragement', 'text'] },
+  { name: 'This User Is Losing Interest In Everything ~ Premium Solid Black T-shirt', design: 'This User Is Losing Interest In Everything', tags: ['burnout', 'mood', 'humor', 'text'] },
+  { name: 'What A Privilege ~ Premium Solid Black T-shirt', design: 'What A Privilege', tags: ['gratitude', 'privilege', 'text', 'life'] },
+  { name: 'Wordless Maya World ~ Premium Solid Black T-shirt', design: 'Wordless Maya World', tags: ['minimal', 'conceptual', 'illustration', 'maya'] },
+  { name: 'Your Time Graphic ~ Premium Solid Black T-shirt', design: 'Your Time Graphic', tags: ['time', 'hourglass', 'graphic', 'abstract'] },
 ];
 
 function loadUrls() {
