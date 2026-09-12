@@ -6,6 +6,7 @@ import { fetchProducts } from '../api/products';
 import ShopProductCard from '../components/ShopProductCard';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { categories } from '../data/categories';
 
 export default function Shop() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -15,10 +16,6 @@ export default function Shop() {
     queryKey: ['products'],
     queryFn: fetchProducts,
   });
-
-  const allTags = products
-    ? [...new Set(products.flatMap((p) => p.tags || []))].sort()
-    : [];
 
   const filtered = products?.filter((p) => {
     if (!tagFilter) return true;
@@ -32,6 +29,20 @@ export default function Shop() {
       setSearchParams({});
     }
   };
+
+  const pillClass = (active) =>
+    `px-4 py-2 text-sm rounded-full border transition-colors whitespace-nowrap ${
+      active
+        ? 'bg-[var(--accent)] border-[var(--accent)] text-white'
+        : 'border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--accent)] hover:text-[var(--text-primary)]'
+    }`;
+
+  const sidebarClass = (active) =>
+    `flex items-center gap-3 w-full text-left px-4 py-2.5 rounded-[8px] text-sm border transition-colors ${
+      active
+        ? 'bg-[var(--accent)] border-[var(--accent)] text-white'
+        : 'border-transparent text-[var(--text-secondary)] hover:border-[var(--border)] hover:text-[var(--text-primary)]'
+    }`;
 
   return (
     <>
@@ -53,30 +64,22 @@ export default function Shop() {
             </h1>
 
             <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
-              <div className="flex gap-2 overflow-x-auto scrollbar-thin pb-1">
+              <div className="flex gap-2 overflow-x-auto scrollbar-thin pb-1 lg:hidden">
                 <button
                   onClick={() => handleTagChange('')}
-                  className={`px-4 py-2 text-sm rounded-full border transition-colors whitespace-nowrap ${
-                    !tagFilter
-                      ? 'bg-[var(--accent)] border-[var(--accent)] text-white'
-                      : 'border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--accent)] hover:text-[var(--text-primary)]'
-                  }`}
+                  className={pillClass(!tagFilter)}
                   style={{ fontFamily: 'var(--font-body)' }}
                 >
                   All
                 </button>
-                {allTags.map((tag) => (
+                {categories.map((category) => (
                   <button
-                    key={tag}
-                    onClick={() => handleTagChange(tag)}
-                    className={`px-4 py-2 text-sm rounded-full border transition-colors whitespace-nowrap ${
-                      tagFilter === tag
-                        ? 'bg-[var(--accent)] border-[var(--accent)] text-white'
-                        : 'border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--accent)] hover:text-[var(--text-primary)]'
-                    }`}
+                    key={category.tag}
+                    onClick={() => handleTagChange(category.tag)}
+                    className={pillClass(tagFilter === category.tag)}
                     style={{ fontFamily: 'var(--font-body)' }}
                   >
-                    {tag}
+                    {category.name}
                   </button>
                 ))}
               </div>
@@ -91,46 +94,72 @@ export default function Shop() {
               )}
             </div>
 
-            {isLoading && (
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-                {[...Array(8)].map((_, i) => (
-                  <div key={i} className="animate-pulse">
-                    <div className="aspect-square bg-[#111] rounded-[10px]" />
-                    <div className="mt-2 h-3 bg-[#111] rounded w-2/3" />
-                    <div className="mt-1.5 h-3 bg-[#111] rounded w-1/3" />
+            <div className="lg:flex lg:gap-8">
+              <aside className="hidden lg:block w-60 shrink-0">
+                <div className="sticky top-6 space-y-1">
+                  <button
+                    onClick={() => handleTagChange('')}
+                    className={sidebarClass(!tagFilter)}
+                    style={{ fontFamily: 'var(--font-body)' }}
+                  >
+                    All
+                  </button>
+                  {categories.map((category) => (
+                    <button
+                      key={category.tag}
+                      onClick={() => handleTagChange(category.tag)}
+                      className={sidebarClass(tagFilter === category.tag)}
+                      style={{ fontFamily: 'var(--font-body)' }}
+                    >
+                      {category.name}
+                    </button>
+                  ))}
+                </div>
+              </aside>
+
+              <div className="flex-1 min-w-0">
+                {isLoading && (
+                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                    {[...Array(8)].map((_, i) => (
+                      <div key={i} className="animate-pulse">
+                        <div className="aspect-square bg-[#111] rounded-[10px]" />
+                        <div className="mt-2 h-3 bg-[#111] rounded w-2/3" />
+                        <div className="mt-1.5 h-3 bg-[#111] rounded w-1/3" />
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-            )}
+                )}
 
-            {error && (
-              <div className="text-center py-12">
-                <p className="text-red-400">Failed to load products</p>
-                <p className="text-sm text-[var(--text-secondary)] mt-2">{error.message}</p>
-              </div>
-            )}
+                {error && (
+                  <div className="text-center py-12">
+                    <p className="text-red-400">Failed to load products</p>
+                    <p className="text-sm text-[var(--text-secondary)] mt-2">{error.message}</p>
+                  </div>
+                )}
 
-            {filtered && filtered.length === 0 && (
-              <div className="text-center py-12">
-                <p className="text-[var(--text-secondary)]">No designs found</p>
-              </div>
-            )}
+                {filtered && filtered.length === 0 && (
+                  <div className="text-center py-12">
+                    <p className="text-[var(--text-secondary)]">No designs found</p>
+                  </div>
+                )}
 
-            {filtered && filtered.length > 0 && (
-              <motion.div
-                className="grid grid-cols-2 lg:grid-cols-4 gap-3"
-                initial="hidden"
-                animate="visible"
-                variants={{
-                  hidden: {},
-                  visible: { transition: { staggerChildren: 0.08 } },
-                }}
-              >
-                {filtered.map((product, i) => (
-                  <ShopProductCard key={product._id} product={product} index={i} />
-                ))}
-              </motion.div>
-            )}
+                {filtered && filtered.length > 0 && (
+                  <motion.div
+                    className="grid grid-cols-2 lg:grid-cols-4 gap-3"
+                    initial="hidden"
+                    animate="visible"
+                    variants={{
+                      hidden: {},
+                      visible: { transition: { staggerChildren: 0.08 } },
+                    }}
+                  >
+                    {filtered.map((product, i) => (
+                      <ShopProductCard key={product._id} product={product} index={i} />
+                    ))}
+                  </motion.div>
+                )}
+              </div>
+            </div>
           </div>
         </main>
 

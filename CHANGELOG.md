@@ -7,6 +7,26 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.1.2] — 2026-09-12
+
+**Status:** Stable — v0.1.2 Complete
+
+Category system overhaul: 17-category taxonomy replaces the 3 hardcoded placeholders, with a unified category nav across homepage and shop.
+
+**Features:**
+- Central category config (`client/src/data/categories.js`) — 17 categories with name, tag, icon, homepage flag
+- Homepage category grid shows only in-stock categories (real product images) + hand-picked future categories (icon placeholders)
+- Shop page gets a desktop left sidebar (all 17 categories) and mobile horizontal category pills
+- Product tags migrated to full taxonomy: `iu-tshirts`, `mens-tshirts`, `mens-shirts`, `hoodies`, `jerseys`, `mens-caps`, etc.
+
+**Infrastructure:**
+- Product seed re-tagged with taxonomy; descriptive tags preserved
+- Database re-seeded with 17 products
+
+**Detailed snapshot:** [versions/v0.1.2.md](versions/v0.1.2.md)
+
+---
+
 ## [0.1.1] — 2026-09-12
 
 **Status:** Stable — v0.1.1 Complete

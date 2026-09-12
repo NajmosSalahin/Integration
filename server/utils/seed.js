@@ -57,7 +57,7 @@ function buildProducts(urls) {
         { size: 'L', inStock: true },
         { size: 'XL', inStock: true },
       ],
-      tags: tee.tags,
+      tags: ['mens-tshirts', ...tee.tags],
       active: true,
     });
   }
@@ -76,7 +76,7 @@ function buildProducts(urls) {
         { size: 'L', inStock: true },
         { size: 'XL', inStock: true },
       ],
-      tags: tee.tags,
+      tags: ['iu-tshirts', ...tee.tags],
       active: true,
     });
   }
