@@ -51,6 +51,17 @@ const aestheticTees = [
   { name: 'Kneeling Skeleton Lotus ~ Premium Solid Black T-shirt', design: 'Kneeling Skeleton Lotus', tags: ['spiritual', 'skeleton', 'lotus', 'illustration'] },
   { name: 'Serendipity ~ Premium Solid Black T-shirt', design: 'Serendipity', tags: ['serendipity', 'minimal', 'text'] },
   { name: 'Where Am I ~ Premium Solid Black T-shirt', design: 'Where Am I', tags: ['introspective', 'text', 'minimal'] },
+  { name: 'Abbey Road ~ Premium Solid Black T-shirt', design: 'Abbey Road', tags: ['music', 'vintage', 'crosswalk', 'iconic'] },
+  { name: 'Ankle Acquired Cat ~ Premium Solid Black T-shirt', design: 'Ankle Acquired Cat', tags: ['japanese', 'cat', 'meme', 'illustration'] },
+  { name: 'Cowboy Bebop Oh Well ~ Premium Solid Black T-shirt', design: 'Cowboy Bebop Oh Well', tags: ['japanese', 'anime', 'space', 'retro'] },
+  { name: 'Drained Cat ~ Premium Solid Black T-shirt', design: 'Drained Cat', tags: ['japanese', 'cat', 'mood', 'illustration'] },
+  { name: 'Johan Liebert - Monster ~ Premium Solid Black T-shirt', design: 'Johan Liebert - Monster', tags: ['japanese', 'anime', 'thriller', 'illustration'] },
+  { name: 'Lucky Black Cat ~ Premium Solid Black T-shirt', design: 'Lucky Black Cat', tags: ['cat', 'luck', 'minimal', 'illustration'] },
+  { name: 'Marlboro Juice Box ~ Premium Solid Black T-shirt', design: 'Marlboro Juice Box', tags: ['retro', 'vintage', 'packaging', 'illustration'] },
+  { name: 'Maybe Silence Was The Cleanest Goodbye ~ Premium Solid Black T-shirt', design: 'Maybe Silence Was The Cleanest Goodbye', tags: ['introspective', 'text', 'minimal', 'quote'] },
+  { name: 'Meet You Like The Wind ~ Premium Solid Black T-shirt', design: 'Meet You Like The Wind', tags: ['romantic', 'text', 'minimal', 'quote'] },
+  { name: 'Night Village ~ Premium Solid Black T-shirt', design: 'Night Village', tags: ['japanese', 'landscape', 'night', 'nature'] },
+  { name: 'Ponyo Comic Panel ~ Premium Solid Black T-shirt', design: 'Ponyo Comic Panel', tags: ['japanese', 'anime', 'film', 'illustration'] },
 ];
 
 function loadUrls() {
