@@ -60,7 +60,7 @@ export default function Home() {
                   Featured Products
                 </h2>
                 <Link
-                  to="/"
+                  to="/shop"
                   className="inline-flex items-center gap-1.5 text-[14px] text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors"
                   style={{ fontFamily: 'var(--font-body)' }}
                 >

@@ -1,6 +1,7 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { Minus, Plus, X, ShoppingBag } from 'lucide-react';
+import { Minus, Plus, X, Check, ShoppingBag } from 'lucide-react';
 import useCart from '../stores/cartStore';
 import { useAuth } from '../context/AuthContext';
 import Navbar from '../components/Navbar';
@@ -10,6 +11,42 @@ export default function Cart() {
   const { items, removeItem, updateQuantity, clearCart, getTotal } = useCart();
   const { user } = useAuth();
   const total = getTotal();
+  const [confirmingRemove, setConfirmingRemove] = useState(null);
+  const [confirmingClear, setConfirmingClear] = useState(false);
+
+  const armConfirm = (setter, value = true) => {
+    setter(value);
+    setTimeout(() => setter(value === null ? null : false), 2000);
+  };
+
+  const handleRemove = (item) => {
+    if (confirmingRemove === `${item.productId}-${item.size}`) {
+      setConfirmingRemove(null);
+      removeItem(item.productId, item.size);
+    } else {
+      armConfirm(setConfirmingRemove, `${item.productId}-${item.size}`);
+    }
+  };
+
+  const handleClear = () => {
+    if (confirmingClear) {
+      setConfirmingClear(false);
+      clearCart();
+    } else {
+      armConfirm(setConfirmingClear);
+    }
+  };
+
+  const removeButtonClass = (item) => {
+    const isArmed = confirmingRemove === `${item.productId}-${item.size}`;
+    return `p-2 transition-colors shrink-0 min-w-[44px] min-h-[44px] flex items-center justify-center ${
+      isArmed ? 'text-red-400 bg-red-500/10' : 'text-[var(--text-secondary)] hover:text-red-400'
+    }`;
+  };
+
+  const clearClass = confirmingClear
+    ? 'w-full py-2.5 text-xs tracking-wider uppercase text-red-400'
+    : 'w-full py-2.5 text-xs tracking-wider uppercase text-[var(--text-secondary)] hover:text-red-400 transition-colors';
 
   return (
     <>
@@ -75,15 +112,24 @@ export default function Cart() {
                             </p>
                           </div>
                           <button
-                            onClick={() => {
-                              if (window.confirm(`Remove "${item.title}" (${item.size}) from cart?`)) {
-                                removeItem(item.productId, item.size);
-                              }
-                            }}
-                            className="p-2 text-[var(--text-secondary)] hover:text-red-400 transition-colors shrink-0 min-w-[44px] min-h-[44px] flex items-center justify-center"
-                            aria-label={`Remove ${item.title}`}
+                            onClick={() => handleRemove(item)}
+                            className={removeButtonClass(item)}
+                            aria-label={
+                              confirmingRemove === `${item.productId}-${item.size}`
+                                ? `Confirm remove ${item.title}`
+                                : `Remove ${item.title}`
+                            }
+                          title={
+                              confirmingRemove === `${item.productId}-${item.size}`
+                                ? 'Click again to confirm'
+                                : 'Remove item'
+                            }
                           >
-                            <X size={16} />
+                            {confirmingRemove === `${item.productId}-${item.size}` ? (
+                              <Check size={16} />
+                            ) : (
+                              <X size={16} />
+                            )}
                           </button>
                         </div>
 
@@ -146,15 +192,8 @@ export default function Cart() {
                     </Link>
                   )}
 
-                  <button
-                    onClick={() => {
-                      if (window.confirm('Clear all items from cart?')) {
-                        clearCart();
-                      }
-                    }}
-                    className="w-full py-2.5 text-xs tracking-wider uppercase text-[var(--text-secondary)] hover:text-red-400 transition-colors"
-                  >
-                    Clear Cart
+                  <button onClick={handleClear} className={clearClass}>
+                    {confirmingClear ? 'Confirm Clear Cart?' : 'Clear Cart'}
                   </button>
                 </div>
               </>
