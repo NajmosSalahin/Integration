@@ -14,13 +14,13 @@ const PRICE = 450;
 const HOODIE_PRICE = 950;
 
 const plainTees = [
-  { name: 'Integration ~ Premium Solid Black T-shirt', color: 'Black', tags: ['plain', 'solid', 'black'] },
-  { name: 'Integration ~ Premium Pure White T-shirt', color: 'White', tags: ['plain', 'solid', 'white'] },
-  { name: 'Integration ~ Premium Sand Beige T-shirt', color: 'Sand Beige', tags: ['plain', 'solid', 'beige'] },
-  { name: 'Integration ~ Premium Olive Green T-shirt', color: 'Olive Green', tags: ['plain', 'solid', 'green'] },
-  { name: 'Integration ~ Premium Navy Blue T-shirt', color: 'Navy Blue', tags: ['plain', 'solid', 'blue'] },
-  { name: 'Integration ~ Premium Maroon Red T-shirt', color: 'Maroon Red', tags: ['plain', 'solid', 'red'] },
-  { name: 'Integration ~ Premium Heather Grey T-shirt', color: 'Heather Grey', tags: ['plain', 'solid', 'grey'] },
+  { name: 'Premium Solid Black T-shirt', color: 'Black', tags: ['plain', 'solid', 'black'] },
+  { name: 'Premium Pure White T-shirt', color: 'White', tags: ['plain', 'solid', 'white'] },
+  { name: 'Premium Sand Beige T-shirt', color: 'Sand Beige', tags: ['plain', 'solid', 'beige'] },
+  { name: 'Premium Olive Green T-shirt', color: 'Olive Green', tags: ['plain', 'solid', 'green'] },
+  { name: 'Premium Navy Blue T-shirt', color: 'Navy Blue', tags: ['plain', 'solid', 'blue'] },
+  { name: 'Premium Maroon Red T-shirt', color: 'Maroon Red', tags: ['plain', 'solid', 'red'] },
+  { name: 'Premium Heather Grey T-shirt', color: 'Heather Grey', tags: ['plain', 'solid', 'grey'] },
 ];
 
 const iuTees = [
@@ -38,19 +38,19 @@ const iuTees = [
 ];
 
 const hoodies = [
-  { name: 'Integration ~ Premium Chocolate Brown Hoodie', color: 'Chocolate Brown', price: HOODIE_PRICE, tags: ['premium', 'chocolate', 'brown'] },
+  { name: 'Premium Chocolate Brown Hoodie', color: 'Chocolate Brown', price: HOODIE_PRICE, tags: ['premium', 'chocolate', 'brown'] },
 ];
 
 const aestheticTees = [
-  { name: 'Mount Fuji Torii ~ Premium Solid Black T-shirt', display: 'Integration ~ Mount Fuji Torii ~ Premium Solid Black T-shirt', design: 'Mount Fuji Torii', tags: ['japanese', 'mountain', 'torii', 'minimal'] },
-  { name: 'Oriental Mountain Landscape ~ Premium Solid Black T-shirt', display: 'Integration ~ Oriental Mountain Landscape ~ Premium Solid Black T-shirt', design: 'Oriental Mountain Landscape', tags: ['japanese', 'landscape', 'nature'] },
-  { name: 'Ramen Neko ~ Premium Solid Black T-shirt', display: 'Integration ~ Ramen Neko ~ Premium Solid Black T-shirt', design: 'Ramen Neko', tags: ['japanese', 'ramen', 'cute', 'illustration'] },
-  { name: 'Retro Fallout ~ Premium Black T-shirt', display: 'Integration ~ Retro Fallout ~ Premium Black T-shirt', design: 'Retro Fallout', tags: ['retro', 'vintage', 'text'] },
-  { name: 'What If It Works Out ~ Premium Solid Black T-shirt', display: 'Integration ~ What If It Works Out ~ Premium Solid Black T-shirt', design: 'What If It Works Out', tags: ['motivational', 'text', 'minimal'] },
-  { name: 'Offline Life Is The Ultimate Luxury ~ Premium Solid Black T-shirt', display: 'Integration ~ Offline Life Is The Ultimate Luxury ~ Premium Solid Black T-shirt', design: 'Offline Life Is The Ultimate Luxury', tags: ['lifestyle', 'text', 'minimal'] },
-  { name: 'Kneeling Skeleton Lotus ~ Premium Solid Black T-shirt', display: 'Integration ~ Kneeling Skeleton Lotus ~ Premium Solid Black T-shirt', design: 'Kneeling Skeleton Lotus', tags: ['spiritual', 'skeleton', 'lotus', 'illustration'] },
-  { name: 'Serendipity ~ Premium Solid Black T-shirt', display: 'Integration ~ Serendipity ~ Premium Solid Black T-shirt', design: 'Serendipity', tags: ['serendipity', 'minimal', 'text'] },
-  { name: 'Where Am I ~ Premium Solid Black T-shirt', display: 'Integration ~ Where Am I ~ Premium Solid Black T-shirt', design: 'Where Am I', tags: ['introspective', 'text', 'minimal'] },
+  { name: 'Mount Fuji Torii ~ Premium Solid Black T-shirt', design: 'Mount Fuji Torii', tags: ['japanese', 'mountain', 'torii', 'minimal'] },
+  { name: 'Oriental Mountain Landscape ~ Premium Solid Black T-shirt', design: 'Oriental Mountain Landscape', tags: ['japanese', 'landscape', 'nature'] },
+  { name: 'Ramen Neko ~ Premium Solid Black T-shirt', design: 'Ramen Neko', tags: ['japanese', 'ramen', 'cute', 'illustration'] },
+  { name: 'Retro Fallout ~ Premium Black T-shirt', design: 'Retro Fallout', tags: ['retro', 'vintage', 'text'] },
+  { name: 'What If It Works Out ~ Premium Solid Black T-shirt', design: 'What If It Works Out', tags: ['motivational', 'text', 'minimal'] },
+  { name: 'Offline Life Is The Ultimate Luxury ~ Premium Solid Black T-shirt', design: 'Offline Life Is The Ultimate Luxury', tags: ['lifestyle', 'text', 'minimal'] },
+  { name: 'Kneeling Skeleton Lotus ~ Premium Solid Black T-shirt', design: 'Kneeling Skeleton Lotus', tags: ['spiritual', 'skeleton', 'lotus', 'illustration'] },
+  { name: 'Serendipity ~ Premium Solid Black T-shirt', design: 'Serendipity', tags: ['serendipity', 'minimal', 'text'] },
+  { name: 'Where Am I ~ Premium Solid Black T-shirt', design: 'Where Am I', tags: ['introspective', 'text', 'minimal'] },
 ];
 
 function loadUrls() {
