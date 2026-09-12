@@ -143,7 +143,7 @@ export default function Orders() {
                           </td>
                           <td className="py-3 px-3 text-right">
                             <span className="text-gray-300">
-                              ৳{(order.totalAmount / 100).toLocaleString()}
+                              ৳{order.totalAmount.toLocaleString()}
                             </span>
                           </td>
                           <td className="py-3 px-3 hidden md:table-cell">

@@ -153,7 +153,7 @@ export default function Cart() {
                             </button>
                           </div>
                           <p className="text-sm text-[var(--text-primary)] tabular-nums">
-                            ৳{((item.price * item.quantity) / 100).toLocaleString()}
+                            ৳{(item.price * item.quantity).toLocaleString()}
                           </p>
                         </div>
                       </div>
@@ -168,7 +168,7 @@ export default function Cart() {
                       className="text-xl text-[var(--accent)]"
                       style={{ fontFamily: "var(--font-utility)" }}
                     >
-                      ৳{(total / 100).toLocaleString()}
+                      ৳{total.toLocaleString()}
                     </span>
                   </div>
 

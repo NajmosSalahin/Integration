@@ -13,7 +13,7 @@ export async function sendOrderNotificationEmail({ order, customerName, customer
     console.log(`  Phone: ${order.contactPhone}`);
     console.log(`  Address: ${order.deliveryAddress}`);
     console.log(`  Items: ${order.items.map((i) => `${i.title} (${i.size}) x${i.quantity}`).join(', ')}`);
-    console.log(`  Total: ৳${(order.totalAmount / 100).toLocaleString()}`);
+    console.log(`  Total: ৳${order.totalAmount.toLocaleString()}`);
     console.log(`  PDF attached: ${pdfBuffer ? 'yes' : 'no'}`);
     return;
   }

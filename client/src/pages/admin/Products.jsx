@@ -209,7 +209,7 @@ export default function Products() {
                           <p className="text-gray-300 truncate max-w-[150px] sm:max-w-[200px]">{product.title}</p>
                         </td>
                         <td className="py-3 px-3 text-right">
-                          <span className="text-gray-300">৳{(product.price / 100).toLocaleString()}</span>
+                          <span className="text-gray-300">৳{product.price.toLocaleString()}</span>
                         </td>
                         <td className="py-3 px-3 hidden sm:table-cell">
                           <span className="text-gray-400 text-xs">{product.sizes.join(', ')}</span>
@@ -307,7 +307,7 @@ export default function Products() {
               </div>
 
               <div>
-                <label className="block text-xs tracking-[0.15em] uppercase text-gray-400 mb-1">Price (in cents) *</label>
+                <label className="block text-xs tracking-[0.15em] uppercase text-gray-400 mb-1">Price (in taka) *</label>
                 <input
                   type="number"
                   value={form.price}
@@ -317,7 +317,7 @@ export default function Products() {
                   className="w-full px-3 py-2 bg-gray-900 border border-gray-800 rounded-sm text-sm text-white focus:border-blue-500 focus:outline-none"
                 />
                 <p className="text-xs text-gray-600 mt-1">
-                  {form.price ? `৳${(parseInt(form.price, 10) / 100).toLocaleString()}` : '৳0'}
+                  {form.price ? `৳${parseInt(form.price, 10).toLocaleString()}` : '৳0'}
                 </p>
               </div>
 

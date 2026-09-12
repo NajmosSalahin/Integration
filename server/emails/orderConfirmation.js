@@ -13,7 +13,7 @@ export async function sendOrderConfirmationEmail({ order, customerEmail, custome
   const orderUrl = `${clientUrl}/order-confirmation/${order._id}`;
 
   const rawNumbers = process.env.WHATSAPP_NUMBER || '00000000000';
-  const waMessage = `Hi, I placed order #${String(order._id).slice(-8).toUpperCase()} on Integration. Total: ৳${(order.totalAmount / 100).toLocaleString()}. Looking forward to hearing from you.`;
+  const waMessage = `Hi, I placed order #${String(order._id).slice(-8).toUpperCase()} on Integration. Total: ৳${order.totalAmount.toLocaleString()}. Looking forward to hearing from you.`;
   const waLinks = buildWhatsappLinks(rawNumbers, waMessage);
 
   const messengerPage = process.env.MESSENGER_PAGE || 'placeholder';

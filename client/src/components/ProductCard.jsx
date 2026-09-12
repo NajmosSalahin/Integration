@@ -45,7 +45,7 @@ export default function ProductCard({ product, index }) {
                   className="text-[15px] text-[var(--text-secondary)] mt-0.5"
                   style={{ fontFamily: 'var(--font-body)' }}
                 >
-                  ৳{(product.price / 100).toLocaleString()}
+                  ৳{product.price.toLocaleString()}
                 </p>
               </div>
               <button

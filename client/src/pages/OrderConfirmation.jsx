@@ -94,7 +94,7 @@ export default function OrderConfirmation() {
                         {item.title} <span className="text-gray-500">({item.size})</span> &times; {item.quantity}
                       </span>
                       <span className="text-gray-300">
-                        ৳{((item.priceAtOrder * item.quantity) / 100).toLocaleString()}
+                        ৳{(item.priceAtOrder * item.quantity).toLocaleString()}
                       </span>
                     </div>
                   ))}
@@ -102,7 +102,7 @@ export default function OrderConfirmation() {
                 <div className="border-t border-gray-800 mt-3 pt-3 flex justify-between">
                   <span className="text-sm font-bold">Total</span>
                   <span className="text-lg text-blue-400" style={{ fontFamily: "'Bebas Neue', sans-serif" }}>
-                    ৳{(order.totalAmount / 100).toLocaleString()}
+                    ৳{order.totalAmount.toLocaleString()}
                   </span>
                 </div>
               </div>
@@ -158,7 +158,7 @@ export default function OrderConfirmation() {
                 </h2>
                 <div className="flex flex-wrap gap-3">
                   <a
-                    href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(`Hi, I placed order #${orderShort} on Integration. Total: ৳${(order.totalAmount / 100).toLocaleString()}. Looking forward to hearing from you.`)}`}
+                    href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(`Hi, I placed order #${orderShort} on Integration. Total: ৳${order.totalAmount.toLocaleString()}. Looking forward to hearing from you.`)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="px-4 py-2 bg-green-600 hover:bg-green-500 text-white text-sm rounded-sm transition-colors"

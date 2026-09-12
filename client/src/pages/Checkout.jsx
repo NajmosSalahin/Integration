@@ -228,7 +228,7 @@ export default function Checkout() {
                           </p>
                         </div>
                         <p className="text-sm text-gray-300 shrink-0">
-                          ৳{((item.price * item.quantity) / 100).toLocaleString()}
+                          ৳{(item.price * item.quantity).toLocaleString()}
                         </p>
                       </div>
                     ))}
@@ -241,7 +241,7 @@ export default function Checkout() {
                         className="text-xl text-blue-400"
                         style={{ fontFamily: "'Bebas Neue', sans-serif" }}
                       >
-                        ৳{(total / 100).toLocaleString()}
+                        ৳{total.toLocaleString()}
                       </span>
                     </div>
                   </div>
