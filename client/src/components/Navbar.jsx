@@ -135,6 +135,13 @@ export default function Navbar() {
               </button>
 
               <Link
+                to="/"
+                className="hidden sm:block text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors text-sm mr-2"
+              >
+                Home
+              </Link>
+
+              <Link
                 to="/shop"
                 className="hidden sm:block text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors text-sm mr-2"
               >
