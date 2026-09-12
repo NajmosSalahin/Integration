@@ -3,169 +3,86 @@ import Product from '../models/Product.js';
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
+import { readFileSync } from 'fs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: join(__dirname, '../../.env.development') });
 
 const MONGO_URI = process.env.MONGO_URI;
 
-const designs = [
-  {
-    title: 'SHADOW WAVE',
-    description: 'A dark, flowing wave pattern that captures the essence of midnight streets. Heavy cotton, oversized fit. The design wraps across the chest with subtle tonal shifts that catch light differently at every angle.',
-    price: 149900,
-    images: [
-      'https://picsum.photos/seed/shadow-wave/600/750',
-      'https://picsum.photos/seed/shadow-wave-2/600/750',
-      'https://picsum.photos/seed/shadow-wave-3/600/750',
-    ],
-    sizes: ['S', 'M', 'L', 'XL'],
-    sizeGuideNote: 'Runs true to size. Oversized fit — size down for a slimmer look.',
-    stock: [
-      { size: 'S', inStock: true },
-      { size: 'M', inStock: true },
-      { size: 'L', inStock: true },
-      { size: 'XL', inStock: false },
-    ],
-    tags: ['streetwear', 'graphic'],
-    active: true,
-  },
-  {
-    title: 'NEON DRIFT',
-    description: 'Minimal design, maximum impact. A single neon streak across a void-black base. The simplicity is the statement — clean lines, bold presence, no noise.',
-    price: 129900,
-    images: [
-      'https://picsum.photos/seed/neon-drift/600/750',
-      'https://picsum.photos/seed/neon-drift-2/600/750',
-    ],
-    sizes: ['S', 'M', 'L', 'XL'],
-    sizeGuideNote: 'Compact fit. Size up if between sizes.',
-    stock: [
-      { size: 'S', inStock: false },
-      { size: 'M', inStock: true },
-      { size: 'L', inStock: true },
-      { size: 'XL', inStock: true },
-    ],
-    tags: ['neon', 'minimal'],
-    active: true,
-  },
-  {
-    title: 'KANJI STORM',
-    description: 'Bold kanji characters erupt across the front in a controlled chaos of typography and energy. Each character was chosen for its visual weight and meaning — storm, resistance, identity.',
-    price: 159900,
-    images: [
-      'https://picsum.photos/seed/kanji-storm/600/750',
-      'https://picsum.photos/seed/kanji-storm-2/600/750',
-      'https://picsum.photos/seed/kanji-storm-3/600/750',
-    ],
-    sizes: ['S', 'M', 'L', 'XL'],
-    sizeGuideNote: 'Standard fit. True to size.',
-    stock: [
-      { size: 'S', inStock: true },
-      { size: 'M', inStock: true },
-      { size: 'L', inStock: true },
-      { size: 'XL', inStock: true },
-    ],
-    tags: ['kanji', 'bold'],
-    active: true,
-  },
-  {
-    title: 'VOID SERIES',
-    description: 'Abstract geometric shapes dissolve into darkness. The design appears and disappears depending on the light — a shirt that changes with you throughout the day.',
-    price: 139900,
-    images: [
-      'https://picsum.photos/seed/void-series/600/750',
-      'https://picsum.photos/seed/void-series-2/600/750',
-    ],
-    sizes: ['S', 'M', 'L', 'XL'],
-    sizeGuideNote: 'Relaxed fit. Size down for a tighter silhouette.',
-    stock: [
-      { size: 'S', inStock: true },
-      { size: 'M', inStock: false },
-      { size: 'L', inStock: true },
-      { size: 'XL', inStock: false },
-    ],
-    tags: ['abstract', 'dark'],
-    active: true,
-  },
-  {
-    title: 'REBEL MARK',
-    description: 'The signature mark. Clean, confident, unmistakable. This is the piece that defines the collection — our logo rendered in a way that bridges refined and raw.',
-    price: 149900,
-    images: [
-      'https://picsum.photos/seed/rebel-mark/600/750',
-      'https://picsum.photos/seed/rebel-mark-2/600/750',
-      'https://picsum.photos/seed/rebel-mark-3/600/750',
-    ],
-    sizes: ['S', 'M', 'L', 'XL'],
-    sizeGuideNote: 'Classic fit. Our most versatile sizing.',
-    stock: [
-      { size: 'S', inStock: true },
-      { size: 'M', inStock: true },
-      { size: 'L', inStock: true },
-      { size: 'XL', inStock: true },
-    ],
-    tags: ['logo', 'classic'],
-    active: true,
-  },
-  {
-    title: 'GHOST PRINT',
-    description: 'Barely there. The design lives in the space between visible and invisible — a tonal print that reveals itself only up close. For those who notice details.',
-    price: 119900,
-    images: [
-      'https://picsum.photos/seed/ghost-print/600/750',
-      'https://picsum.photos/seed/ghost-print-2/600/750',
-    ],
-    sizes: ['S', 'M', 'L', 'XL'],
-    sizeGuideNote: 'Slim fit. Size up for a relaxed feel.',
-    stock: [
-      { size: 'S', inStock: false },
-      { size: 'M', inStock: true },
-      { size: 'L', inStock: false },
-      { size: 'XL', inStock: true },
-    ],
-    tags: ['subtle', 'ghost'],
-    active: true,
-  },
-  {
-    title: 'TOKYO NIGHTS',
-    description: 'The electric hum of Shinjuku after dark — neon signs reflected in rain-slicked streets. This design captures that specific energy of a city that never fully sleeps.',
-    price: 169900,
-    images: [
-      'https://picsum.photos/seed/tokyo-nights/600/750',
-      'https://picsum.photos/seed/tokyo-nights-2/600/750',
-      'https://picsum.photos/seed/tokyo-nights-3/600/750',
-    ],
-    sizes: ['M', 'L', 'XL'],
-    sizeGuideNote: 'Oversized fit. Size down for standard fit.',
-    stock: [
-      { size: 'M', inStock: true },
-      { size: 'L', inStock: true },
-      { size: 'XL', inStock: false },
-    ],
-    tags: ['city', 'neon'],
-    active: true,
-  },
-  {
-    title: 'DISTRICT 08',
-    description: 'Urban grid pattern meets street-level energy. The numbered district system creates a sense of place — your block, your rules, your design.',
-    price: 139900,
-    images: [
-      'https://picsum.photos/seed/district-08/600/750',
-      'https://picsum.photos/seed/district-08-2/600/750',
-    ],
-    sizes: ['S', 'M', 'L', 'XL'],
-    sizeGuideNote: 'Standard fit. True to size.',
-    stock: [
-      { size: 'S', inStock: true },
-      { size: 'M', inStock: true },
-      { size: 'L', inStock: true },
-      { size: 'XL', inStock: true },
-    ],
-    tags: ['urban', 'grid'],
-    active: true,
-  },
+const PRICE = 45000;
+
+const plainTees = [
+  { name: 'Integration ~ Premium Solid Black T-shirt', color: 'Black', tags: ['plain', 'solid', 'black'] },
+  { name: 'Integration ~ Premium Pure White T-shirt', color: 'White', tags: ['plain', 'solid', 'white'] },
+  { name: 'Integration ~ Premium Sand Beige T-shirt', color: 'Sand Beige', tags: ['plain', 'solid', 'beige'] },
+  { name: 'Integration ~ Premium Olive Green T-shirt', color: 'Olive Green', tags: ['plain', 'solid', 'green'] },
+  { name: 'Integration ~ Premium Navy Blue T-shirt', color: 'Navy Blue', tags: ['plain', 'solid', 'blue'] },
+  { name: 'Integration ~ Premium Maroon Red T-shirt', color: 'Maroon Red', tags: ['plain', 'solid', 'red'] },
+  { name: 'Integration ~ Premium Heather Grey T-shirt', color: 'Heather Grey', tags: ['plain', 'solid', 'grey'] },
 ];
+
+const iuTees = [
+  { name: 'Sotota Fountain ~ Islamic University ~ Premium Black T-shirt', design: 'Sotota Fountain', tags: ['iu', 'fountain', 'landmark'] },
+  { name: 'Shaheed Monument ~ Islamic University ~ Premium Black T-shirt', design: 'Shaheed Monument', tags: ['iu', 'monument', 'landmark'] },
+  { name: 'Mukta Bangla ~ Islamic University ~ Premium Black T-shirt', design: 'Mukta Bangla', tags: ['iu', 'typography', 'bangla'] },
+  { name: 'Mofiz Lake Bridge ~ Islamic University ~ Premium Black T-shirt', design: 'Mofiz Lake Bridge', tags: ['iu', 'nature', 'bridge'] },
+  { name: 'IUian Multi-Monument Retro ~ Islamic University ~ Premium Black T-shirt', design: 'Multi-Monument Retro', tags: ['iu', 'retro', 'multi'] },
+  { name: 'IUian Grunge Element Strips ~ Islamic University ~ Premium Black T-shirt', design: 'Grunge Element Strips', tags: ['iu', 'grunge', 'strips'] },
+  { name: 'IUian Festival Doodle Art ~ Islamic University ~ Premium Black T-shirt', design: 'Festival Doodle Art', tags: ['iu', 'doodle', 'festival'] },
+  { name: 'IU Gate ~ Islamic University ~ Premium Black T-shirt', design: 'IU Gate', tags: ['iu', 'gate', 'landmark'] },
+  { name: 'Islamic University ~ Horizontal Strips ~ Premium Black T-shirt.png', display: 'Islamic University ~ Horizontal Strips ~ Premium Black T-shirt', design: 'Horizontal Strips', tags: ['iu', 'strips', 'minimal'] },
+  { name: 'Central Mosque ~ Islamic University ~ Premium Black T-shirt', design: 'Central Mosque', tags: ['iu', 'mosque', 'landmark'] },
+];
+
+function loadUrls() {
+  const raw = readFileSync(join(__dirname, 'uploaded_urls.json'), 'utf-8');
+  return JSON.parse(raw);
+}
+
+function buildProducts(urls) {
+  const products = [];
+
+  for (const tee of plainTees) {
+    products.push({
+      title: tee.name,
+      description: `Premium solid ${tee.color} t-shirt from Integration. Heavy cotton, clean finish. A versatile essential that works across every setting — minimal design, maximum quality.`,
+      price: PRICE,
+      images: urls[tee.name] || [],
+      sizes: ['S', 'M', 'L', 'XL'],
+      sizeGuideNote: 'Standard fit. True to size.',
+      stock: [
+        { size: 'S', inStock: true },
+        { size: 'M', inStock: true },
+        { size: 'L', inStock: true },
+        { size: 'XL', inStock: true },
+      ],
+      tags: tee.tags,
+      active: true,
+    });
+  }
+
+  for (const tee of iuTees) {
+    products.push({
+      title: tee.display || tee.name,
+      description: `Premium black t-shirt featuring the "${tee.design}" design representing Islamic University. Heavy cotton, bold print. For those who carry their campus pride everywhere.`,
+      price: PRICE,
+      images: urls[tee.name] || [],
+      sizes: ['S', 'M', 'L', 'XL'],
+      sizeGuideNote: 'Standard fit. True to size.',
+      stock: [
+        { size: 'S', inStock: true },
+        { size: 'M', inStock: true },
+        { size: 'L', inStock: true },
+        { size: 'XL', inStock: true },
+      ],
+      tags: tee.tags,
+      active: true,
+    });
+  }
+
+  return products;
+}
 
 async function seed() {
   if (!MONGO_URI) {
@@ -174,16 +91,22 @@ async function seed() {
   }
 
   try {
+    const urls = loadUrls();
+    console.log(`Loaded ${Object.keys(urls).length} uploaded image URLs`);
+
+    const products = buildProducts(urls);
+    console.log(`Prepared ${products.length} products for seeding`);
+
     await mongoose.connect(MONGO_URI);
     console.log('Connected to MongoDB');
 
     const count = await Product.countDocuments();
     if (count > 0) {
-      console.log(`Database already has ${count} products. Clearing...`);
+      console.log(`Database has ${count} products. Clearing...`);
       await Product.deleteMany({});
     }
 
-    const created = await Product.insertMany(designs);
+    const created = await Product.insertMany(products);
     console.log(`Seeded ${created.length} products successfully`);
 
     await mongoose.disconnect();
