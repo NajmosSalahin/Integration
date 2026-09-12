@@ -41,6 +41,18 @@ const hoodies = [
   { name: 'Integration ~ Premium Chocolate Brown Hoodie', color: 'Chocolate Brown', price: HOODIE_PRICE, tags: ['premium', 'chocolate', 'brown'] },
 ];
 
+const aestheticTees = [
+  { name: 'Mount Fuji Torii ~ Premium Solid Black T-shirt', display: 'Integration ~ Mount Fuji Torii ~ Premium Solid Black T-shirt', design: 'Mount Fuji Torii', tags: ['japanese', 'mountain', 'torii', 'minimal'] },
+  { name: 'Oriental Mountain Landscape ~ Premium Solid Black T-shirt', display: 'Integration ~ Oriental Mountain Landscape ~ Premium Solid Black T-shirt', design: 'Oriental Mountain Landscape', tags: ['japanese', 'landscape', 'nature'] },
+  { name: 'Ramen Neko ~ Premium Solid Black T-shirt', display: 'Integration ~ Ramen Neko ~ Premium Solid Black T-shirt', design: 'Ramen Neko', tags: ['japanese', 'ramen', 'cute', 'illustration'] },
+  { name: 'Retro Fallout ~ Premium Black T-shirt', display: 'Integration ~ Retro Fallout ~ Premium Black T-shirt', design: 'Retro Fallout', tags: ['retro', 'vintage', 'text'] },
+  { name: 'What If It Works Out ~ Premium Solid Black T-shirt', display: 'Integration ~ What If It Works Out ~ Premium Solid Black T-shirt', design: 'What If It Works Out', tags: ['motivational', 'text', 'minimal'] },
+  { name: 'Offline Life Is The Ultimate Luxury ~ Premium Solid Black T-shirt', display: 'Integration ~ Offline Life Is The Ultimate Luxury ~ Premium Solid Black T-shirt', design: 'Offline Life Is The Ultimate Luxury', tags: ['lifestyle', 'text', 'minimal'] },
+  { name: 'Kneeling Skeleton Lotus ~ Premium Solid Black T-shirt', display: 'Integration ~ Kneeling Skeleton Lotus ~ Premium Solid Black T-shirt', design: 'Kneeling Skeleton Lotus', tags: ['spiritual', 'skeleton', 'lotus', 'illustration'] },
+  { name: 'Serendipity ~ Premium Solid Black T-shirt', display: 'Integration ~ Serendipity ~ Premium Solid Black T-shirt', design: 'Serendipity', tags: ['serendipity', 'minimal', 'text'] },
+  { name: 'Where Am I ~ Premium Solid Black T-shirt', display: 'Integration ~ Where Am I ~ Premium Solid Black T-shirt', design: 'Where Am I', tags: ['introspective', 'text', 'minimal'] },
+];
+
 function loadUrls() {
   const raw = readFileSync(join(__dirname, 'uploaded_urls.json'), 'utf-8');
   return JSON.parse(raw);
@@ -102,6 +114,25 @@ function buildProducts(urls) {
         { size: 'XL', inStock: true },
       ],
       tags: ['hoodies', ...item.tags],
+      active: true,
+    });
+  }
+
+  for (const tee of aestheticTees) {
+    products.push({
+      title: tee.display || tee.name,
+      description: `Premium solid black t-shirt featuring the "${tee.design}" design. Heavy cotton, clean print. A statement piece for those who wear their mood, their mind, and their aesthetic.`,
+      price: tee.price || PRICE,
+      images: urls[tee.name] || [],
+      sizes: ['S', 'M', 'L', 'XL'],
+      sizeGuideNote: 'Standard fit. True to size.',
+      stock: [
+        { size: 'S', inStock: true },
+        { size: 'M', inStock: true },
+        { size: 'L', inStock: true },
+        { size: 'XL', inStock: true },
+      ],
+      tags: ['aesthetic-tshirts', ...tee.tags],
       active: true,
     });
   }
