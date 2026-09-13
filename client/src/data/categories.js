@@ -5,6 +5,7 @@ export const categories = [
   { name: 'Hoodies', tag: 'hoodies', icon: 'Shirt', home: true },
   { name: "Jerseys", tag: 'jerseys', icon: 'Shield', home: true },
   { name: 'Aesthetic T-Shirt', tag: 'aesthetic-tshirts', icon: 'Shirt', home: true },
+  { name: 'Literature Cover T-Shirt', tag: 'literature-tshirts', icon: 'BookOpenText', home: true },
   { name: "Men's Cap", tag: 'mens-caps', icon: 'Crown', home: false },
   { name: "Joggers", tag: 'joggers', icon: 'Footprints', home: false },
   { name: "Men's Handbag", tag: 'mens-handbags', icon: 'ShoppingBag', home: false },
