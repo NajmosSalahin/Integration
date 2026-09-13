@@ -8,7 +8,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const IMAGES_ROOT = join(__dirname, '../../Product Images');
 const TEMP_DIR = join(__dirname, '../../temp_uploads');
 
-const CATEGORIES = ['Plain_Tshirt_image', 'IU_Tshirt_image', 'Hoodies', 'Aesthetic_Tshirt_image'];
+const CATEGORIES = ['Plain_Tshirt_image', 'IU_Tshirt_image', 'Hoodies', 'Aesthetic_Tshirt_image', 'Literature_Cover_Tshirt'];
 
 async function ensureDir(dir) {
   await mkdir(dir, { recursive: true });
@@ -35,14 +35,26 @@ async function createCopies(imagePath, count) {
   return copies;
 }
 
+const MAX_ATTEMPTS = 3;
+
 async function uploadToCloudinary(filePath) {
   const name = basename(filePath, extname(filePath));
-  const result = await cloudinary.uploader.upload(filePath, {
-    folder: 'integration/products',
-    public_id: name,
-    overwrite: true,
-  });
-  return result.secure_url;
+  const safeName = name.replace(/&/g, 'and').replace(/[/\\?#%*:"<>|]/g, '-');
+
+  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+    try {
+      const result = await cloudinary.uploader.upload(filePath, {
+        folder: 'integration/products',
+        public_id: safeName,
+        overwrite: true,
+      });
+      return result.secure_url;
+    } catch (err) {
+      if (attempt === MAX_ATTEMPTS) throw err;
+      console.log(`    Retrying (${attempt}/${MAX_ATTEMPTS}) after error...`);
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    }
+  }
 }
 
 function getProductName(filename) {

@@ -7,6 +7,26 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.1.3] — 2026-09-13
+
+**Status:** Stable — v0.1.3 Complete
+
+Literature Cover T-Shirt category + major catalog expansion: 49 new products, catalog grows from 55 → 104.
+
+**Features:**
+- New "Literature Cover T-Shirt" category (`literature-tshirts`) — 31 Bengali literature book-cover designs (Pather Panchali, Chander Pahar, Padma Nadir Majhi, Lalsalu, etc.), live on homepage grid, Shop sidebar, and mobile pills
+- 18 new aesthetic t-shirt designs (Asa & Yoru Chainsaw Man, Kyoto, Makima, Tsuki Ga Kirei Desu Ne, etc.) — aesthetic category now 54 designs
+- Upload pipeline hardening: `public_id` sanitization (`&` → `and`) + 3-attempt retry on transient Cloudinary errors
+
+**Infrastructure:**
+- Image folder renamed `Literatire_Cover_Tshirt` → `Literature_Cover_Tshirt`
+- All 104 products re-uploaded to Cloudinary (3 images each), `uploaded_urls.json` regenerated
+- Database re-seeded with 104 products
+
+**Detailed snapshot:** [versions/v0.1.3.md](versions/v0.1.3.md)
+
+---
+
 ## [0.1.2] — 2026-09-12
 
 **Status:** Stable — v0.1.2 Complete
