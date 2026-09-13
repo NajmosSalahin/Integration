@@ -35,6 +35,7 @@ const iuTees = [
   { name: 'SDS ~ Islamic University ~ Premium Black T-shirt', design: 'SDS', tags: ['iu', 'sds', 'typography'] },
   { name: 'Islamic University ~ Horizontal Strips ~ Premium Black T-shirt.png', display: 'Islamic University ~ Horizontal Strips ~ Premium Black T-shirt', design: 'Horizontal Strips', tags: ['iu', 'strips', 'minimal'] },
   { name: 'Central Mosque ~ Islamic University ~ Premium Black T-shirt', design: 'Central Mosque', tags: ['iu', 'mosque', 'landmark', 'popular'] },
+  { name: 'Lain Islamic University ~ Premium Solid Black T-shirt', design: 'Lain', tags: ['iu', 'lain', 'anime', 'typography'] },
 ];
 
 const hoodies = [
@@ -96,6 +97,22 @@ const aestheticTees = [
   { name: "We All Get Addicted To Something That Takes Away The Pain ~ Premium Solid Black T-shirt", design: "We All Get Addicted To Something That Takes Away The Pain", tags: ['deep', 'text', 'introspective', 'quote'] },
   { name: 'Wordless ~ Premium Solid Black T-shirt', design: 'Wordless', tags: ['minimal', 'conceptual', 'illustration'] },
   { name: "You're Going To Die Anyway ~ Premium Solid Black T-shirt", design: "You're Going To Die Anyway", tags: ['memento mori', 'philosophical', 'text', 'minimal'] },
+  { name: 'Anime Eyes A Thousand Stories ~ Premium Solid Black T-shirt', design: 'Anime Eyes A Thousand Stories', tags: ['japanese', 'anime', 'minimal', 'illustration'] },
+  { name: 'Chain Smoking Cat ~ Premium Solid Black T-shirt', design: 'Chain Smoking Cat', tags: ['cat', 'retro', 'meme', 'illustration'] },
+  { name: 'Fight Club ~ Premium Solid Black T-shirt', design: 'Fight Club', tags: ['movie', 'film', 'iconic', 'vintage', 'popular'] },
+  { name: 'Find Your Crew ~ Premium Solid Black T-shirt', design: 'Find Your Crew', tags: ['motivational', 'text', 'minimal'] },
+  { name: 'Glitch in the Code ~ Premium Solid Black T-shirt', design: 'Glitch in the Code', tags: ['tech', 'glitch', 'minimal', 'digital'] },
+  { name: 'Japan Stamp Collection ~ Premium Solid Black T-shirt', design: 'Japan Stamp Collection', tags: ['japanese', 'stamps', 'retro', 'collection'] },
+  { name: 'Kyoto Travel Deeper ~ Premium Solid Black T-shirt', design: 'Kyoto Travel Deeper', tags: ['japanese', 'kyoto', 'travel', 'retro'] },
+  { name: 'Lose Your Mind Find Your Soul ~ Premium Solid Black T-shirt', design: 'Lose Your Mind Find Your Soul', tags: ['spiritual', 'text', 'minimal', 'quote'] },
+  { name: 'One Piece Wano Country (ワノ国) ~ Premium Solid Black T-shirt', design: 'One Piece Wano Country (ワノ国)', tags: ['japanese', 'anime', 'one piece', 'illustration', 'popular'] },
+  { name: 'Ramen Neko ~ Premium Solid Black T-shirt (2)', design: 'Ramen Neko ~ Premium Solid Black T-shirt (2)', tags: ['japanese', 'ramen', 'cat', 'illustration'] },
+  { name: 'Ramen Vinyl ~ Premium Solid Black T-shirt', design: 'Ramen Vinyl', tags: ['japanese', 'ramen', 'vinyl', 'retro'] },
+  { name: 'Roronoa Zoro ~ Premium Solid Black T-shirt', design: 'Roronoa Zoro', tags: ['japanese', 'anime', 'one piece', 'illustration', 'popular'] },
+  { name: 'Stacked Stones Red Sun ~ Premium Solid Black T-shirt', design: 'Stacked Stones Red Sun', tags: ['japanese', 'zen', 'minimal', 'sun'] },
+  { name: 'Surrounded by Fish ~ Premium Solid Black T-shirt', design: 'Surrounded by Fish', tags: ['japanese', 'fish', 'art', 'illustration'] },
+  { name: 'The Climber (孤高の人) ~ Premium Solid Black T-shirt', design: 'The Climber (孤高の人)', tags: ['japanese', 'mountain', 'climber', 'illustration'] },
+  { name: 'Walking Toward the Light ~ Premium Solid Black T-shirt', design: 'Walking Toward the Light', tags: ['minimal', 'hopeful', 'abstract', 'illustration'] },
 ];
 
 const literatureTees = [
