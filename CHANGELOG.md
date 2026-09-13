@@ -7,6 +7,26 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.1.4] — 2026-09-13
+
+**Status:** Stable — v0.1.4 Complete
+
+Anime & pop-culture expansion: 17 new designs, catalog grows from 104 → 121.
+
+**Features:**
+- 16 new aesthetic t-shirts — One Piece Wano Country (ワノ国), Roronoa Zoro, Fight Club, Chain Smoking Cat, Kyoto Travel Deeper, Ramen Vinyl, Japan Stamp Collection, The Climber (孤高の人), etc.
+- 1 new IU design — Lain Islamic University (anime crossover)
+- `popular` tag on Fight Club, One Piece Wano Country, Roronoa Zoro → homepage Featured Products row
+- Full descriptive tags (japanese, anime, one piece, movie, zen, etc.) for search
+
+**Infrastructure:**
+- Incremental Cloudinary upload of the 17 new images (3 copies each), `uploaded_urls.json` at 121 keys
+- Database re-seeded with 121 products
+
+**Detailed snapshot:** [versions/v0.1.4.md](versions/v0.1.4.md)
+
+---
+
 ## [0.1.3] — 2026-09-13
 
 **Status:** Stable — v0.1.3 Complete
