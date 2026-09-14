@@ -5,7 +5,21 @@ All notable changes to the Integration storefront will be documented in this fil
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
----
+## [0.1.5] - 2026-09-14
+
+**Status:** Pre-Release — v0.1.5 In Development
+
+Homepage & Shop Catalog. Curated featured banner, newest-16 Collection, global search capped at 16, shop sort + numbered pagination.
+
+- Featured dashboard: 8 curated designs (`featured: true`)
+- FeaturedBanner (FeaturedCarousel) on the homepage
+- Collection = newest 16 designs (homepage + global search results capped at 16)
+- Shop search + sort dropdown (newest / oldest / price low→high / price high→low)
+- Numbered pagination — 16 designs per page (`?page=`)
+
+**Detailed snapshot:** [versions/v0.1.5.md](versions/v0.1.5.md)
+
+------
 
 ## [0.1.4] — 2026-09-13
 

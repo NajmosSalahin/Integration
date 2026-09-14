@@ -8,6 +8,7 @@ import ProductCard from '../components/ProductCard';
 import Navbar from '../components/Navbar';
 import Hero from '../components/Hero';
 import CategoryGrid from '../components/CategoryGrid';
+import FeaturedCarousel from '../components/FeaturedCarousel';
 import Footer from '../components/Footer';
 
 export default function Home() {
@@ -31,9 +32,12 @@ export default function Home() {
     return matchesSearch && matchesTag;
   });
 
-  const featured = products?.filter((p) =>
-    p.tags?.some((t) => t.toLowerCase() === 'popular')
-  ).slice(0, 4);
+  const featured = products
+    ?.filter((p) => p.featured === true)
+    .slice(0, 8);
+
+  const collection16 = filtered?.slice(0, 16);
+  const search16 = filtered?.slice(0, 16);
 
   return (
     <>
@@ -133,7 +137,7 @@ export default function Home() {
                   visible: { transition: { staggerChildren: 0.08 } },
                 }}
               >
-                {filtered.map((product, i) => (
+                  {filtered?.slice(0, 16).map((product, i) => (
                   <ProductCard key={product._id} product={product} index={i} />
                 ))}
               </motion.div>

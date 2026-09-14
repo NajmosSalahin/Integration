@@ -67,7 +67,7 @@ export default function Navbar() {
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      navigate(`/?q=${encodeURIComponent(searchQuery)}`);
+      navigate(`/shop?q=${encodeURIComponent(searchQuery)}`);
       setShowResults(false);
       setMobileSearchOpen(false);
     }
