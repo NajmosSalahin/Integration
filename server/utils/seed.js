@@ -48,6 +48,7 @@ const iuTees = [
   { name: 'The Foggy Bridge Islamic University ~ Premium Solid Black T-shirt', design: 'The Foggy Bridge', tags: ['iu', 'nature', 'bridge', 'fog'] },
   { name: 'TSCC - Milonayoton Islamic University ~ Premium Solid Black T-shirt', design: 'TSCC - Milonayoton', tags: ['iu', 'tscc', 'landmark'] },
   { name: 'TSCC Islamic University ~ Premium Solid Black T-shirt', design: 'TSCC', tags: ['iu', 'tscc', 'landmark', 'popular'], featured: true },
+  { name: 'Crossing in Color Islamic University ~ Premium Solid Black T-shirt', design: 'Crossing in Color', tags: ['iu', 'campus', 'color'] },
 ];
 
 const hoodies = [
@@ -59,6 +60,31 @@ const menShirts = [
   { name: 'Integration Denim Weave ~ Premium Navy Long-Sleeve Shirt', design: 'Denim Weave', tags: ['long-sleeve', 'denim', 'casual', 'navy'] },
   { name: 'Integration Flannel Edition ~ Premium Navy Long-Sleeve Shirt', design: 'Flannel Edition', tags: ['long-sleeve', 'flannel', 'warm', 'navy'] },
   { name: 'Integration Oxford Button-Down ~ Premium Navy Long-Sleeve Shirt', design: 'Oxford Button-Down', tags: ['long-sleeve', 'oxford', 'formal', 'navy'] },
+];
+
+const culturalTees = [
+  { name: 'Anonto Kaler Gaan ~ Premium Solid Black T-shirt', design: 'Anonto Kaler Gaan', tags: ['bangla', 'cultural', 'music'] },
+  { name: 'Bengal Stories A Cultural Collage ~ Premium Solid Black T-shirt', design: 'Bengal Stories A Cultural Collage', tags: ['bangla', 'cultural', 'collage'] },
+  { name: "Fisherman's Silence ~ Premium Solid Black T-shirt", design: "Fisherman's Silence", tags: ['bangla', 'cultural', 'river', 'silence'] },
+  { name: 'Melancholy Golden Highway ~ Premium Solid Black T-shirt', design: 'Melancholy Golden Highway', tags: ['bangla', 'cultural', 'highway'] },
+];
+
+const landscapeTees = [
+  { name: 'Clay Vessels A Still Life ~ Premium Solid Black T-shirt', design: 'Clay Vessels A Still Life', tags: ['landscape', 'still-life', 'pottery'] },
+  { name: 'Cooling Towers at Dusk ~ Premium Solid Black T-shirt', design: 'Cooling Towers at Dusk', tags: ['landscape', 'dusk', 'industrial'] },
+  { name: 'Ember Sky, Lone Wing ~ Premium Solid Black T-shirt', design: 'Ember Sky, Lone Wing', tags: ['landscape', 'sky', 'bird'] },
+  { name: 'Shikara Sunbeams ~ Premium Solid Black T-shirt', design: 'Shikara Sunbeams', tags: ['landscape', 'kashmir', 'lake', 'sunbeams'] },
+  { name: 'Skyward Cross ~ Premium Solid Black T-shirt', design: 'Skyward Cross', tags: ['landscape', 'architecture', 'sky'] },
+  { name: 'Sundown Through the Wires ~ Premium Solid Black T-shirt', design: 'Sundown Through the Wires', tags: ['landscape', 'sundown', 'wires'] },
+  { name: 'The Green Tunnel ~ Premium Solid Black T-shirt', design: 'The Green Tunnel', tags: ['landscape', 'nature', 'tunnel'] },
+  { name: 'The Hollow Tower ~ Premium Solid Black T-shirt', design: 'The Hollow Tower', tags: ['landscape', 'tower', 'moody'] },
+];
+
+const artisanTees = [
+  { name: 'Lanterns to Nowhere ~ Premium Solid Black T-shirt', design: 'Lanterns to Nowhere', tags: ['artisan', 'lanterns', 'atmospheric'] },
+  { name: 'Liquid Gold Tide ~ Premium Solid Black T-shirt', design: 'Liquid Gold Tide', tags: ['artisan', 'gold', 'tide'] },
+  { name: 'Murobbi Murobbi ~ Premium Solid Black T-shirt', design: 'Murobbi Murobbi', tags: ['artisan', 'bangla', 'music'] },
+  { name: 'River Bend City From Above ~ Premium Solid Black T-shirt', design: 'River Bend City From Above', tags: ['artisan', 'city', 'aerial', 'river'] },
 ];
 
 const aestheticTees = [
@@ -138,6 +164,7 @@ const literatureTees = [
   { name: 'Abhishapto ~ Premium Solid Black T-shirt', design: 'Abhishapto', tags: ['bangla', 'literature', 'classic'] },
   { name: 'Aguner Poroshmoni ~ Premium Solid Black T-shirt', design: 'Aguner Poroshmoni', tags: ['bangla', 'literature', 'poetry'] },
   { name: 'Amar Aachhe Jol ~ Premium Solid Black T-shirt', design: 'Amar Aachhe Jol', tags: ['bangla', 'literature', 'poetry'] },
+  { name: 'Aranyak ~ Premium Solid Black T-shirt (2)', design: 'Aranyak ~ Premium Solid Black T-shirt (2)', tags: ['bangla', 'literature', 'classic'] },
   { name: 'Aranyak ~ Premium Solid Black T-shirt', design: 'Aranyak', tags: ['bangla', 'literature', 'classic'] },
   { name: 'Aranyer Dinratri ~ Premium Solid Black T-shirt', design: 'Aranyer Dinratri', tags: ['bangla', 'literature', 'classic', 'popular'] },
   { name: 'Aranyok ~ Premium Solid Black T-shirt', design: 'Aranyok', tags: ['bangla', 'literature', 'classic'] },
@@ -152,6 +179,7 @@ const literatureTees = [
   { name: 'Lalsalu ~ Premium Solid Black T-shirt', design: 'Lalsalu', tags: ['bangla', 'literature', 'novel', 'popular'] },
   { name: 'Manasamangal ~ Premium Solid Black T-shirt', design: 'Manasamangal', tags: ['bangla', 'literature', 'epic'] },
   { name: 'Megh Boleche Jabo Jabo ~ Premium Solid Black T-shirt', design: 'Megh Boleche Jabo Jabo', tags: ['bangla', 'literature', 'poetry'] },
+  { name: 'Megh Bolechhe Jabo Jabo ~ Premium Solid Black T-shirt', design: 'Megh Bolechhe Jabo Jabo', tags: ['bangla', 'literature', 'poetry'] },
   { name: 'Nishithe ~ Premium Solid Black T-shirt', design: 'Nishithe', tags: ['bangla', 'literature', 'classic'] },
   { name: 'Nishithini ~ Premium Solid Black T-shirt', design: 'Nishithini', tags: ['bangla', 'literature', 'classic'] },
   { name: 'Padatika ~ Premium Solid Black T-shirt', design: 'Padatika', tags: ['bangla', 'literature', 'classic'] },
@@ -290,6 +318,63 @@ function buildProducts(urls) {
       tags: ['literature-tshirts', ...item.tags],
       active: true,
       featured: !!item.featured,
+    });
+  }
+
+  for (const tee of culturalTees) {
+    products.push({
+      title: tee.name,
+      description: `Premium solid black t-shirt celebrating the "${tee.design}" story. Heavy cotton, clean print. Wear a piece of Bengali culture, art, and emotion.`,
+      price: tee.price || PRICE,
+      images: urls[tee.name] || [],
+      sizes: ['S', 'M', 'L', 'XL'],
+      sizeGuideNote: 'Standard fit. True to size.',
+      stock: [
+        { size: 'S', inStock: true },
+        { size: 'M', inStock: true },
+        { size: 'L', inStock: true },
+        { size: 'XL', inStock: true },
+      ],
+      tags: ['cultural-tshirts', ...tee.tags],
+      active: true,
+    });
+  }
+
+  for (const tee of landscapeTees) {
+    products.push({
+      title: tee.name,
+      description: `Premium solid black t-shirt featuring the "${tee.design}" landscape. Heavy cotton, clean print. Wear the mood, the sky, and the places you dream of.`,
+      price: tee.price || PRICE,
+      images: urls[tee.name] || [],
+      sizes: ['S', 'M', 'L', 'XL'],
+      sizeGuideNote: 'Standard fit. True to size.',
+      stock: [
+        { size: 'S', inStock: true },
+        { size: 'M', inStock: true },
+        { size: 'L', inStock: true },
+        { size: 'XL', inStock: true },
+      ],
+      tags: ['landscape-tshirts', ...tee.tags],
+      active: true,
+    });
+  }
+
+  for (const tee of artisanTees) {
+    products.push({
+      title: tee.name,
+      description: `Premium solid black t-shirt featuring the artisan design "${tee.design}". Heavy cotton, clean print. Crafted details for those who appreciate the finer story.`,
+      price: tee.price || PRICE,
+      images: urls[tee.name] || [],
+      sizes: ['S', 'M', 'L', 'XL'],
+      sizeGuideNote: 'Standard fit. True to size.',
+      stock: [
+        { size: 'S', inStock: true },
+        { size: 'M', inStock: true },
+        { size: 'L', inStock: true },
+        { size: 'XL', inStock: true },
+      ],
+      tags: ['artisan-tshirts', ...tee.tags],
+      active: true,
     });
   }
 

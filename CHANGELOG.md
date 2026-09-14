@@ -9,13 +9,15 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 **Status:** Pre-Release — v0.1.6 In Preparation
 
-Catalog expansion + featured-carousel fix. 15 new products, catalog grows 121 → 136, and the homepage featured row finally shows content.
+Large catalog expansion + featured-carousel fix. 34 new products, catalog grows 121 → 155, and the homepage featured row finally shows content.
 
-- 11 new IU t-shirt designs — TSCC, The Central Mosque, Red Double-Decker, Sunset Over Central Mosque, Symmetry From Above, Rainy Paradise Road, and more
+- 12 new IU t-shirt designs — TSCC, The Central Mosque, Red Double-Decker, Crossing in Color, and 8 more
 - 4 new **Men's Long-Sleeve Shirts** (750 BDT) — Classic Poplin, Denim Weave, Flannel Edition, Oxford Button-Down under `mens-shirts`
+- 3 brand-new categories: **Cultural** (4), **Landscape** (8), **Artisan** (4) t-shirts added to shop + homepage grid
+- 2 new literature book-cover designs — Aranyak (2), Megh Bolechhe Jabo Jabo
 - Bug fix: `seed.js` never propagated the `featured` flag into the DB — homepage carousel was always empty; now 10 featured products
 - Bug fix: shop page build errors (stray `interpret` + literal `\n` escapes) resolved
-- 15 new image sets uploaded to Cloudinary; `uploaded_urls.json` at 136 keys; DB re-seeded
+- 34 new image sets uploaded to Cloudinary; `uploaded_urls.json` at 155 keys; DB re-seeded
 
 **Detailed snapshot:** [versions/v0.1.6.md](versions/v0.1.6.md)
 

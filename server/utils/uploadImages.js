@@ -14,6 +14,7 @@ const CATEGORIES = [
   'Hoodies',
   'Aesthetic_Tshirt_image',
   'Literature_Cover_Tshirt',
+  'IDK Category',
   'Men_Shirt_image',
   'Womens_Tshirt_image',
   'Womens_Shirt_image',
