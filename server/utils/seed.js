@@ -12,6 +12,7 @@ const MONGO_URI = process.env.MONGO_URI;
 
 const PRICE = 450;
 const HOODIE_PRICE = 950;
+const SHIRT_PRICE = 750;
 
 const plainTees = [
   { name: 'Premium Solid Black T-shirt', color: 'Black', tags: ['plain', 'solid', 'black'] },
@@ -36,10 +37,28 @@ const iuTees = [
   { name: 'Islamic University ~ Horizontal Strips ~ Premium Black T-shirt.png', display: 'Islamic University ~ Horizontal Strips ~ Premium Black T-shirt', design: 'Horizontal Strips', tags: ['iu', 'strips', 'minimal'] },
   { name: 'Central Mosque ~ Islamic University ~ Premium Black T-shirt', design: 'Central Mosque', tags: ['iu', 'mosque', 'landmark', 'popular'], featured: true },
   { name: 'Lain Islamic University ~ Premium Solid Black T-shirt', design: 'Lain', tags: ['iu', 'lain', 'anime', 'typography'] },
+  { name: 'A Day in Five Frames Islamic University ~ Premium Solid Black T-shirt', design: 'A Day in Five Frames', tags: ['iu', 'landmark', 'art'] },
+  { name: 'Misty Crossing Islamic University ~ Premium Solid Black T-shirt', design: 'Misty Crossing', tags: ['iu', 'nature', 'bridge'] },
+  { name: 'Rainy Paradise Road Islamic University ~ Premium Solid Black T-shirt', design: 'Rainy Paradise Road', tags: ['iu', 'campus', 'rain'] },
+  { name: 'Rainy Red Double-Decker Islamic University ~ Premium Solid Black T-shirt', design: 'Rainy Red Double-Decker', tags: ['iu', 'double-decker', 'rain'] },
+  { name: 'Red Double-Decker Islamic University ~ Premium Solid Black T-shirt', design: 'Red Double-Decker', tags: ['iu', 'double-decker', 'landmark'], featured: true },
+  { name: 'Sunset Over Central Mosque Islamic University ~ Premium Solid Black T-shirt', design: 'Sunset Over Central Mosque', tags: ['iu', 'mosque', 'sunset'] },
+  { name: 'Symmetry From Above Islamic University ~ Premium Solid Black T-shirt', design: 'Symmetry From Above', tags: ['iu', 'aerial', 'campus'] },
+  { name: 'The Central Mosque Islamic University ~ Premium Solid Black T-shirt', design: 'The Central Mosque', tags: ['iu', 'mosque', 'landmark', 'popular'], featured: true },
+  { name: 'The Foggy Bridge Islamic University ~ Premium Solid Black T-shirt', design: 'The Foggy Bridge', tags: ['iu', 'nature', 'bridge', 'fog'] },
+  { name: 'TSCC - Milonayoton Islamic University ~ Premium Solid Black T-shirt', design: 'TSCC - Milonayoton', tags: ['iu', 'tscc', 'landmark'] },
+  { name: 'TSCC Islamic University ~ Premium Solid Black T-shirt', design: 'TSCC', tags: ['iu', 'tscc', 'landmark', 'popular'], featured: true },
 ];
 
 const hoodies = [
   { name: 'Premium Chocolate Brown Hoodie', color: 'Chocolate Brown', price: HOODIE_PRICE, tags: ['premium', 'chocolate', 'brown'] },
+];
+
+const menShirts = [
+  { name: 'Integration Classic Poplin ~ Premium Navy Long-Sleeve Shirt', design: 'Classic Poplin', tags: ['long-sleeve', 'classic', 'poplin', 'navy'] },
+  { name: 'Integration Denim Weave ~ Premium Navy Long-Sleeve Shirt', design: 'Denim Weave', tags: ['long-sleeve', 'denim', 'casual', 'navy'] },
+  { name: 'Integration Flannel Edition ~ Premium Navy Long-Sleeve Shirt', design: 'Flannel Edition', tags: ['long-sleeve', 'flannel', 'warm', 'navy'] },
+  { name: 'Integration Oxford Button-Down ~ Premium Navy Long-Sleeve Shirt', design: 'Oxford Button-Down', tags: ['long-sleeve', 'oxford', 'formal', 'navy'] },
 ];
 
 const aestheticTees = [
@@ -192,6 +211,7 @@ function buildProducts(urls) {
       ],
       tags: ['iu-tshirts', ...tee.tags],
       active: true,
+      featured: !!tee.featured,
     });
   }
 
@@ -214,6 +234,25 @@ function buildProducts(urls) {
     });
   }
 
+  for (const item of menShirts) {
+    products.push({
+      title: item.name,
+      description: `Premium navy long-sleeve shirt from Integration. The "${item.design}" cut and fabric, tailored for comfort. A wardrobe staple that carries you from campus to everywhere.`,
+      price: SHIRT_PRICE,
+      images: urls[item.name] || [],
+      sizes: ['S', 'M', 'L', 'XL'],
+      sizeGuideNote: 'Standard fit. True to size.',
+      stock: [
+        { size: 'S', inStock: true },
+        { size: 'M', inStock: true },
+        { size: 'L', inStock: true },
+        { size: 'XL', inStock: true },
+      ],
+      tags: ['mens-shirts', ...item.tags],
+      active: true,
+    });
+  }
+
   for (const tee of aestheticTees) {
     products.push({
       title: tee.display || tee.name,
@@ -230,6 +269,7 @@ function buildProducts(urls) {
       ],
       tags: ['aesthetic-tshirts', ...tee.tags],
       active: true,
+      featured: !!tee.featured,
     });
   }
 
@@ -249,6 +289,7 @@ function buildProducts(urls) {
       ],
       tags: ['literature-tshirts', ...item.tags],
       active: true,
+      featured: !!item.featured,
     });
   }
 

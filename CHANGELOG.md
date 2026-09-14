@@ -5,6 +5,22 @@ All notable changes to the Integration storefront will be documented in this fil
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.6] - 2026-09-14
+
+**Status:** Pre-Release — v0.1.6 In Preparation
+
+Catalog expansion + featured-carousel fix. 15 new products, catalog grows 121 → 136, and the homepage featured row finally shows content.
+
+- 11 new IU t-shirt designs — TSCC, The Central Mosque, Red Double-Decker, Sunset Over Central Mosque, Symmetry From Above, Rainy Paradise Road, and more
+- 4 new **Men's Long-Sleeve Shirts** (750 BDT) — Classic Poplin, Denim Weave, Flannel Edition, Oxford Button-Down under `mens-shirts`
+- Bug fix: `seed.js` never propagated the `featured` flag into the DB — homepage carousel was always empty; now 10 featured products
+- Bug fix: shop page build errors (stray `interpret` + literal `\n` escapes) resolved
+- 15 new image sets uploaded to Cloudinary; `uploaded_urls.json` at 136 keys; DB re-seeded
+
+**Detailed snapshot:** [versions/v0.1.6.md](versions/v0.1.6.md)
+
+------
+
 ## [0.1.5] - 2026-09-14
 
 **Status:** Pre-Release — v0.1.5 In Development
