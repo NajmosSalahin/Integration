@@ -106,7 +106,12 @@ export default function Shop() {
   const rangeEnd = sorted ? Math.min(start + PER_PAGE, sorted.length) : 0;
 
   const pageChoices = Array.from({ length: totalPages }, (_, i) => i + 1);
-  const window = { length: 7, offset: 2 };\n  const visiblePages = pageChoices.length > 7\n    ? pageChoices.filter(\n        (n) => n === 1 || n === totalPages || Math.abs(n - safePage) <= 2\n      )\n    : pageChoices;\n  const finalPages = [...new Set(visiblePages)];
+  const visiblePages = pageChoices.length > 7
+    ? pageChoices.filter(
+        (n) => n === 1 || n === totalPages || Math.abs(n - safePage) <= 2
+      )
+    : pageChoices;
+  const finalPages = [...new Set(visiblePages)];
 
   return (
     <>
