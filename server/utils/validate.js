@@ -57,6 +57,7 @@ export const createProductSchema = z.object({
   sizes: z.array(z.string().min(1)).min(1, 'At least one size is required'),
   sizeGuideNote: z.string().max(500).optional().default(''),
   tags: z.array(z.string()).optional().default([]),
+  featured: z.boolean().optional().default(false),
   stock: z.array(z.object({
     size: z.string(),
     inStock: z.boolean(),

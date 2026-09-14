@@ -24,9 +24,9 @@ const plainTees = [
 ];
 
 const iuTees = [
-  { name: 'Sotota Fountain ~ Islamic University ~ Premium Black T-shirt', design: 'Sotota Fountain', tags: ['iu', 'fountain', 'landmark', 'popular'] },
-  { name: 'Shaheed Monument ~ Islamic University ~ Premium Black T-shirt', design: 'Shaheed Monument', tags: ['iu', 'monument', 'landmark'] },
-  { name: 'Mukta Bangla ~ Islamic University ~ Premium Black T-shirt', design: 'Mukta Bangla', tags: ['iu', 'typography', 'bangla', 'popular'] },
+  { name: 'Sotota Fountain ~ Islamic University ~ Premium Black T-shirt', design: 'Sotota Fountain', tags: ['iu', 'fountain', 'landmark', 'popular'], featured: true },
+  { name: 'Shaheed Monument ~ Islamic University ~ Premium Black T-shirt', design: 'Shaheed Monument', tags: ['iu', 'monument', 'landmark'], featured: true },
+  { name: 'Mukta Bangla ~ Islamic University ~ Premium Black T-shirt', design: 'Mukta Bangla', tags: ['iu', 'typography', 'bangla', 'popular'], featured: true },
   { name: 'Mofiz Lake Bridge ~ Islamic University ~ Premium Black T-shirt', design: 'Mofiz Lake Bridge', tags: ['iu', 'nature', 'bridge'] },
   { name: 'IUian Multi-Monument Retro ~ Islamic University ~ Premium Black T-shirt', design: 'Multi-Monument Retro', tags: ['iu', 'retro', 'multi'] },
   { name: 'IUian Grunge Element Strips ~ Islamic University ~ Premium Black T-shirt', design: 'Grunge Element Strips', tags: ['iu', 'grunge', 'strips'] },
@@ -34,7 +34,7 @@ const iuTees = [
   { name: 'IU Gate ~ Islamic University ~ Premium Black T-shirt', design: 'IU Gate', tags: ['iu', 'gate', 'landmark', 'popular'] },
   { name: 'SDS ~ Islamic University ~ Premium Black T-shirt', design: 'SDS', tags: ['iu', 'sds', 'typography'] },
   { name: 'Islamic University ~ Horizontal Strips ~ Premium Black T-shirt.png', display: 'Islamic University ~ Horizontal Strips ~ Premium Black T-shirt', design: 'Horizontal Strips', tags: ['iu', 'strips', 'minimal'] },
-  { name: 'Central Mosque ~ Islamic University ~ Premium Black T-shirt', design: 'Central Mosque', tags: ['iu', 'mosque', 'landmark', 'popular'] },
+  { name: 'Central Mosque ~ Islamic University ~ Premium Black T-shirt', design: 'Central Mosque', tags: ['iu', 'mosque', 'landmark', 'popular'], featured: true },
   { name: 'Lain Islamic University ~ Premium Solid Black T-shirt', design: 'Lain', tags: ['iu', 'lain', 'anime', 'typography'] },
 ];
 
@@ -99,7 +99,7 @@ const aestheticTees = [
   { name: "You're Going To Die Anyway ~ Premium Solid Black T-shirt", design: "You're Going To Die Anyway", tags: ['memento mori', 'philosophical', 'text', 'minimal'] },
   { name: 'Anime Eyes A Thousand Stories ~ Premium Solid Black T-shirt', design: 'Anime Eyes A Thousand Stories', tags: ['japanese', 'anime', 'minimal', 'illustration'] },
   { name: 'Chain Smoking Cat ~ Premium Solid Black T-shirt', design: 'Chain Smoking Cat', tags: ['cat', 'retro', 'meme', 'illustration'] },
-  { name: 'Fight Club ~ Premium Solid Black T-shirt', design: 'Fight Club', tags: ['movie', 'film', 'iconic', 'vintage', 'popular'] },
+  { name: 'Fight Club ~ Premium Solid Black T-shirt', design: 'Fight Club', tags: ['movie', 'film', 'iconic', 'vintage', 'popular'], featured: true },
   { name: 'Find Your Crew ~ Premium Solid Black T-shirt', design: 'Find Your Crew', tags: ['motivational', 'text', 'minimal'] },
   { name: 'Glitch in the Code ~ Premium Solid Black T-shirt', design: 'Glitch in the Code', tags: ['tech', 'glitch', 'minimal', 'digital'] },
   { name: 'Japan Stamp Collection ~ Premium Solid Black T-shirt', design: 'Japan Stamp Collection', tags: ['japanese', 'stamps', 'retro', 'collection'] },
@@ -108,7 +108,7 @@ const aestheticTees = [
   { name: 'One Piece Wano Country (ワノ国) ~ Premium Solid Black T-shirt', design: 'One Piece Wano Country (ワノ国)', tags: ['japanese', 'anime', 'one piece', 'illustration', 'popular'] },
   { name: 'Ramen Neko ~ Premium Solid Black T-shirt (2)', design: 'Ramen Neko ~ Premium Solid Black T-shirt (2)', tags: ['japanese', 'ramen', 'cat', 'illustration'] },
   { name: 'Ramen Vinyl ~ Premium Solid Black T-shirt', design: 'Ramen Vinyl', tags: ['japanese', 'ramen', 'vinyl', 'retro'] },
-  { name: 'Roronoa Zoro ~ Premium Solid Black T-shirt', design: 'Roronoa Zoro', tags: ['japanese', 'anime', 'one piece', 'illustration', 'popular'] },
+  { name: 'Roronoa Zoro ~ Premium Solid Black T-shirt', design: 'Roronoa Zoro', tags: ['japanese', 'anime', 'one piece', 'illustration', 'popular'], featured: true },
   { name: 'Stacked Stones Red Sun ~ Premium Solid Black T-shirt', design: 'Stacked Stones Red Sun', tags: ['japanese', 'zen', 'minimal', 'sun'] },
   { name: 'Surrounded by Fish ~ Premium Solid Black T-shirt', design: 'Surrounded by Fish', tags: ['japanese', 'fish', 'art', 'illustration'] },
   { name: 'The Climber (孤高の人) ~ Premium Solid Black T-shirt', design: 'The Climber (孤高の人)', tags: ['japanese', 'mountain', 'climber', 'illustration'] },
@@ -137,7 +137,7 @@ const literatureTees = [
   { name: 'Nishithini ~ Premium Solid Black T-shirt', design: 'Nishithini', tags: ['bangla', 'literature', 'classic'] },
   { name: 'Padatika ~ Premium Solid Black T-shirt', design: 'Padatika', tags: ['bangla', 'literature', 'classic'] },
   { name: 'Padma Nadir Majhi ~ Premium Solid Black T-shirt', design: 'Padma Nadir Majhi', tags: ['bangla', 'literature', 'novel', 'popular'] },
-  { name: 'Pather Panchali ~ Premium Solid Black T-shirt', design: 'Pather Panchali', tags: ['bangla', 'literature', 'classic', 'popular'] },
+  { name: 'Pather Panchali ~ Premium Solid Black T-shirt', design: 'Pather Panchali', tags: ['bangla', 'literature', 'classic', 'popular'], featured: true },
   { name: 'Pathik ~ Premium Solid Black T-shirt', design: 'Pathik', tags: ['bangla', 'literature', 'classic'] },
   { name: 'Rupasi Bangla ~ Premium Solid Black T-shirt', design: 'Rupasi Bangla', tags: ['bangla', 'literature', 'poetry'] },
   { name: 'Sandhya ~ Premium Solid Black T-shirt', design: 'Sandhya', tags: ['bangla', 'literature', 'poetry'] },

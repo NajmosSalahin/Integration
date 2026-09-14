@@ -52,7 +52,7 @@ export async function createProduct(req, res) {
       return res.status(503).json({ error: 'Database not connected' });
     }
 
-    const { title, description, price, images, sizes, sizeGuideNote, tags, stock } = req.body;
+    const { title, description, price, images, sizes, sizeGuideNote, tags, stock, featured } = req.body;
 
     const productStock = stock || sizes.map((size) => ({ size, inStock: true }));
 
@@ -65,6 +65,7 @@ export async function createProduct(req, res) {
       sizeGuideNote: sizeGuideNote || '',
       tags: tags || [],
       stock: productStock,
+      featured: featured ?? false,
     });
 
     res.status(201).json(product);
@@ -85,7 +86,7 @@ export async function updateProduct(req, res) {
       return res.status(404).json({ error: 'Product not found' });
     }
 
-    const { title, description, price, images, sizes, sizeGuideNote, tags, stock } = req.body;
+    const { title, description, price, images, sizes, sizeGuideNote, tags, stock, featured } = req.body;
 
     if (sizes && sizes.length > 0) {
       const existingStockMap = new Map(product.stock.map((s) => [s.size, s.inStock]));

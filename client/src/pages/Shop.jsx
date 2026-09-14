@@ -8,9 +8,22 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { categories } from '../data/categories';
 
+const PER_PAGE = 16;
+
+const SORTS = [
+  { value: 'newest', label: 'Sort: Newest' },
+  { value: 'oldest', label: 'Sort: Oldest' },
+  { value: 'price-asc', label: 'Price: Low to High' },
+  { value: 'price-desc', label: 'Price: High to Low' },
+];
+
 export default function Shop() {
   const [searchParams, setSearchParams] = useSearchParams();
   const tagFilter = searchParams.get('tag') || '';
+  const searchQuery = searchParams.get('q') || '';
+  const sort = searchParams.get('sort') || 'newest';
+  const pageParam = Number(searchParams.get('page')) || 1;
+  const page = pageParam < 1 ? 1 : pageParam;
 
   const { data: products, isLoading, error } = useQuery({
     queryKey: ['products'],
@@ -18,16 +31,61 @@ export default function Shop() {
   });
 
   const filtered = products?.filter((p) => {
-    if (!tagFilter) return true;
-    return p.tags?.some((t) => t.toLowerCase() === tagFilter.toLowerCase());
+    const matchesTag = tagFilter
+      ? p.tags?.some((t) => t.toLowerCase() === tagFilter.toLowerCase())
+      : true;
+    const matchesSearch = searchQuery
+      ? p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        p.design?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        p.tags?.some((t) => t.toLowerCase().includes(searchQuery.toLowerCase()))
+      : true;
+    return matchesTag && matchesSearch;
   });
+
+  const sorted = filtered ? [...filtered] : undefined;
+  if (sorted) {
+    switch (sort) {
+      case 'oldest':
+        sorted.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+        break;
+      case 'price-asc':
+        sorted.sort((a, b) => a.price - b.price);
+        break;
+      case 'price-desc':
+        sorted.sort((a, b) => b.price - a.price);
+        break;
+      default:
+        sorted.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    }
+  }
+
+  const totalPages = sorted ? Math.max(1, Math.ceil(sorted.length / PER_PAGE)) : 1;
+  const safePage = Math.min(page, totalPages);
+  const start = (safePage - 1) * PER_PAGE;
+  const pageItems = sorted?.slice(start, start + PER_PAGE interpret);
+
+  const setParams = (updates) => {
+    const next = new URLSearchParams(searchParams);
+    Object.entries(updates).forEach(([key, value]) => {
+      if (value === '' || value == null) {
+        next.delete(key);
+      } else {
+        next.set(key, value);
+      }
+    });
+    setSearchParams(next);
+  };
 
   const handleTagChange = (tag) => {
     if (tag) {
-      setSearchParams({ tag });
+      setParams({ tag, page: '' });
     } else {
-      setSearchParams({});
+      setParams({ tag: '', page: '' });
     }
+  };
+
+  const handleSortChange = (e) => {
+    setParams({ sort: e.target.value, page: '' });
   };
 
   const pillClass = (active) =>
@@ -43,6 +101,12 @@ export default function Shop() {
         ? 'bg-[var(--accent)] border-[var(--accent)] text-white'
         : 'border-transparent text-[var(--text-secondary)] hover:border-[var(--border)] hover:text-[var(--text-primary)]'
     }`;
+
+  const rangeStart = sorted?.length ? start + 1 : 0;
+  const rangeEnd = sorted ? Math.min(start + PER_PAGE, sorted.length) : 0;
+
+  const pageChoices = Array.from({ length: totalPages }, (_, i) => i + 1);
+  const window = { length: 7, offset: 2 };\n  const visiblePages = pageChoices.length > 7\n    ? pageChoices.filter(\n        (n) => n === 1 || n === totalPages || Math.abs(n - safePage) <= 2\n      )\n    : pageChoices;\n  const finalPages = [...new Set(visiblePages)];
 
   return (
     <>
@@ -84,14 +148,20 @@ export default function Shop() {
                 ))}
               </div>
 
-              {filtered && (
-                <span
-                  className="text-sm text-[var(--text-secondary)] whitespace-nowrap"
+              <div className="flex items-center gap-2 ml-auto">
+                <select
+                  value={sort}
+                  onChange={handleSortChange}
+                  className="px-3 py-2 text-sm rounded-lg border border-[var(--border)] bg-[var(--bg-primary)] text-[var(--text-primary)] focus:outline-none focus:border-[var(--accent)]"
                   style={{ fontFamily: 'var(--font-body)' }}
                 >
-                  {filtered.length} design{filtered.length !== 1 ? 's' : ''}
-                </span>
-              )}
+                  {SORTS.map((s) => (
+                    <option key={s.value} value={s.value}>
+                      {s.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
 
             <div className="lg:flex lg:gap-8">
@@ -137,26 +207,74 @@ export default function Shop() {
                   </div>
                 )}
 
-                {filtered && filtered.length === 0 && (
+                {sorted && sorted.length === 0 && (
                   <div className="text-center py-12">
                     <p className="text-[var(--text-secondary)]">No designs found</p>
                   </div>
                 )}
 
-                {filtered && filtered.length > 0 && (
-                  <motion.div
-                    className="grid grid-cols-2 lg:grid-cols-4 gap-3"
-                    initial="hidden"
-                    animate="visible"
-                    variants={{
-                      hidden: {},
-                      visible: { transition: { staggerChildren: 0.08 } },
-                    }}
-                  >
-                    {filtered.map((product, i) => (
-                      <ShopProductCard key={product._id} product={product} index={i} />
-                    ))}
-                  </motion.div>
+                {sorted && sorted.length > 0 && (
+                  <div className="flex items-center justify-between mb-5">
+                    <p className="text-sm text-[var(--text-secondary)]" style={{ fontFamily: 'var(--font-body)' }}>
+                      {sorted.length} design{sorted.length !== 1 ? 's' : ''}
+                    </p>
+                    {searchQuery && (
+                      <p className="text-sm text-[var(--text-secondary)]" style={{ fontFamily: 'var(--font-body)' }}>
+                        Results for "{searchQuery}"
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                {sorted && sorted.length > 0 && (
+                  <>
+                    <motion.div
+                      className="grid grid-cols-2 lg:grid-cols-4 gap-3"
+                      initial="hidden"
+                      animate="visible"
+                      variants={{
+                        hidden: {},
+                        visible: { transition: { staggerChildren: 0.08 } },
+                      }}
+                    >
+                      {pageItems.map((product, i) => (
+                        <ShopProductCard key={product._id} product={product} index={i} />
+                      ))}
+                    </motion.div>
+
+                    <div className="flex items-center justify-center gap-1.5 mt-8 flex-wrap">
+                      <button
+                        onClick={() => setParams({ page: Math.max(1, safePage - 1) })}
+                        disabled={safePage === 1}
+                        className="px-3 py-2 text-sm rounded-lg border border-[var(--border)] text-[var(--text-secondary)] disabled:opacity-40 hover:border-[var(--accent)] disabled:hover:border-[var(--border)] transition-colors"
+                        style={{ fontFamily: 'var(--font-body)' }}
+                      >
+                        Prev
+                      </button>
+                      {finalPages.map((n) => (
+                        <button
+                          key={n}
+                          onClick={() => setParams({ page: n === 1 ? '' : n })}
+                          className={`px-3.5 py-2 text-sm rounded-lg border transition-colors ${
+                            n === safePage
+                              ? 'bg-[var(--accent)] border-[var(--accent)] text-white'
+                              : 'border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--accent)] hover:text-[var(--text-primary)]'
+                          }`}
+                          style={{ fontFamily: 'var(--font-body)' }}
+                        >
+                          {n}
+                        </button>
+                      ))}
+                      <button
+                        onClick={() => setParams({ page: Math.min(totalPages, safePage + 1) })}
+                        disabled={safePage === totalPages}
+                        className="px-3 py-2 text-sm rounded-lg border border-[var(--border)] text-[var(--text-secondary)] disabled:opacity-40 hover:border-[var(--accent)] disabled:hover:border-[var(--border)] transition-colors"
+                        style={{ fontFamily: 'var(--font-body)' }}
+                      >
+                        Next
+                      </button>
+                    </div>
+                  </>
                 )}
               </div>
             </div>

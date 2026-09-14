@@ -14,6 +14,7 @@ const productSchema = new mongoose.Schema({
   sizeGuideNote: { type: String, default: '' },
   stock: [stockItemSchema],
   tags: [{ type: String }],
+  featured: { type: Boolean, default: false },
   active: { type: Boolean, default: true },
 }, { timestamps: true });
 
