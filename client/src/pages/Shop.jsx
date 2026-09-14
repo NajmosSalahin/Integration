@@ -62,7 +62,7 @@ export default function Shop() {
   const totalPages = sorted ? Math.max(1, Math.ceil(sorted.length / PER_PAGE)) : 1;
   const safePage = Math.min(page, totalPages);
   const start = (safePage - 1) * PER_PAGE;
-  const pageItems = sorted?.slice(start, start + PER_PAGE interpret);
+  const pageItems = sorted?.slice(start, start + PER_PAGE);
 
   const setParams = (updates) => {
     const next = new URLSearchParams(searchParams);
