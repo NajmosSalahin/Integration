@@ -5,7 +5,56 @@ All notable changes to the Integration storefront will be documented in this fil
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
----
+## [0.1.7] - 2026-09-15
+
+**Status:** Pre-Release — v0.1.7 In Development
+
+Smart search across the catalog, shared by the Navbar live dropdown, Home, and Shop. Fuzzy + relevance-ranked via Fuse.js, with description coverage and a debounced dropdown.
+
+- New `fuse.js` (v7) client-side fuzzy search via `client/src/lib/smartSearch.js` — typo tolerance, weighted keys (title 0.6 / tags 0.25 / description 0.15), threshold 0.4, match-anywhere
+- Navbar dropdown now debounced (250ms via `useDebouncedValue`) and capped at 6 results
+- Home and Shop search the whole catalog (title + tags + description) and rank by relevance; results stay relevance-ordered when a query is present
+- `description` is now included in the public `GET /api/products` projection so it can be searched
+- Dead code removed: `p.design` clause in Shop (`design` field doesn't exist) and unused `collection16`/`search16` consts on Home
+- FeaturedRow carousel + two-per-row mobile product grid on the homepage (committed `5bd0bb4`, included in this release's scope)
+
+**Detailed snapshot:** [versions/v0.1.7.md](versions/v0.1.7.md)
+
+------
+
+## [0.1.6] - 2026-09-14
+
+**Status:** Pre-Release — v0.1.6 In Preparation
+
+Large catalog expansion + featured-carousel fix. 34 new products, catalog grows 121 → 155, and the homepage featured row finally shows content.
+
+- 12 new IU t-shirt designs — TSCC, The Central Mosque, Red Double-Decker, Crossing in Color, and 8 more
+- 4 new **Men's Long-Sleeve Shirts** (750 BDT) — Classic Poplin, Denim Weave, Flannel Edition, Oxford Button-Down under `mens-shirts`
+- 3 brand-new categories: **Cultural** (4), **Landscape** (8), **Artisan** (4) t-shirts added to shop + homepage grid
+- 2 new literature book-cover designs — Aranyak (2), Megh Bolechhe Jabo Jabo
+- Bug fix: `seed.js` never propagated the `featured` flag into the DB — homepage carousel was always empty; now 10 featured products
+- Bug fix: shop page build errors (stray `interpret` + literal `\n` escapes) resolved
+- 34 new image sets uploaded to Cloudinary; `uploaded_urls.json` at 155 keys; DB re-seeded
+
+**Detailed snapshot:** [versions/v0.1.6.md](versions/v0.1.6.md)
+
+------
+
+## [0.1.5] - 2026-09-14
+
+**Status:** Pre-Release — v0.1.5 In Development
+
+Homepage & Shop Catalog. Curated featured banner, newest-16 Collection, global search capped at 16, shop sort + numbered pagination.
+
+- Featured dashboard: 8 curated designs (`featured: true`)
+- FeaturedBanner (FeaturedCarousel) on the homepage
+- Collection = newest 16 designs (homepage + global search results capped at 16)
+- Shop search + sort dropdown (newest / oldest / price low→high / price high→low)
+- Numbered pagination — 16 designs per page (`?page=`)
+
+**Detailed snapshot:** [versions/v0.1.5.md](versions/v0.1.5.md)
+
+------
 
 ## [0.1.4] — 2026-09-13
 

@@ -8,7 +8,27 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const IMAGES_ROOT = join(__dirname, '../../Product Images');
 const TEMP_DIR = join(__dirname, '../../temp_uploads');
 
-const CATEGORIES = ['Plain_Tshirt_image', 'IU_Tshirt_image', 'Hoodies', 'Aesthetic_Tshirt_image', 'Literature_Cover_Tshirt'];
+const CATEGORIES = [
+  'Plain_Tshirt_image',
+  'IU_Tshirt_image',
+  'Hoodies',
+  'Aesthetic_Tshirt_image',
+  'Literature_Cover_Tshirt',
+  'IDK Category',
+  'Men_Shirt_image',
+  'Womens_Tshirt_image',
+  'Womens_Shirt_image',
+  'Men_Cap_image',
+  'Joggers_image',
+  'Men_Handbag_image',
+  'Women_Handbag_image',
+  'Men_Backpack_image',
+  'Women_Backpack_image',
+  'ToteBag_image',
+  'MessengerBag_image',
+  'Men_Jeans_image',
+  'Women_Jeans_image',
+];
 
 async function ensureDir(dir) {
   await mkdir(dir, { recursive: true });
@@ -16,8 +36,16 @@ async function ensureDir(dir) {
 
 async function getImages(category) {
   const dir = join(IMAGES_ROOT, category);
-  const files = await readdir(dir);
-  return files.filter(f => extname(f).toLowerCase() === '.png').map(f => join(dir, f));
+  const files = await readdir(dir, { withFileTypes: true });
+  const pngs = [];
+  for (const entry of files) {
+    if (entry.isDirectory()) {
+      pngs.push(...await getImages(join(category, entry.name)));
+    } else if (extname(entry.name).toLowerCase() === '.png') {
+      pngs.push(join(dir, entry.name));
+    }
+  }
+  return pngs;
 }
 
 async function createCopies(imagePath, count) {

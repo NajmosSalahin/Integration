@@ -25,7 +25,7 @@ export default function Hero() {
   }, [next]);
 
   return (
-    <section className="relative w-full h-[400px] sm:h-[500px] lg:h-[600px] overflow-hidden">
+    <section className="relative w-full aspect-[2.4/1] lg:h-[600px] lg:aspect-auto overflow-hidden">
       <div className="absolute inset-0">
         {slides.map((slide, i) => (
           <img
@@ -41,7 +41,7 @@ export default function Hero() {
 
       <div className="absolute inset-0 bg-black/10" />
 
-      <div className="absolute inset-0 z-10 flex items-end justify-center pb-10">
+      <div className="absolute inset-0 z-10 flex items-end justify-center pb-5 sm:pb-10">
         <Link
           to="/shop"
           className="inline-flex items-center gap-2 bg-[var(--accent)] hover:bg-[var(--accent)]/90 text-white px-7 py-[11px] text-sm font-medium transition-colors"
