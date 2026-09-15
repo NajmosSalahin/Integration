@@ -84,7 +84,7 @@ export default function FeaturedRow({ products }) {
             {products.map((product, i) => (
               <div
                 key={product._id}
-                className="w-[220px] sm:w-[260px] shrink-0 snap-start"
+                className="w-[180px] sm:w-[220px] shrink-0 snap-start"
               >
                 <ProductCard product={product} index={i} />
               </div>

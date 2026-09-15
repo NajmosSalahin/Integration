@@ -32,17 +32,17 @@ export default function ProductCard({ product, index }) {
             />
           </div>
 
-          <div className="p-5">
+          <div className="p-3">
             <div className="flex items-end justify-between gap-3">
               <div className="min-w-0 flex-1">
                 <h3
-                  className="text-[16px] font-semibold text-[var(--text-primary)] truncate"
+                  className="text-[14px] font-semibold text-[var(--text-primary)] truncate"
                   style={{ fontFamily: 'var(--font-body)' }}
                 >
                   {product.title}
                 </h3>
                 <p
-                  className="text-[15px] text-[var(--text-secondary)] mt-0.5"
+                  className="text-[14px] text-[var(--text-secondary)] mt-0.5"
                   style={{ fontFamily: 'var(--font-body)' }}
                 >
                   ৳{product.price.toLocaleString()}
