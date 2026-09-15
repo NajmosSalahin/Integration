@@ -1,14 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
-import { useSearchParams, Link } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
 import { fetchProducts } from '../api/products';
 import ProductCard from '../components/ProductCard';
 import Navbar from '../components/Navbar';
 import Hero from '../components/Hero';
 import CategoryGrid from '../components/CategoryGrid';
-import FeaturedCarousel from '../components/FeaturedCarousel';
+import FeaturedRow from '../components/FeaturedRow';
 import Footer from '../components/Footer';
 
 export default function Home() {
@@ -53,34 +52,7 @@ export default function Home() {
 
         <CategoryGrid />
 
-        {featured && featured.length > 0 && (
-          <section className="py-12 sm:py-8 lg:py-20">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="flex items-center justify-between mb-6">
-                <h2
-                  className="text-[26px] sm:text-[20px] font-bold text-[var(--text-primary)]"
-                  style={{ fontFamily: 'var(--font-utility)' }}
-                >
-                  Featured Products
-                </h2>
-                <Link
-                  to="/shop"
-                  className="inline-flex items-center gap-1.5 text-[14px] text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors"
-                  style={{ fontFamily: 'var(--font-body)' }}
-                >
-                  View All
-                  <ArrowRight size={14} />
-                </Link>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-                {featured.map((product, i) => (
-                  <ProductCard key={product._id} product={product} index={i} />
-                ))}
-              </div>
-            </div>
-          </section>
-        )}
+        <FeaturedRow products={featured} />
 
         <section className="py-12 sm:py-8 lg:py-20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -103,7 +75,7 @@ export default function Home() {
             </div>
 
             {isLoading && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
                 {[...Array(8)].map((_, i) => (
                   <div key={i} className="animate-pulse">
                     <div className="aspect-square bg-[#111] rounded-[10px]" />
@@ -129,7 +101,7 @@ export default function Home() {
 
             {filtered && filtered.length > 0 && (
               <motion.div
-                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6"
+                className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6"
                 initial="hidden"
                 animate="visible"
                 variants={{
