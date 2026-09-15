@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, ShoppingCart, Menu, X, LogOut, Package, LogIn, User } from 'lucide-react';
@@ -6,6 +6,8 @@ import { useQuery } from '@tanstack/react-query';
 import { fetchProducts } from '../api/products';
 import useCart from '../stores/cartStore';
 import { useAuth } from '../context/AuthContext';
+import { searchProducts } from '../lib/smartSearch';
+import useDebouncedValue from '../hooks/useDebouncedValue';
 import SearchResults from './SearchResults';
 
 export default function Navbar() {
@@ -57,12 +59,12 @@ export default function Navbar() {
     setMobileSearchOpen(false);
   }, [searchParams]);
 
-  const debouncedResults = searchQuery
-    ? products?.filter((p) =>
-        p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        p.tags?.some((t) => t.toLowerCase().includes(searchQuery.toLowerCase()))
-      )
-    : [];
+  const debouncedQuery = useDebouncedValue(searchQuery, 250);
+
+  const debouncedResults = useMemo(
+    () => searchProducts(products, debouncedQuery, 6),
+    [products, debouncedQuery]
+  );
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -115,7 +117,7 @@ export default function Navbar() {
                 <Search size={18} className="absolute left-3 top-3 text-[var(--text-secondary)]" />
 
                 <AnimatePresence>
-                  {showResults && debouncedResults.length > 0 && (
+                  {showResults && debouncedQuery.trim() && debouncedResults.length > 0 && (
                     <SearchResults
                       results={debouncedResults}
                       onSelect={() => setShowResults(false)}
@@ -315,7 +317,7 @@ export default function Navbar() {
 
                 <div ref={searchRef}>
                   <AnimatePresence>
-                    {showResults && debouncedResults.length > 0 && (
+                    {showResults && debouncedQuery.trim() && debouncedResults.length > 0 && (
                       <SearchResults
                         results={debouncedResults}
                         onSelect={() => { setShowResults(false); setMobileSearchOpen(false); }}
