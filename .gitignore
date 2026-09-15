@@ -38,3 +38,21 @@ coverage/
 
 # Misc
 *.log
+
+# Marketplace asset folders (large / user-uploaded, kept local; Cloudinary is source of truth)
+Product Images/
+client/public/**/Product Images/
+
+# Scratch / working notes (never ship)
+homepage-restructure-prompt.md
+versions/TEMPLATE.md
+versions/TEMPLATE_backup.md
+versions/versions/v0.1.5.md
+versions/order_backup_pre_taka.json
+order_backup_pre_taka.json
+client/node_modules/
+server/uploaded_urls.json
+
+# Local package-locks superseded by workspace resolution
+client/package-lock.json
+server/package-lock.json
