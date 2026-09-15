@@ -1,8 +1,10 @@
+import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
 import { useSearchParams } from 'react-router-dom';
 import { fetchProducts } from '../api/products';
+import { searchProducts } from '../lib/smartSearch';
 import ShopProductCard from '../components/ShopProductCard';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -30,20 +32,16 @@ export default function Shop() {
     queryFn: fetchProducts,
   });
 
-  const filtered = products?.filter((p) => {
-    const matchesTag = tagFilter
-      ? p.tags?.some((t) => t.toLowerCase() === tagFilter.toLowerCase())
-      : true;
-    const matchesSearch = searchQuery
-      ? p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        p.design?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        p.tags?.some((t) => t.toLowerCase().includes(searchQuery.toLowerCase()))
-      : true;
-    return matchesTag && matchesSearch;
-  });
+  const filtered = useMemo(() => {
+    if (!products) return undefined;
+    const base = searchQuery ? searchProducts(products, searchQuery) : products;
+    return tagFilter
+      ? base.filter((p) => p.tags?.some((t) => t.toLowerCase() === tagFilter.toLowerCase()))
+      : base;
+  }, [products, searchQuery, tagFilter]);
 
   const sorted = filtered ? [...filtered] : undefined;
-  if (sorted) {
+  if (sorted && !searchQuery) {
     switch (sort) {
       case 'oldest':
         sorted.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));

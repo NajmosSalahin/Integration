@@ -5,6 +5,23 @@ All notable changes to the Integration storefront will be documented in this fil
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.7] - 2026-09-15
+
+**Status:** Pre-Release — v0.1.7 In Development
+
+Smart search across the catalog, shared by the Navbar live dropdown, Home, and Shop. Fuzzy + relevance-ranked via Fuse.js, with description coverage and a debounced dropdown.
+
+- New `fuse.js` (v7) client-side fuzzy search via `client/src/lib/smartSearch.js` — typo tolerance, weighted keys (title 0.6 / tags 0.25 / description 0.15), threshold 0.4, match-anywhere
+- Navbar dropdown now debounced (250ms via `useDebouncedValue`) and capped at 6 results
+- Home and Shop search the whole catalog (title + tags + description) and rank by relevance; results stay relevance-ordered when a query is present
+- `description` is now included in the public `GET /api/products` projection so it can be searched
+- Dead code removed: `p.design` clause in Shop (`design` field doesn't exist) and unused `collection16`/`search16` consts on Home
+- FeaturedRow carousel + two-per-row mobile product grid on the homepage (committed `5bd0bb4`, included in this release's scope)
+
+**Detailed snapshot:** [versions/v0.1.7.md](versions/v0.1.7.md)
+
+------
+
 ## [0.1.6] - 2026-09-14
 
 **Status:** Pre-Release — v0.1.6 In Preparation

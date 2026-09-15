@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
 import { useSearchParams } from 'react-router-dom';
 import { fetchProducts } from '../api/products';
+import { searchProducts } from '../lib/smartSearch';
 import ProductCard from '../components/ProductCard';
 import Navbar from '../components/Navbar';
 import Hero from '../components/Hero';
@@ -20,23 +21,17 @@ export default function Home() {
     queryFn: fetchProducts,
   });
 
-  const filtered = products?.filter((p) => {
-    const matchesSearch = searchQuery
-      ? p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        p.tags?.some((t) => t.toLowerCase().includes(searchQuery.toLowerCase()))
-      : true;
-    const matchesTag = tagFilter
-      ? p.tags?.some((t) => t.toLowerCase() === tagFilter.toLowerCase())
-      : true;
-    return matchesSearch && matchesTag;
-  });
+  const filtered = products
+    ? (searchQuery ? searchProducts(products, searchQuery) : products).filter((p) =>
+        tagFilter
+          ? p.tags?.some((t) => t.toLowerCase() === tagFilter.toLowerCase())
+          : true
+      )
+    : undefined;
 
   const featured = products
     ?.filter((p) => p.featured === true)
     .slice(0, 8);
-
-  const collection16 = filtered?.slice(0, 16);
-  const search16 = filtered?.slice(0, 16);
 
   return (
     <>

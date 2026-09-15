@@ -7,7 +7,7 @@ export async function getProducts(req, res) {
       return res.json([]);
     }
     const products = await Product.find({ active: true })
-      .select('title price images tags stock sizes featured createdAt')
+      .select('title description price images tags stock sizes featured createdAt')
       .sort({ createdAt: -1 });
     res.json(products);
   } catch (err) {
