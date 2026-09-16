@@ -35,10 +35,12 @@ export async function getOrder(id) {
   return request(`/api/orders/${id}`);
 }
 
-export async function getAllOrders({ status, page } = {}) {
+export async function getAllOrders({ status, page, search, sort } = {}) {
   const params = new URLSearchParams();
   if (status) params.set('status', status);
   if (page) params.set('page', String(page));
+  if (search) params.set('search', search);
+  if (sort) params.set('sort', sort);
   const qs = params.toString();
   return request(`/api/orders${qs ? `?${qs}` : ''}`);
 }
