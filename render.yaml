@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: integration
+    name: integration-api
     runtime: node
     plan: free
     buildCommand: >-
@@ -32,6 +32,6 @@ services:
       - key: BREVO_NEWSLETTER_LIST_ID
         value: 6
       - key: CLIENT_URL
-        value: https://integration.onrender.com/
+        value: https://integration-06n2.onrender.com
       - key: NODE_ENV
         value: production
