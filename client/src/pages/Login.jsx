@@ -36,7 +36,7 @@ export default function Login() {
   };
 
   const inputClass =
-    'w-full px-3 py-2.5 bg-[#111] border border-[var(--border)] rounded-lg text-[var(--text-primary)] text-sm focus:outline-none focus:border-[var(--accent)] transition-colors pr-10';
+    'w-full px-3 py-2.5 bg-[var(--bg-secondary)] border border-[var(--border)] rounded-lg text-[var(--text-primary)] text-sm focus:outline-none focus:border-[var(--accent)] transition-colors pr-10';
 
   return (
     <>
@@ -77,7 +77,7 @@ export default function Login() {
                   value={form.email}
                   onChange={handleChange('email')}
                   autoComplete="email"
-                  className="w-full px-3 py-2.5 bg-[#111] border border-[var(--border)] rounded-lg text-[var(--text-primary)] text-sm focus:outline-none focus:border-[var(--accent)] transition-colors"
+                  className="w-full px-3 py-2.5 bg-[var(--bg-secondary)] border border-[var(--border)] rounded-lg text-[var(--text-primary)] text-sm focus:outline-none focus:border-[var(--accent)] transition-colors"
                 />
               )}
             </FormField>
@@ -120,7 +120,7 @@ export default function Login() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-2.5 bg-[var(--accent)] hover:bg-blue-500 disabled:bg-[var(--border)] disabled:text-[var(--text-secondary)] text-white text-sm tracking-[0.2em] uppercase rounded-lg transition-colors cursor-pointer disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
+              className="w-full py-2.5 bg-[var(--accent)] hover:bg-[var(--accent-hover)] disabled:bg-[var(--border)] disabled:text-[var(--text-secondary)] text-white text-sm tracking-[0.2em] uppercase rounded-lg transition-colors cursor-pointer disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
             >
               {loading && <Spinner size={15} />}
               {loading ? 'Logging in...' : 'Log In'}

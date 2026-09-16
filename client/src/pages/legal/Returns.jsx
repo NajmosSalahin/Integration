@@ -3,7 +3,7 @@ import ContentLayout from '../../components/ContentLayout';
 export default function Returns() {
   return (
     <ContentLayout title="Returns & Refunds">
-      <div className="space-y-6 text-gray-400 leading-relaxed">
+      <div className="space-y-6 text-[var(--text-secondary)] leading-relaxed">
         <div>
           <h2
             className="text-lg tracking-[0.15em] uppercase text-[#e8e8e8] mb-3"
@@ -26,19 +26,19 @@ export default function Returns() {
           </h2>
           <ul className="space-y-2">
             <li className="flex items-start gap-3">
-              <span className="text-blue-400 mt-1">&#x2022;</span>
+              <span className="text-[var(--accent)] mt-1">&#x2022;</span>
               <span>Item must be unworn, unwashed, and in its original condition</span>
             </li>
             <li className="flex items-start gap-3">
-              <span className="text-blue-400 mt-1">&#x2022;</span>
+              <span className="text-[var(--accent)] mt-1">&#x2022;</span>
               <span>Original tags must be attached</span>
             </li>
             <li className="flex items-start gap-3">
-              <span className="text-blue-400 mt-1">&#x2022;</span>
+              <span className="text-[var(--accent)] mt-1">&#x2022;</span>
               <span>Return request must be initiated within 7 days of delivery</span>
             </li>
             <li className="flex items-start gap-3">
-              <span className="text-blue-400 mt-1">&#x2022;</span>
+              <span className="text-[var(--accent)] mt-1">&#x2022;</span>
               <span>Item must not be from a sale or promotional offer (unless defective)</span>
             </li>
           </ul>

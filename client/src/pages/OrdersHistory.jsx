@@ -21,7 +21,7 @@ const STATUS_LABELS = {
 const STATUS_COLORS = {
   pending_payment: 'text-yellow-400',
   awaiting_confirmation: 'text-orange-400',
-  paid: 'text-blue-400',
+  paid: 'text-[var(--accent)]',
   fulfilled: 'text-emerald-400',
   cancelled: 'text-red-400',
 };

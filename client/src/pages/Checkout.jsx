@@ -13,7 +13,7 @@ const PHONE_RE = /^(\+?[\d\s()-]{8,16})$/;
 const MIN_ADDRESS_LEN = 10;
 
 const inputClass = (hasError) =>
-  `w-full px-3 py-2.5 bg-[#111] border rounded-lg text-sm text-[var(--text-primary)] placeholder-[var(--text-secondary)] focus:outline-none transition-colors ${
+  `w-full px-3 py-2.5 bg-[var(--bg-secondary)] border rounded-lg text-sm text-[var(--text-primary)] placeholder-[var(--text-secondary)] focus:outline-none transition-colors ${
     hasError
       ? 'border-red-500/60 focus:border-red-500'
       : 'border-[var(--border)] focus:border-[var(--accent)]'
@@ -147,7 +147,7 @@ export default function Checkout() {
                         disabled={submitting}
                         autoComplete="name"
                         aria-readonly="true"
-                        className="w-full px-3 py-2.5 bg-[#111] border border-[var(--border)] rounded-lg text-sm text-[var(--text-secondary)] cursor-not-allowed"
+                        className="w-full px-3 py-2.5 bg-[var(--bg-secondary)] border border-[var(--border)] rounded-lg text-sm text-[var(--text-secondary)] cursor-not-allowed"
                       />
                     )}
                   </FormField>
@@ -162,7 +162,7 @@ export default function Checkout() {
                         disabled={submitting}
                         autoComplete="email"
                         aria-readonly="true"
-                        className="w-full px-3 py-2.5 bg-[#111] border border-[var(--border)] rounded-lg text-sm text-[var(--text-secondary)] cursor-not-allowed"
+                        className="w-full px-3 py-2.5 bg-[var(--bg-secondary)] border border-[var(--border)] rounded-lg text-sm text-[var(--text-secondary)] cursor-not-allowed"
                       />
                     )}
                   </FormField>
@@ -252,7 +252,7 @@ export default function Checkout() {
                   className={`w-full py-2.5 rounded-lg text-sm tracking-[0.2em] uppercase transition-all duration-200 ${
                     submitting || !phone.trim() || !address.trim()
                       ? 'bg-[var(--border)] text-[var(--text-secondary)] cursor-not-allowed'
-                      : 'bg-[var(--accent)] hover:bg-blue-500 text-white cursor-pointer'
+                      : 'bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white cursor-pointer'
                   }`}
                 >
                   {submitting ? 'Placing Order...' : 'Place Order'}
@@ -271,7 +271,7 @@ export default function Checkout() {
                   <ul className="space-y-2">
                     {items.map((item) => (
                       <li key={`${item.productId}-${item.size}`} className="flex gap-3">
-                        <div className="shrink-0 w-12 h-12 bg-[#111] rounded-lg overflow-hidden">
+                        <div className="shrink-0 w-12 h-12 bg-[var(--bg-secondary)] rounded-lg overflow-hidden">
                           <img
                             src={item.image}
                             alt={item.title}

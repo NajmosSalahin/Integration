@@ -29,7 +29,7 @@ export default function ConfirmDialog({
           className={`px-4 py-2 text-sm rounded-lg text-white flex items-center gap-2 transition-colors disabled:opacity-50 ${
             danger
               ? 'bg-red-600 hover:bg-red-500'
-              : 'bg-[var(--accent)] hover:bg-blue-500'
+              : 'bg-[var(--accent)] hover:bg-[var(--accent-hover)]'
           }`}
         >
           {loading && <Spinner size={14} />}

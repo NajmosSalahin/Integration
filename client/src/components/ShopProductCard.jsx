@@ -29,7 +29,7 @@ export default function ShopProductCard({ product, index }) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: index * 0.08 }}
     >
-      <div className="group relative overflow-hidden rounded-[10px] border border-[var(--border)] bg-[#111] transition-all duration-300 group-hover:border-[var(--accent)]">
+      <div className="group relative overflow-hidden rounded-[10px] border border-[var(--border)] bg-[var(--bg-secondary)] transition-all duration-300 group-hover:border-[var(--accent)]">
         <Link
           to={`/product/${product._id}`}
           className="block"

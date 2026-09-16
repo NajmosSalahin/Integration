@@ -188,7 +188,7 @@ export default function Products() {
               </h1>
               <button
                 onClick={openAdd}
-                className="flex items-center gap-2 px-4 py-2 bg-[var(--accent)] hover:bg-blue-500 text-white text-sm rounded-lg transition-colors"
+                className="flex items-center gap-2 px-4 py-2 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white text-sm rounded-lg transition-colors"
               >
                 <Plus size={16} aria-hidden="true" />
                 <span className="tracking-wider uppercase">Add Product</span>
@@ -472,7 +472,7 @@ export default function Products() {
                 className={`flex-1 py-2 text-sm rounded-lg transition-colors inline-flex items-center justify-center gap-2 ${
                   isSubmitting || form.sizes.length === 0
                     ? 'bg-[var(--border)] text-[var(--text-secondary)] cursor-not-allowed'
-                    : 'bg-[var(--accent)] hover:bg-blue-500 text-white cursor-pointer'
+                    : 'bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white cursor-pointer'
                 }`}
               >
                 {isSubmitting && <Spinner size={14} />}

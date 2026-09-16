@@ -76,7 +76,7 @@ export default function Contact() {
                   value={form.name}
                   onChange={handleChange('name')}
                   autoComplete="name"
-                  className="w-full px-3 py-2.5 bg-[#111] border border-[var(--border)] rounded-lg text-[var(--text-primary)] text-sm focus:outline-none focus:border-[var(--accent)] transition-colors"
+                  className="w-full px-3 py-2.5 bg-[var(--bg-secondary)] border border-[var(--border)] rounded-lg text-[var(--text-primary)] text-sm focus:outline-none focus:border-[var(--accent)] transition-colors"
                 />
               )}
             </FormField>
@@ -90,7 +90,7 @@ export default function Contact() {
                   value={form.email}
                   onChange={handleChange('email')}
                   autoComplete="email"
-                  className="w-full px-3 py-2.5 bg-[#111] border border-[var(--border)] rounded-lg text-[var(--text-primary)] text-sm focus:outline-none focus:border-[var(--accent)] transition-colors"
+                  className="w-full px-3 py-2.5 bg-[var(--bg-secondary)] border border-[var(--border)] rounded-lg text-[var(--text-primary)] text-sm focus:outline-none focus:border-[var(--accent)] transition-colors"
                 />
               )}
             </FormField>
@@ -106,7 +106,7 @@ export default function Contact() {
                   maxLength={MAX_MESSAGE}
                   value={form.message}
                   onChange={handleChange('message')}
-                  className="w-full px-3 py-2.5 bg-[#111] border border-[var(--border)] rounded-lg text-[var(--text-primary)] text-sm focus:outline-none focus:border-[var(--accent)] transition-colors resize-none"
+                  className="w-full px-3 py-2.5 bg-[var(--bg-secondary)] border border-[var(--border)] rounded-lg text-[var(--text-primary)] text-sm focus:outline-none focus:border-[var(--accent)] transition-colors resize-none"
                 />
                 <p className="text-xs text-[var(--text-secondary)] mt-1 text-right">
                   {form.message.length}/{MAX_MESSAGE}
@@ -118,7 +118,7 @@ export default function Contact() {
           <button
             type="submit"
             disabled={!canSubmit}
-            className="px-8 py-2.5 bg-[var(--accent)] hover:bg-blue-500 disabled:bg-[var(--border)] disabled:text-[var(--text-secondary)] text-white text-sm tracking-[0.2em] uppercase rounded-lg transition-colors cursor-pointer disabled:cursor-not-allowed inline-flex items-center gap-2"
+            className="px-8 py-2.5 bg-[var(--accent)] hover:bg-[var(--accent-hover)] disabled:bg-[var(--border)] disabled:text-[var(--text-secondary)] text-white text-sm tracking-[0.2em] uppercase rounded-lg transition-colors cursor-pointer disabled:cursor-not-allowed inline-flex items-center gap-2"
           >
             {loading && <Spinner size={15} />}
             {loading ? 'Sending...' : 'Send Message'}

@@ -99,7 +99,7 @@ export default function ForgotPassword() {
                     setError(null);
                   }}
                   autoComplete="email"
-                  className="w-full px-4 py-3 bg-[#111] border border-[var(--border)] rounded-lg text-[var(--text-primary)] text-sm focus:outline-none focus:border-[var(--accent)] transition-colors"
+                  className="w-full px-4 py-3 bg-[var(--bg-secondary)] border border-[var(--border)] rounded-lg text-[var(--text-primary)] text-sm focus:outline-none focus:border-[var(--accent)] transition-colors"
                 />
               )}
             </FormField>
@@ -107,7 +107,7 @@ export default function ForgotPassword() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3.5 bg-[var(--accent)] hover:bg-blue-500 disabled:bg-[var(--border)] disabled:text-[var(--text-secondary)] text-white text-sm tracking-[0.2em] uppercase rounded-lg transition-colors cursor-pointer disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
+              className="w-full py-3.5 bg-[var(--accent)] hover:bg-[var(--accent-hover)] disabled:bg-[var(--border)] disabled:text-[var(--text-secondary)] text-white text-sm tracking-[0.2em] uppercase rounded-lg transition-colors cursor-pointer disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
             >
               {loading && <Spinner size={15} />}
               {loading ? 'Sending...' : 'Send Reset Link'}

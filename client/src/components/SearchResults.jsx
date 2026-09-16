@@ -14,7 +14,7 @@ export default function SearchResults({ results, query, onSelect }) {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -10 }}
       transition={{ duration: 0.15 }}
-      className="absolute top-full left-0 right-0 z-50 mt-1 bg-[#111] border border-[var(--border)] rounded-lg shadow-lg max-h-80 overflow-y-auto"
+      className="absolute top-full left-0 right-0 z-50 mt-1 bg-[var(--bg-secondary)] border border-[var(--border)] rounded-lg shadow-lg max-h-80 overflow-y-auto"
     >
       {results && results.length > 0 ? (
         <>

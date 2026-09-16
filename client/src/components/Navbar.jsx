@@ -144,7 +144,7 @@ export default function Navbar() {
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onFocus={() => setShowResults(true)}
                   aria-label="Search designs"
-                  className="w-full pl-10 pr-4 py-2.5 border border-[var(--border)] rounded-lg bg-[#111] text-[var(--text-primary)] text-sm focus:outline-none focus:border-[var(--accent)] transition-colors placeholder-[var(--text-secondary)]"
+                  className="w-full pl-10 pr-4 py-2.5 border border-[var(--border)] rounded-lg bg-[var(--bg-secondary)] text-[var(--text-primary)] text-sm focus:outline-none focus:border-[var(--accent)] transition-colors placeholder-[var(--text-secondary)]"
                 />
                 <Search size={18} className="absolute left-3 top-3 text-[var(--text-secondary)]" aria-hidden="true" />
 
@@ -253,7 +253,7 @@ export default function Navbar() {
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: -8, scale: 0.95 }}
                       transition={{ duration: 0.15 }}
-                      className="absolute right-0 top-full mt-2 w-56 bg-[#111] border border-[var(--border)] rounded-xl shadow-xl overflow-hidden z-50"
+                      className="absolute right-0 top-full mt-2 w-56 bg-[var(--bg-secondary)] border border-[var(--border)] rounded-xl shadow-xl overflow-hidden z-50"
                       role="menu"
                       id="user-menu"
                     >
@@ -376,7 +376,7 @@ export default function Navbar() {
                   onFocus={() => setShowResults(true)}
                   autoFocus
                   aria-label="Search designs"
-                  className="w-full pl-10 pr-4 py-2.5 border border-[var(--border)] rounded-lg bg-[#111] text-[var(--text-primary)] text-sm focus:outline-none focus:border-[var(--accent)] transition-colors placeholder-[var(--text-secondary)]"
+                  className="w-full pl-10 pr-4 py-2.5 border border-[var(--border)] rounded-lg bg-[var(--bg-secondary)] text-[var(--text-primary)] text-sm focus:outline-none focus:border-[var(--accent)] transition-colors placeholder-[var(--text-secondary)]"
                 />
                 <Search size={18} className="absolute left-3 top-3.5 text-[var(--text-secondary)]" aria-hidden="true" />
 

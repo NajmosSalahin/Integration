@@ -117,7 +117,7 @@ export default function Cart() {
                       >
                         <Link
                           to={`/product/${item.productId}`}
-                          className="shrink-0 w-24 h-24 bg-[#111] rounded-lg overflow-hidden"
+                          className="shrink-0 w-24 h-24 bg-[var(--bg-secondary)] rounded-lg overflow-hidden"
                         >
                           <img
                             src={item.image}
@@ -236,14 +236,14 @@ export default function Cart() {
                   {user ? (
                     <Link
                       to="/checkout"
-                      className="block w-full py-2.5 rounded-lg text-sm tracking-[0.2em] uppercase bg-[var(--accent)] hover:bg-blue-500 text-white text-center transition-all duration-200"
+                      className="block w-full py-2.5 rounded-lg text-sm tracking-[0.2em] uppercase bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white text-center transition-all duration-200"
                     >
                       Checkout
                     </Link>
                   ) : (
                     <Link
                       to="/login?redirect=/checkout"
-                      className="block w-full py-2.5 rounded-lg text-sm tracking-[0.2em] uppercase bg-[var(--accent)] hover:bg-blue-500 text-white text-center transition-all duration-200"
+                      className="block w-full py-2.5 rounded-lg text-sm tracking-[0.2em] uppercase bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white text-center transition-all duration-200"
                     >
                       Login to Checkout
                     </Link>

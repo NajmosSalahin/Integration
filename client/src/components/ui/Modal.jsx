@@ -79,7 +79,7 @@ export default function Modal({ open, onClose, title, children, maxWidth = 'max-
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 10 }}
             transition={{ duration: 0.2 }}
-            className={`relative w-full ${maxWidth} bg-[#111] border border-[var(--border)] rounded-xl p-6 shadow-2xl outline-none`}
+            className={`relative w-full ${maxWidth} bg-[var(--bg-secondary)] border border-[var(--border)] rounded-xl p-6 shadow-2xl outline-none`}
           >
             <div className="flex items-center justify-between mb-4">
               <h2

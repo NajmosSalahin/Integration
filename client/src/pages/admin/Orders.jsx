@@ -22,7 +22,7 @@ const STATUS_OPTIONS = [
 const STATUS_COLORS = {
   pending_payment: 'text-yellow-400',
   awaiting_confirmation: 'text-orange-400',
-  paid: 'text-blue-400',
+  paid: 'text-[var(--accent)]',
   fulfilled: 'text-emerald-400',
   cancelled: 'text-red-400',
 };
@@ -99,7 +99,7 @@ export default function Orders() {
                     setPage(1);
                   }}
                   aria-label="Search orders"
-                  className="w-full pl-9 pr-3 py-2 bg-[#111] border border-[var(--border)] rounded-lg text-sm text-[var(--text-primary)] placeholder-[var(--text-secondary)] focus:outline-none focus:border-[var(--accent)] transition-colors"
+                  className="w-full pl-9 pr-3 py-2 bg-[var(--bg-secondary)] border border-[var(--border)] rounded-lg text-sm text-[var(--text-primary)] placeholder-[var(--text-secondary)] focus:outline-none focus:border-[var(--accent)] transition-colors"
                 />
               </div>
               <select
@@ -109,7 +109,7 @@ export default function Orders() {
                   setPage(1);
                 }}
                 aria-label="Sort orders"
-                className="px-3 py-2 bg-[#111] border border-[var(--border)] rounded-lg text-sm text-[var(--text-primary)] focus:outline-none focus:border-[var(--accent)] transition-colors cursor-pointer"
+                className="px-3 py-2 bg-[var(--bg-secondary)] border border-[var(--border)] rounded-lg text-sm text-[var(--text-primary)] focus:outline-none focus:border-[var(--accent)] transition-colors cursor-pointer"
               >
                 <option value="date_desc">Newest first</option>
                 <option value="date_asc">Oldest first</option>
@@ -234,7 +234,7 @@ export default function Orders() {
                             <span className={`text-xs px-2 py-0.5 rounded-lg ${
                               order.paymentMethod === 'cod'
                                 ? 'bg-orange-500/10 text-orange-400'
-                                : 'bg-blue-500/10 text-blue-400'
+                                : 'bg-[var(--accent)]/10 text-[var(--accent)]'
                             }`}>
                               {order.paymentMethod === 'cod' ? 'COD' : 'bKash'}
                             </span>

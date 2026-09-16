@@ -8,17 +8,17 @@ export default function NotFound() {
         <title>404 — Integration</title>
       </Helmet>
 
-      <div className="min-h-screen bg-[#0a0a0a] text-[#e8e8e8] flex flex-col items-center justify-center px-4">
+      <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)] flex flex-col items-center justify-center px-4">
         <h1
-          className="text-8xl sm:text-9xl tracking-[0.2em] text-blue-500"
+          className="text-8xl sm:text-9xl tracking-[0.2em] text-[var(--accent)]"
           style={{ fontFamily: "'Bebas Neue', sans-serif" }}
         >
           404
         </h1>
-        <p className="mt-4 text-lg text-gray-400">Page not found</p>
+        <p className="mt-4 text-lg text-[var(--text-secondary)]">Page not found</p>
         <Link
           to="/"
-          className="mt-8 px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white text-sm tracking-[0.2em] uppercase rounded-sm transition-colors"
+          className="mt-8 px-6 py-3 bg-[var(--accent-hover)] hover:bg-[var(--accent)] text-white text-sm tracking-[0.2em] uppercase rounded-sm transition-colors"
         >
           Back to Collection
         </Link>

@@ -184,13 +184,13 @@ export default function OrderConfirmation() {
                     href={`https://m.me/${messengerPage}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-4 py-2 bg-[var(--accent)] hover:bg-blue-500 text-white text-sm rounded-lg transition-colors"
+                    className="px-4 py-2 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white text-sm rounded-lg transition-colors"
                   >
                     Messenger
                   </a>
                   <a
                     href="mailto:najmussalahin.adib@gmail.com"
-                    className="px-4 py-2 bg-[var(--bg-secondary)] hover:bg-gray-700 text-[var(--text-primary)] text-sm rounded-lg transition-colors"
+                    className="px-4 py-2 bg-[var(--bg-secondary)] hover:bg-[var(--border)] text-[var(--text-primary)] text-sm rounded-lg transition-colors"
                   >
                     Email
                   </a>

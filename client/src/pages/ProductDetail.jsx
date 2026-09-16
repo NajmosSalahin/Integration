@@ -207,7 +207,7 @@ export default function ProductDetail() {
                     ${selectedSize
                       ? added
                         ? 'bg-emerald-600 text-white cursor-default'
-                        : 'bg-[var(--accent)] hover:bg-blue-500 text-white cursor-pointer'
+                        : 'bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white cursor-pointer'
                       : 'bg-[var(--border)] text-[var(--text-secondary)] cursor-pointer hover:text-[var(--text-primary)]'
                     }
                   `}

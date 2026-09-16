@@ -93,7 +93,7 @@ export default function ProductGallery({ images }) {
   return (
     <div className="space-y-3">
       <div
-        className="relative aspect-square overflow-hidden rounded-[10px] border border-[var(--border)] bg-gray-900 cursor-zoom-in"
+        className="relative aspect-square overflow-hidden rounded-[10px] border border-[var(--border)] bg-[var(--bg-secondary)] cursor-zoom-in"
         onMouseEnter={() => setIsHovering(true)}
         onMouseLeave={() => setIsHovering(false)}
         onMouseMove={handleMouseMove}
@@ -147,7 +147,7 @@ export default function ProductGallery({ images }) {
               className={`flex-shrink-0 w-16 h-16 rounded-sm overflow-hidden border-2 transition-colors duration-200 ${
                 i === selectedIndex
                   ? 'border-[var(--accent)] ring-1 ring-[var(--accent)]'
-                  : 'border-[var(--border)] hover:border-gray-600'
+                  : 'border-[var(--border)] hover:border-[var(--text-secondary)]'
               }`}
             >
               <img

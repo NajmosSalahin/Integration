@@ -37,7 +37,7 @@ export default function CategoryGrid() {
             ? [...Array(3)].map((_, i) => (
                 <div
                   key={i}
-                  className="rounded-[10px] border border-[var(--border)] bg-[#111] overflow-hidden"
+                  className="rounded-[10px] border border-[var(--border)] bg-[var(--bg-secondary)] overflow-hidden"
                 >
                   <div className="flex items-center min-h-[140px]">
                     <div className="w-1/3 aspect-square shrink-0 bg-[var(--border)] animate-pulse" />
@@ -55,7 +55,7 @@ export default function CategoryGrid() {
                   <Link
                     key={category.tag}
                     to={`/shop?tag=${category.tag}`}
-                    className="group relative overflow-hidden rounded-[10px] border border-[var(--border)] bg-[#111] transition-all duration-300 hover:border-[var(--accent)]"
+                    className="group relative overflow-hidden rounded-[10px] border border-[var(--border)] bg-[var(--bg-secondary)] transition-all duration-300 hover:border-[var(--accent)]"
                     aria-label={`Shop ${category.name}`}
                   >
                     <div className="flex items-center min-h-[140px]">

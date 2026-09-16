@@ -3,7 +3,7 @@ import ContentLayout from '../components/ContentLayout';
 export default function About() {
   return (
     <ContentLayout title="About">
-      <div className="space-y-6 text-gray-400 leading-relaxed">
+      <div className="space-y-6 text-[var(--text-secondary)] leading-relaxed">
         <p>
           Integration was born from a simple idea: different styles can coexist under one identity.
           In a world where everyone is told to pick a lane, we believe the most interesting people
@@ -22,7 +22,7 @@ export default function About() {
           is something that feels entirely new.
         </p>
 
-        <div className="py-6 border-t border-b border-gray-800/50">
+        <div className="py-6 border-t border-b border-[var(--border)]/50">
           <h2
             className="text-xl tracking-[0.15em] uppercase text-[#e8e8e8] mb-4"
             style={{ fontFamily: "'Bebas Neue', sans-serif" }}
@@ -31,15 +31,15 @@ export default function About() {
           </h2>
           <ul className="space-y-3">
             <li className="flex items-start gap-3">
-              <span className="text-blue-400 mt-1">&#x2022;</span>
+              <span className="text-[var(--accent)] mt-1">&#x2022;</span>
               <span>Quality over quantity. Every design earns its place.</span>
             </li>
             <li className="flex items-start gap-3">
-              <span className="text-blue-400 mt-1">&#x2022;</span>
+              <span className="text-[var(--accent)] mt-1">&#x2022;</span>
               <span>No fast fashion. We produce with intention, not impulse.</span>
             </li>
             <li className="flex items-start gap-3">
-              <span className="text-blue-400 mt-1">&#x2022;</span>
+              <span className="text-[var(--accent)] mt-1">&#x2022;</span>
               <span>Transparency in process — from payment to delivery, you know exactly what to expect.</span>
             </li>
           </ul>
