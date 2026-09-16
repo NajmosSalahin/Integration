@@ -98,10 +98,10 @@ export default function Cart() {
                 <ShoppingBag size={48} className="mx-auto text-[var(--border)] mb-4" aria-hidden="true" />
                 <p className="text-[var(--text-secondary)] mb-2">Your cart is empty</p>
                 <Link
-                  to="/"
+                  to="/shop"
                   className="text-sm text-[var(--accent)] hover:text-blue-400 transition-colors"
                 >
-                  Browse the collection
+                  Browse the shop
                 </Link>
               </div>
             ) : (
