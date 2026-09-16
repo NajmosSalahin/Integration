@@ -255,7 +255,7 @@ export default function Products() {
                     {products.map((product) => (
                       <tr
                         key={product._id}
-                        className={`border-b border-[var(--border)]/50 ${!product.active ? 'opacity-40' : 'hover:bg-[var(--bg-secondary)]'}`}
+                        className={`border-b border-[var(--border)]/50 ${!product.active ? 'opacity-50' : 'hover:bg-[var(--bg-secondary)]'}`}
                       >
                         <td className="py-3 px-3">
                           <div className="w-10 h-10 bg-[var(--bg-secondary)] rounded-lg overflow-hidden">

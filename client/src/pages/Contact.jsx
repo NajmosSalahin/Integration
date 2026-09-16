@@ -50,7 +50,7 @@ export default function Contact() {
         </p>
 
         {success && (
-          <div className="p-4 border border-emerald-500/30 bg-emerald-500/10 rounded-lg flex items-start gap-2" role="status">
+          <div className="p-4 border border-emerald-500/40 bg-emerald-500/20 rounded-lg flex items-start gap-2" role="status">
             <CheckCircle size={18} className="shrink-0 mt-0.5 text-emerald-400" aria-hidden="true" />
             <p className="text-emerald-400 text-sm">
               Your message has been sent. We will get back to you shortly.
@@ -59,7 +59,7 @@ export default function Contact() {
         )}
 
         {error && (
-          <div className="p-4 border border-red-500/30 bg-red-500/10 rounded-lg flex items-start gap-2" role="alert">
+          <div className="p-4 border border-red-500/40 bg-red-500/20 rounded-lg flex items-start gap-2" role="alert">
             <AlertCircle size={18} className="shrink-0 mt-0.5 text-red-400" aria-hidden="true" />
             <p className="text-red-400 text-sm">{error}</p>
           </div>

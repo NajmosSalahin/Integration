@@ -29,9 +29,9 @@ const icons = {
 };
 
 const colors = {
-  success: 'border-emerald-500/40 bg-emerald-500/10 text-emerald-300',
-  error: 'border-red-500/40 bg-red-500/10 text-red-300',
-  info: 'border-blue-500/40 bg-blue-500/10 text-blue-300',
+  success: 'border-emerald-500/60 bg-emerald-500/20 text-emerald-300',
+  error: 'border-red-500/60 bg-red-500/20 text-red-300',
+  info: 'border-blue-500/60 bg-blue-500/20 text-blue-300',
 };
 
 const iconColors = {

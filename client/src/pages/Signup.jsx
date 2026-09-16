@@ -197,7 +197,7 @@ export default function Signup() {
                     <CheckCircle
                       size={12}
                       aria-hidden="true"
-                      className={rule.passed ? '' : 'opacity-30'}
+                      className={rule.passed ? '' : 'opacity-50'}
                     />
                     {rule.label}
                   </li>

@@ -197,7 +197,7 @@ export default function Cart() {
                               <button
                                 onClick={() => updateQuantity(item.productId, item.size, item.quantity + 1)}
                                 disabled={item.quantity >= MAX_QTY}
-                                className="w-11 h-11 flex items-center justify-center border border-[var(--border)] rounded-lg text-[var(--text-secondary)] hover:border-[var(--accent)] hover:text-[var(--text-primary)] transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                                className="w-11 h-11 flex items-center justify-center border border-[var(--border)] rounded-lg text-[var(--text-secondary)] hover:border-[var(--accent)] hover:text-[var(--text-primary)] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                                 aria-label="Increase quantity"
                               >
                                 <Plus size={14} aria-hidden="true" />
@@ -227,7 +227,7 @@ export default function Cart() {
                     </span>
                   </div>
 
-                  <div className="p-3 bg-blue-500/10 border border-blue-500/30 rounded-lg">
+                  <div className="p-3 bg-blue-500/20 border border-blue-500/40 rounded-lg">
                     <p className="text-xs text-blue-300">
                       Payment is manual via bKash. You will be contacted after placing your order.
                     </p>
