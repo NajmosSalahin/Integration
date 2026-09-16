@@ -86,12 +86,12 @@ export default function ShopProductCard({ product, index }) {
             disabled={!instock}
             aria-label={instock ? `Add ${product.title} to cart` : `${product.title} is out of stock`}
             aria-disabled={!instock}
-            className={`shrink-0 w-[30px] h-[30px] flex items-center justify-center border rounded-lg transition-all ${
+            className={`shrink-0 w-[36px] h-[36px] flex items-center justify-center border rounded-lg backdrop-blur-sm transition-all ${
               added
                 ? 'bg-emerald-500 border-emerald-500 text-white'
                 : instock
-                  ? 'border-[var(--border)] text-[var(--text-secondary)] hover:bg-[var(--accent)] hover:border-[var(--accent)] hover:text-white'
-                  : 'border-[var(--border)] text-[var(--text-secondary)] opacity-50 cursor-not-allowed'
+                  ? 'bg-black/60 border-white/25 text-white hover:bg-[var(--accent)] hover:border-[var(--accent)]'
+                  : 'bg-black/60 border-white/25 text-white opacity-50 cursor-not-allowed'
             }`}
           >
             {added ? <Check size={14} aria-hidden="true" /> : <ShoppingCart size={14} aria-hidden="true" />}
