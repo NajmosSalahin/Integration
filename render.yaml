@@ -27,7 +27,11 @@ services:
         sync: false
       - key: WHATSAPP_NUMBER
         sync: false
+      - key: MESSENGER_PAGE
+        value: https://www.facebook.com/profile.php?id=61594204353841
+      - key: BREVO_NEWSLETTER_LIST_ID
+        value: 6
       - key: CLIENT_URL
-        value: https://integration-3j28.onrender.com/
+        value: https://integration.onrender.com/
       - key: NODE_ENV
         value: production
