@@ -1,11 +1,17 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { subscribeNewsletter } from '../api/newsletter';
+import Spinner from './ui/Spinner';
 
 export default function NewsletterForm({ compact = false }) {
   const [email, setEmail] = useState('');
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(null);
+  const successTimer = useRef(null);
+
+  useEffect(() => {
+    return () => clearTimeout(successTimer.current);
+  }, []);
 
   const mutation = useMutation({
     mutationFn: subscribeNewsletter,
@@ -13,27 +19,40 @@ export default function NewsletterForm({ compact = false }) {
       setSuccess(true);
       setEmail('');
       setError(null);
+      successTimer.current = setTimeout(() => setSuccess(false), 6000);
     },
     onError: (err) => {
-      setError(err.message);
+      const msg = err?.message || '';
+      const alreadySubscribed =
+        /already/i.test(msg) || /subscri/i.test(msg) && /exist/i.test(msg);
+      setError(
+        alreadySubscribed
+          ? 'You are already subscribed — no action needed.'
+          : msg
+      );
       setSuccess(false);
     },
   });
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setError(null);
     setSuccess(false);
     mutation.mutate(email);
   };
+
+  const id = compact ? 'newsletter-email-compact' : 'newsletter-email';
 
   if (compact) {
     return (
       <div>
         <form onSubmit={handleSubmit} className="flex gap-2">
           <input
+            id={id}
             type="email"
             required
             placeholder="Your email"
+            aria-label="Email address for newsletter"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="flex-1 px-3 py-2.5 border border-[var(--border)] rounded-lg bg-[#111] text-[var(--text-primary)] text-sm focus:outline-none focus:border-[var(--accent)] transition-colors placeholder-[var(--text-secondary)]"
@@ -41,17 +60,18 @@ export default function NewsletterForm({ compact = false }) {
           <button
             type="submit"
             disabled={mutation.isPending}
-            className="px-4 py-2.5 bg-[var(--accent)] text-white text-xs tracking-[0.2em] uppercase rounded-lg hover:bg-blue-600 disabled:bg-gray-400 transition-colors cursor-pointer disabled:cursor-not-allowed"
+            className="px-4 py-2.5 bg-[var(--accent)] text-white text-xs tracking-[0.2em] uppercase rounded-lg hover:bg-blue-600 disabled:bg-gray-800 disabled:text-gray-500 transition-colors cursor-pointer disabled:cursor-not-allowed inline-flex items-center gap-1.5"
             style={{ fontFamily: "var(--font-utility)" }}
           >
-            {mutation.isPending ? '...' : 'Subscribe'}
+            {mutation.isPending && <Spinner size={12} />}
+            {mutation.isPending ? 'Subscribing' : 'Subscribe'}
           </button>
         </form>
         {success && (
-          <p className="text-xs text-green-500 mt-2">Thanks for subscribing!</p>
+          <p className="text-xs text-green-500 mt-2" role="status">Thanks for subscribing!</p>
         )}
         {error && (
-          <p className="text-xs text-red-400 mt-2">{error}</p>
+          <p className="text-xs text-red-400 mt-2" role="alert">{error}</p>
         )}
       </div>
     );
@@ -70,21 +90,23 @@ export default function NewsletterForm({ compact = false }) {
       </p>
 
       {success && (
-        <p className="text-sm text-green-600 mb-3">
+        <p className="text-sm text-green-600 mb-3" role="status">
           Thanks for subscribing!
         </p>
       )}
 
       {error && (
-        <p className="text-sm text-red-500 mb-3">{error}</p>
+        <p className="text-sm text-red-500 mb-3" role="alert">{error}</p>
       )}
 
       <form onSubmit={handleSubmit}>
         <div className="flex gap-2">
           <input
+            id={id}
             type="email"
             required
             placeholder="Your email"
+            aria-label="Email address for newsletter"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="flex-1 px-4 py-2.5 border border-[var(--border)] rounded-lg bg-[var(--bg-primary)] text-[var(--text-primary)] text-sm focus:outline-none focus:border-[var(--accent)] transition-colors"
@@ -92,10 +114,11 @@ export default function NewsletterForm({ compact = false }) {
           <button
             type="submit"
             disabled={mutation.isPending}
-            className="px-4 py-2 bg-[var(--accent)] text-white text-xs tracking-[0.2em] uppercase rounded-lg hover:bg-blue-600 disabled:bg-gray-400 transition-colors cursor-pointer disabled:cursor-not-allowed"
+            className="px-4 py-2 bg-[var(--accent)] text-white text-xs tracking-[0.2em] uppercase rounded-lg hover:bg-blue-600 disabled:bg-gray-800 disabled:text-gray-500 transition-colors cursor-pointer disabled:cursor-not-allowed inline-flex items-center gap-1.5"
             style={{ fontFamily: "var(--font-utility)" }}
           >
-            {mutation.isPending ? 'Sending...' : 'Subscribe'}
+            {mutation.isPending && <Spinner size={12} />}
+            {mutation.isPending ? 'Subscribing' : 'Subscribe'}
           </button>
         </div>
       </form>
