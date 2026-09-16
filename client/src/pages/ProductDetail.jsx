@@ -1,49 +1,102 @@
-import { useState } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useState, useEffect, useRef } from 'react';
+import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
-import { ShoppingCart } from 'lucide-react';
+import { ChevronLeft, ShoppingCart, Check } from 'lucide-react';
 import { fetchProduct } from '../api/products';
 import ProductGallery from '../components/ProductGallery';
 import SizeSelector from '../components/SizeSelector';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import Skeleton from '../components/ui/Skeleton';
+import ErrorState from '../components/ui/ErrorState';
 import useCart from '../stores/cartStore';
+import { useToast } from '../components/ui/Toast';
 
 export default function ProductDetail() {
   const { id } = useParams();
-  const navigate = useNavigate();
   const [selectedSize, setSelectedSize] = useState(null);
   const [added, setAdded] = useState(false);
+  const [sizeShake, setSizeShake] = useState(false);
   const addItem = useCart((s) => s.addItem);
-  const itemCount = useCart((s) => s.getItemCount());
+  const toast = useToast();
+  const addTimer = useRef(null);
 
-  const { data: product, isLoading, error } = useQuery({
+  const { data: product, isLoading, error, refetch } = useQuery({
     queryKey: ['product', id],
     queryFn: () => fetchProduct(id),
   });
+
+  useEffect(() => {
+    setSelectedSize(null);
+    setAdded(false);
+  }, [id]);
+
+  useEffect(() => () => clearTimeout(addTimer.current), []);
+
+  const handleAddToCart = () => {
+    if (!selectedSize) {
+      setSizeShake(true);
+      setTimeout(() => setSizeShake(false), 600);
+      return;
+    }
+    addItem({ product, size: selectedSize });
+    toast({ type: 'success', message: `${product.title} (${selectedSize}) added to cart` });
+    setAdded(true);
+    addTimer.current = setTimeout(() => setAdded(false), 1500);
+  };
 
   if (isLoading) {
     return (
       <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
         <Navbar />
-        <div className="flex items-center justify-center py-16">
-          <div className="animate-pulse text-[var(--text-secondary)]">Loading...</div>
-        </div>
+        <main className="px-4 sm:px-6 lg:px-8 py-6">
+          <div className="max-w-7xl mx-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8" aria-busy="true">
+              <Skeleton className="aspect-square w-full" />
+              <div className="space-y-4">
+                <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-10 w-2/3" />
+                <Skeleton className="h-8 w-32" />
+                <Skeleton className="h-20 w-full" />
+                <div className="flex gap-2 pt-2">
+                  {[...Array(5)].map((_, i) => (
+                    <Skeleton key={i} className="h-12 w-14" count={1} />
+                  ))}
+                </div>
+                <Skeleton className="h-12 w-full" />
+              </div>
+            </div>
+          </div>
+        </main>
         <Footer />
       </div>
     );
   }
 
-  if (error || !product) {
+  if (!product && !error) {
     return (
       <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
         <Navbar />
-        <div className="flex flex-col items-center justify-center py-16 gap-4">
-          <p className="text-red-400">Product not found</p>
-          <Link to="/" className="text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">
-            Back to collection
+        <ErrorState message="Product not found" onRetry={() => refetch()} />
+        <Footer />
+      </div>
+    );
+  }
+
+  if (error) {
+    const isNotFound = error?.response?.status === 404 || error?.message?.includes('not found');
+    return (
+      <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
+        <Navbar />
+        <ErrorState
+          message={isNotFound ? 'Product not found' : 'Something went wrong loading this product'}
+          onRetry={() => refetch()}
+        />
+        <div className="text-center pb-12">
+          <Link to="/shop" className="text-sm text-[var(--accent)] hover:text-blue-400 transition-colors">
+            Browse all designs
           </Link>
         </div>
         <Footer />
@@ -65,6 +118,14 @@ export default function ProductDetail() {
 
         <main className="px-4 sm:px-6 lg:px-8 py-6">
           <div className="max-w-7xl mx-auto">
+            <Link
+              to="/shop"
+              className="inline-flex items-center gap-1.5 text-sm text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors mb-4"
+            >
+              <ChevronLeft size={16} aria-hidden="true" />
+              Back to shop
+            </Link>
+
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
@@ -85,7 +146,7 @@ export default function ProductDetail() {
                     {product.tags?.slice(0, 2).map((tag) => (
                       <span
                         key={tag}
-                        className="text-[10px] tracking-[0.2em] uppercase px-2 py-1 border border-gray-700 text-gray-400 rounded-sm"
+                        className="text-[10px] tracking-[0.2em] uppercase px-2 py-1 border border-[var(--border)] text-[var(--text-secondary)] rounded-sm"
                       >
                         {tag}
                       </span>
@@ -100,54 +161,70 @@ export default function ProductDetail() {
                 </div>
 
                 <p
-                  className="text-xl text-blue-400"
+                  className="text-xl text-[var(--accent)]"
                   style={{ fontFamily: "'Bebas Neue', sans-serif" }}
                 >
                   {formatPrice(product.price)}
                 </p>
 
-                <p className="text-gray-400 leading-relaxed text-sm">
+                <p className="text-[var(--text-secondary)] leading-relaxed text-sm">
                   {product.description}
                 </p>
 
-                <div className="border-t border-gray-800 pt-4">
-                  <SizeSelector
-                    sizes={product.sizes}
-                    stock={product.stock}
-                    selectedSize={selectedSize}
-                    onSelect={setSelectedSize}
-                  />
+                <div className="border-t border-[var(--border)] pt-4">
+                  <div className={sizeShake ? 'animate-pulse' : ''}>
+                    <SizeSelector
+                      sizes={product.sizes}
+                      stock={product.stock}
+                      selectedSize={selectedSize}
+                      onSelect={setSelectedSize}
+                    />
+                  </div>
+                  {sizeShake && (
+                    <p className="mt-2 text-xs text-red-400" role="alert">
+                      Please select a size first
+                    </p>
+                  )}
                 </div>
 
                 {product.sizeGuideNote && (
-                  <div className="bg-gray-900/50 border border-gray-800 rounded-sm p-4">
-                    <p className="text-xs tracking-[0.15em] uppercase text-gray-500 mb-1">
+                  <div className="bg-[var(--bg-primary)] border border-[var(--border)] rounded-lg p-4">
+                    <p className="text-xs tracking-[0.15em] uppercase text-[var(--text-secondary)] mb-1">
                       Size Guide
                     </p>
-                    <p className="text-sm text-gray-400">
+                    <p className="text-sm text-[var(--text-secondary)]">
                       {product.sizeGuideNote}
                     </p>
                   </div>
                 )}
 
                 <button
-                  disabled={!selectedSize}
-                  onClick={() => {
-                    addItem({ product, size: selectedSize });
-                    setAdded(true);
-                    setTimeout(() => setAdded(false), 1500);
-                  }}
+                  disabled={!selectedSize && !sizeShake}
+                  onClick={handleAddToCart}
+                  aria-live="polite"
                   className={`
-                    w-full py-3 rounded-sm text-sm tracking-[0.2em] uppercase transition-all duration-200
+                    w-full py-3 rounded-lg text-sm tracking-[0.2em] uppercase transition-all duration-200 inline-flex items-center justify-center gap-2
                     ${selectedSize
                       ? added
-                        ? 'bg-green-600 text-white cursor-default'
-                        : 'bg-blue-600 hover:bg-blue-500 text-white cursor-pointer'
-                      : 'bg-gray-800 text-gray-600 cursor-not-allowed'
+                        ? 'bg-emerald-600 text-white cursor-default'
+                        : 'bg-[var(--accent)] hover:bg-blue-500 text-white cursor-pointer'
+                      : 'bg-[var(--border)] text-[var(--text-secondary)] cursor-pointer hover:text-[var(--text-primary)]'
                     }
                   `}
                 >
-                  {added ? 'Added!' : selectedSize ? 'Add to Cart' : 'Select a Size'}
+                  {added ? (
+                    <>
+                      <Check size={16} aria-hidden="true" />
+                      Added!
+                    </>
+                  ) : selectedSize ? (
+                    <>
+                      <ShoppingCart size={16} aria-hidden="true" />
+                      Add to Cart
+                    </>
+                  ) : (
+                    'Select a Size'
+                  )}
                 </button>
               </motion.div>
             </div>

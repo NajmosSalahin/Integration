@@ -34,6 +34,15 @@ input[type="number"] {
   -moz-appearance: textfield;
 }
 
+@keyframes confirm-timer {
+  from {
+    width: 100%;
+  }
+  to {
+    width: 0%;
+  }
+}
+
 @layer base {
   body {
     @apply bg-[var(--bg-primary)] text-[var(--text-primary)];
