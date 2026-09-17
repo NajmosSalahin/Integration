@@ -376,9 +376,9 @@ export default function Navbar() {
                   onFocus={() => setShowResults(true)}
                   autoFocus
                   aria-label="Search designs"
-                  className="w-full pl-10 pr-4 py-2.5 border border-[var(--border)] rounded-lg bg-[var(--bg-secondary)] text-[var(--text-primary)] text-sm focus:outline-none focus:border-[var(--accent)] transition-colors placeholder-[var(--text-secondary)]"
+                  className="w-full pl-10 pr-4 py-2.5 border border-[var(--border)] rounded-lg bg-[var(--bg-secondary)] text-[var(--text-primary)] text-sm focus:outline-none focus:border-[var(--accent)] transition-colors placeholder-[var(--text-secondary)] appearance-none"
                 />
-                <Search size={18} className="absolute left-3 top-3.5 text-[var(--text-secondary)]" aria-hidden="true" />
+                <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-secondary)]" aria-hidden="true" />
 
                 <div ref={searchRef}>
                   <AnimatePresence>

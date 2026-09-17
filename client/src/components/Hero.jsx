@@ -61,7 +61,7 @@ export default function Hero() {
 
   return (
     <section
-      className="relative w-full aspect-[4/3] sm:aspect-[2.4/1] lg:h-[600px] lg:aspect-auto bg-[var(--bg-primary)] overflow-hidden"
+      className="relative w-full aspect-[2.4/1] lg:h-[600px] lg:aspect-auto overflow-hidden"
       aria-roledescription="carousel"
       aria-label="Featured banners"
       onMouseEnter={() => setPaused(true)}
@@ -83,14 +83,14 @@ export default function Hero() {
               e.currentTarget.onerror = null;
               e.currentTarget.src = FALLBACK_IMAGE;
             }}
-            className={`absolute inset-0 w-full h-full object-contain transition-opacity duration-700 ${
+            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${
               i === current ? 'opacity-100' : 'opacity-0'
             }`}
           />
         ))}
       </div>
 
-      <div className="absolute inset-0 bg-[linear-gradient(to_bottom,var(--bg-primary),transparent_25%,transparent_75%,var(--bg-primary))]" />
+      <div className="absolute inset-0 bg-black/30" />
 
       <div className="absolute inset-0 z-10 flex items-end justify-center pb-5 sm:pb-10">
         <Link
