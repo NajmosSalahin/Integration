@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Helmet } from 'react-helmet-async';
+import MetaTags from '../components/MetaTags';
 import { AlertCircle, Eye, EyeOff, CheckCircle, Mail } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import FormField from '../components/ui/FormField';
@@ -92,9 +92,7 @@ export default function Signup() {
 
   return (
     <>
-      <Helmet>
-        <title>Sign Up — Integration</title>
-      </Helmet>
+      <MetaTags title="Sign Up" description="Create an Integration account to place orders and track your purchases." path="/signup" noindex />
       <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)] flex items-center justify-center px-4 py-8">
         <div className="max-w-md w-full space-y-4">
           <div className="text-center">

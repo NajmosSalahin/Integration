@@ -1,13 +1,14 @@
 import { useMemo, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { Helmet } from 'react-helmet-async';
 import { useSearchParams } from 'react-router-dom';
 import { fetchProducts } from '../api/products';
 import { searchProducts } from '../lib/smartSearch';
+import { SITE_URL } from '../lib/seo';
 import ShopProductCard from '../components/ShopProductCard';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import MetaTags from '../components/MetaTags';
 import Pagination from '../components/ui/Pagination';
 import ErrorState from '../components/ui/ErrorState';
 import EmptyState from '../components/ui/EmptyState';
@@ -115,12 +116,27 @@ export default function Shop() {
   const rangeStart = sorted?.length ? start + 1 : 0;
   const rangeEnd = sorted ? Math.min(start + PER_PAGE, sorted.length) : 0;
 
+  const itemListLd = {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: tagFilter ? `${tagFilter} — Integration` : 'Shop — Integration',
+    itemListElement: (pageItems || []).map((p, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: p.title,
+      url: `${SITE_URL}/product/${p._id}`,
+      image: p.images?.[0],
+    })),
+  };
+
   return (
     <>
-      <Helmet>
-        <title>Shop — Integration</title>
-        <meta name="description" content="Browse all Integration t-shirt designs. Different styles, one identity." />
-      </Helmet>
+      <MetaTags
+        title="Shop"
+        description="Browse all Integration t-shirt designs. Filter by category, search by name. Different styles, one identity."
+        path="/shop"
+        jsonLd={itemListLd}
+      />
 
       <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
         <Navbar />

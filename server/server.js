@@ -11,6 +11,7 @@ import authRoutes from './routes/authRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
 import contactRoutes from './routes/contactRoutes.js';
 import newsletterRoutes from './routes/newsletterRoutes.js';
+import Product from './models/Product.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -58,6 +59,60 @@ app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/newsletter', newsletterRoutes);
+
+const STATIC_SITEMAP_PAGES = [
+  { path: '', priority: '1.0', changefreq: 'weekly' },
+  { path: 'shop', priority: '0.9', changefreq: 'daily' },
+  { path: 'faq', priority: '0.6', changefreq: 'monthly' },
+  { path: 'shipping', priority: '0.5', changefreq: 'monthly' },
+  { path: 'returns', priority: '0.5', changefreq: 'monthly' },
+  { path: 'payments', priority: '0.6', changefreq: 'monthly' },
+  { path: 'privacy', priority: '0.3', changefreq: 'yearly' },
+  { path: 'cookies', priority: '0.3', changefreq: 'yearly' },
+  { path: 'terms', priority: '0.3', changefreq: 'yearly' },
+  { path: 'about', priority: '0.6', changefreq: 'monthly' },
+  { path: 'contact', priority: '0.6', changefreq: 'monthly' },
+];
+
+const xmlEscape = (value) =>
+  String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;');
+
+const formatDate = (date) => new Date(date).toISOString();
+
+app.get('/sitemap.xml', async (req, res) => {
+  try {
+    const products = await Product.find({ active: true })
+      .select('_id updatedAt')
+      .lean();
+
+    const staticUrls = STATIC_SITEMAP_PAGES.map(
+      ({ path, priority, changefreq }) => {
+        const lastmod = new Date().toISOString();
+        return `  <url>\n    <loc>${CLIENT_URL}/${path}</loc>\n    <lastmod>${lastmod}</lastmod>\n    <changefreq>${changefreq}</changefreq>\n    <priority>${priority}</priority>\n  </url>`;
+      }
+    );
+
+    const productUrls = products.map((p) => {
+      return `  <url>\n    <loc>${CLIENT_URL}/product/${xmlEscape(p._id)}</loc>\n    <lastmod>${formatDate(p.updatedAt)}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.8</priority>\n  </url>`;
+    });
+
+    const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${staticUrls.join(
+      '\n'
+    )}\n${productUrls.join('\n')}\n</urlset>`;
+
+    res.set('Content-Type', 'application/xml');
+    res.set('Cache-Control', 'public, max-age=3600');
+    res.send(xml);
+  } catch (err) {
+    console.error('sitemap generation failed:', err);
+    res.status(500).send('Failed to generate sitemap');
+  }
+});
 
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(join(__dirname, '../client/dist')));

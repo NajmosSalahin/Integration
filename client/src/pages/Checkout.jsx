@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
 import { AlertCircle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { createOrder } from '../api/orders';
@@ -8,6 +7,7 @@ import useCart from '../stores/cartStore';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import FormField from '../components/ui/FormField';
+import MetaTags from '../components/MetaTags';
 
 const PHONE_RE = /^(\+?[\d\s()-]{8,16})$/;
 const MIN_ADDRESS_LEN = 10;
@@ -35,9 +35,7 @@ export default function Checkout() {
   if (items.length === 0) {
     return (
       <>
-        <Helmet>
-          <title>Checkout — Integration</title>
-        </Helmet>
+        <MetaTags title="Checkout" description="Complete your order." path="/checkout" noindex />
         <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
           <Navbar />
           <div className="flex flex-col items-center justify-center py-16 gap-4">
@@ -100,10 +98,7 @@ export default function Checkout() {
 
   return (
     <>
-      <Helmet>
-        <title>Checkout — Integration</title>
-        <meta name="description" content="Complete your order." />
-      </Helmet>
+      <MetaTags title="Checkout" description="Complete your order." path="/checkout" noindex />
 
       <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
         <Navbar />

@@ -113,6 +113,8 @@ export default function ProductGallery({ images }) {
             key={selectedIndex}
             src={images[selectedIndex]}
             alt={`Product image ${selectedIndex + 1}`}
+            width={800}
+            height={800}
             className={`h-full w-full object-cover transition-transform duration-300 ${
               isHovering ? 'scale-[2]' : 'scale-100'
             }`}
@@ -153,6 +155,8 @@ export default function ProductGallery({ images }) {
               <img
                 src={img}
                 alt={`Thumbnail ${i + 1}`}
+                width={64}
+                height={64}
                 className="h-full w-full object-cover"
                 loading="lazy"
               />

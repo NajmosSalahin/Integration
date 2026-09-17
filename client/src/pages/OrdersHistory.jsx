@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { Helmet } from 'react-helmet-async';
+import MetaTags from '../components/MetaTags';
 import { Package } from 'lucide-react';
 import { getMyOrders } from '../api/orders';
 import Navbar from '../components/Navbar';
@@ -48,9 +48,7 @@ export default function OrdersHistory() {
 
   return (
     <>
-      <Helmet>
-        <title>My Orders — Integration</title>
-      </Helmet>
+      <MetaTags title="My Orders" description="View your past orders and order status." path="/orders" noindex />
 
       <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
         <Navbar />

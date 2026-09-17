@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useSearchParams, useNavigate } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
+import MetaTags from '../components/MetaTags';
 import { AlertCircle, CheckCircle, Eye, EyeOff, TriangleAlert } from 'lucide-react';
 import { resetPassword } from '../api/auth';
 import FormField from '../components/ui/FormField';
@@ -112,9 +112,7 @@ export default function ResetPassword() {
 
   return (
     <>
-      <Helmet>
-        <title>Reset Password — Integration</title>
-      </Helmet>
+      <MetaTags title="Reset Password" description="Create a new password for your Integration account." path="/reset-password" noindex />
       <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)] flex items-center justify-center px-4 py-8">
         <div className="max-w-md w-full space-y-6">
           <div className="text-center">

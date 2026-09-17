@@ -1,6 +1,6 @@
 import { useLocation, useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { Helmet } from 'react-helmet-async';
+import MetaTags from '../components/MetaTags';
 import { CheckCircle, Copy, MessageCircle } from 'lucide-react';
 import { useState } from 'react';
 import { getOrder } from '../api/orders';
@@ -63,10 +63,12 @@ export default function OrderConfirmation() {
 
   return (
     <>
-      <Helmet>
-        <title>Order Confirmed — Integration</title>
-        <meta name="description" content="Your order has been placed successfully." />
-      </Helmet>
+      <MetaTags
+        title="Order Confirmed"
+        description="Your order has been placed successfully."
+        path={`/order-confirmation/${id}`}
+        noindex
+      />
 
       <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
         <Navbar />

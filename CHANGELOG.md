@@ -5,6 +5,42 @@ All notable changes to the Integration storefront will be documented in this fil
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.9] - 2026-09-17
+
+**Status:** Pre-Release — v0.1.9 In Development
+
+SEO foundation + Google Search Console setup. Every public route now ships a unique title, description, canonical, and Open Graph/Twitter tags; private routes are `noindex`. Added JSON-LD structured data, a dynamic `/sitemap.xml`, `robots.txt`, GSC verification, per-route code-splitting, and image `width`/`height` for CLS.
+
+- Centralized SEO layer: `client/src/lib/seo.js` + `client/src/components/MetaTags.jsx`; all pages wired with explicit paths (canonical strips query params)
+- Private routes (cart, checkout, orders, auth, admin, 404) emit `noindex, nofollow`
+- JSON-LD: `Organization` + `WebSite`/`SearchAction` (Home), `ItemList` (Shop), `FAQPage` (FAQ), `Product`/`Offer` in BDT (Product Detail)
+- New `GET /sitemap.xml` — 13 static routes + active product URLs, `Cache-Control: public, max-age=3600`
+- `client/public/robots.txt` disallows private/auth/admin routes; `apple-touch-icon.png` added; GSC verification meta added to `index.html`
+- Route code-splitting via `React.lazy` + `Suspense` (Home eager); 23 routes split into per-page chunks
+- Fixed React 19 metadata duplication: removed app-managed statics (`description`, `robots`, `og:url`) from `index.html` so per-page values win (generic OG/Twitter fallback retained)
+- Image CLS: explicit `width`/`height` on product cards, hero, gallery, navbar logo, search results
+
+**Detailed snapshot:** [versions/v0.1.9.md](versions/v0.1.9.md)
+
+------
+
+## [0.1.8] - 2026-09-17
+
+**Status:** Pre-Release — v0.1.8 In Development
+
+Mobile responsiveness bug-fix pass (Phase 1). Audited and fixed all components that broke at 320–414px: hero height, category grid sizing, newsletter form, and horizontal overflow on several routes.
+
+- Hero/banner ~1.8× taller on phones — `aspect-[4/3]` below `sm` (240/281/311px at 320/375/414) instead of the flat 2.4:1 crop; desktop unchanged
+- Category grid → 2-col vertical tiles on mobile (was full-width oversized horizontal cards); 3-col horizontal layout kept at `sm`+
+- Newsletter "Subscribe" button overflow at 320px fixed: `min-w-0` on email inputs
+- ProductDetail loading skeleton wraps (no overflow <344px)
+- Admin Products header stacks on mobile; SizeSelector pills wrap
+- Verified zero horizontal document scroll on `/`, `/shop`, `/cart`, `/login`, `/about`, `/product/:id` at 320/375/414 (Playwright)
+
+**Detailed snapshot:** [versions/v0.1.8.md](versions/v0.1.8.md)
+
+------
+
 ## [0.1.7] - 2026-09-15
 
 **Status:** Pre-Release — v0.1.7 In Development

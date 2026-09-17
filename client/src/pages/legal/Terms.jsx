@@ -2,7 +2,7 @@ import ContentLayout from '../../components/ContentLayout';
 
 export default function Terms() {
   return (
-    <ContentLayout title="Terms of Service">
+    <ContentLayout title="Terms of Service" description="Terms and conditions governing use of the Integration storefront." path="/terms">
       <div className="space-y-6 text-[var(--text-secondary)] leading-relaxed text-sm">
         <p>
           Last updated: September 2026

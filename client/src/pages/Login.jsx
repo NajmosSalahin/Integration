@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
+import MetaTags from '../components/MetaTags';
 import { AlertCircle, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import FormField from '../components/ui/FormField';
@@ -40,9 +40,7 @@ export default function Login() {
 
   return (
     <>
-      <Helmet>
-        <title>Login — Integration</title>
-      </Helmet>
+      <MetaTags title="Login" description="Sign in to your Integration account." path="/login" noindex />
       <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)] flex items-center justify-center px-4">
         <div className="max-w-md w-full space-y-4">
           <div className="text-center">

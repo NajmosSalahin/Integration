@@ -15,7 +15,7 @@ export default function SizeSelector({ sizes, stock, selectedSize, onSelect }) {
         )}
       </div>
 
-      <div className="flex gap-2">
+      <div className="flex gap-2 flex-wrap">
         {sizes.map((size) => {
           const inStock = getStockStatus(size);
           const isSelected = selectedSize === size;

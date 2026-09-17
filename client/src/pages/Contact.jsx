@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { Helmet } from 'react-helmet-async';
 import { AlertCircle, CheckCircle, Send } from 'lucide-react';
 import ContentLayout from '../components/ContentLayout';
 import { submitContact } from '../api/contact';
@@ -42,7 +41,7 @@ export default function Contact() {
   const canSubmit = form.name.trim() && form.email.trim() && form.message.trim() && !loading;
 
   return (
-    <ContentLayout title="Contact Us">
+    <ContentLayout title="Contact Us" description="Reach out to the Integration team. We're here to help with orders, sizing, and more." path="/contact">
       <div className="space-y-6">
         <p className="text-[var(--text-secondary)] leading-relaxed">
           Have a question about an order, a product, or just want to say hello?

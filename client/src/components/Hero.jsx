@@ -61,7 +61,7 @@ export default function Hero() {
 
   return (
     <section
-      className="relative w-full aspect-[2.4/1] lg:h-[600px] lg:aspect-auto overflow-hidden"
+      className="relative w-full aspect-[4/3] sm:aspect-[2.4/1] lg:h-[600px] lg:aspect-auto overflow-hidden"
       aria-roledescription="carousel"
       aria-label="Featured banners"
       onMouseEnter={() => setPaused(true)}
@@ -76,6 +76,8 @@ export default function Hero() {
             src={slide.image}
             alt={slide.alt}
             aria-hidden={i !== current}
+            width={1942}
+            height={809}
             loading={i === 0 ? 'eager' : 'lazy'}
             onError={(e) => {
               e.currentTarget.onerror = null;

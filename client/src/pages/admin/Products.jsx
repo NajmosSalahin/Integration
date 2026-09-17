@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Helmet } from 'react-helmet-async';
+import MetaTags from '../../components/MetaTags';
 import { Plus, Pencil, Trash2, AlertCircle } from 'lucide-react';
 import { getAllProductsAdmin, createProduct, updateProduct, deleteProduct, toggleStock } from '../../api/products';
 import Navbar from '../../components/Navbar';
@@ -170,18 +170,16 @@ export default function Products() {
 
   return (
     <>
-      <Helmet>
-        <title>Admin Products — Integration</title>
-      </Helmet>
+      <MetaTags title="Admin Products" description="Admin dashboard — product management." path="/admin/products" noindex />
 
       <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
         <Navbar />
 
         <main className="px-4 sm:px-6 lg:px-8 py-10">
           <div className="max-w-7xl mx-auto">
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
               <h1
-                className="text-3xl sm:text-4xl tracking-[0.15em] uppercase"
+                className="text-2xl sm:text-4xl tracking-[0.15em] uppercase"
                 style={{ fontFamily: "'Bebas Neue', sans-serif" }}
               >
                 Admin — Products

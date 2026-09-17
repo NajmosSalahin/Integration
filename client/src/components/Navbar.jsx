@@ -126,7 +126,7 @@ export default function Navbar() {
         <div className="py-2">
           <div className="flex items-center justify-between gap-4">
             <Link to="/" className="flex items-center space-x-3 shrink-0">
-              <img src="/logo-icon.png" alt="Integration" className="h-8 w-8" />
+              <img src="/logo-icon.png" alt="Integration" width={32} height={32} className="h-8 w-8" />
               <span
                 className="text-xl hidden sm:block"
                 style={{ fontFamily: "var(--font-display)" }}

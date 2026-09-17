@@ -32,6 +32,8 @@ export default function SearchResults({ results, query, onSelect }) {
                   <img
                     src={product.images[0]}
                     alt={product.title}
+                    width={48}
+                    height={48}
                     className="w-12 h-12 rounded-md object-cover shrink-0"
                   />
                   <div className="min-w-0">

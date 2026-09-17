@@ -1,17 +1,18 @@
 import { useEffect, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { Helmet } from 'react-helmet-async';
 import { Link, useSearchParams } from 'react-router-dom';
 import { ArrowRight, PackageSearch } from 'lucide-react';
 import { fetchProducts } from '../api/products';
 import { searchProducts } from '../lib/smartSearch';
+import { SITE_URL } from '../lib/seo';
 import ProductCard from '../components/ProductCard';
 import Navbar from '../components/Navbar';
 import Hero from '../components/Hero';
 import CategoryGrid from '../components/CategoryGrid';
 import FeaturedRow from '../components/FeaturedRow';
 import Footer from '../components/Footer';
+import MetaTags from '../components/MetaTags';
 import ErrorState from '../components/ui/ErrorState';
 import EmptyState from '../components/ui/EmptyState';
 import Skeleton from '../components/ui/Skeleton';
@@ -51,10 +52,39 @@ export default function Home() {
 
   return (
     <>
-      <Helmet>
-        <title>Integration — Different Styles, One Identity</title>
-        <meta name="description" content="Curated t-shirt designs. Modern Japanese streetwear. Different styles, one identity." />
-      </Helmet>
+      <MetaTags
+        title="Integration — Custom T-Shirts & Streetwear Online"
+        description="Curated t-shirt designs. Modern Japanese streetwear. Different styles, one identity. Shop the collection now."
+        path="/"
+        jsonLd={[
+          {
+            '@context': 'https://schema.org',
+            '@type': 'Organization',
+            name: 'Integration',
+            url: SITE_URL,
+            logo: `${SITE_URL}/logo.png`,
+            contactPoint: {
+              '@type': 'ContactPoint',
+              contactType: 'customer service',
+              url: `${SITE_URL}/contact`,
+            },
+          },
+          {
+            '@context': 'https://schema.org',
+            '@type': 'WebSite',
+            name: 'Integration',
+            url: SITE_URL,
+            potentialAction: {
+              '@type': 'SearchAction',
+              target: {
+                '@type': 'EntryPoint',
+                urlTemplate: `${SITE_URL}/shop?q={search_term_string}`,
+              },
+              'query-input': 'required name=search_term_string',
+            },
+          },
+        ]}
+      />
 
       <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
         <Navbar />

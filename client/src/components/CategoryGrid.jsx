@@ -32,18 +32,18 @@ export default function CategoryGrid() {
           Shop by Category
         </h2>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
           {isLoading
             ? [...Array(3)].map((_, i) => (
                 <div
                   key={i}
                   className="rounded-[10px] border border-[var(--border)] bg-[var(--bg-secondary)] overflow-hidden"
                 >
-                  <div className="flex items-center min-h-[140px]">
-                    <div className="w-1/3 aspect-square shrink-0 bg-[var(--border)] animate-pulse" />
-                    <div className="flex-1 px-6 py-5 space-y-2">
-                      <div className="h-4 bg-[var(--border)] rounded w-2/3 animate-pulse" />
-                      <div className="h-3 bg-[var(--border)] rounded w-1/3 animate-pulse" />
+                  <div className="flex flex-col sm:flex-row items-center min-h-0 sm:min-h-[140px]">
+                    <div className="w-full sm:w-1/3 aspect-square shrink-0 bg-[var(--border)] animate-pulse" />
+                    <div className="flex-1 w-full px-3 py-4 sm:px-6 sm:py-5 space-y-2">
+                      <div className="h-4 bg-[var(--border)] rounded w-3/4 animate-pulse" />
+                      <div className="h-3 bg-[var(--border)] rounded w-1/2 animate-pulse" />
                     </div>
                   </div>
                 </div>
@@ -58,8 +58,8 @@ export default function CategoryGrid() {
                     className="group relative overflow-hidden rounded-[10px] border border-[var(--border)] bg-[var(--bg-secondary)] transition-all duration-300 hover:border-[var(--accent)]"
                     aria-label={`Shop ${category.name}`}
                   >
-                    <div className="flex items-center min-h-[140px]">
-                      <div className="w-1/3 aspect-square shrink-0 overflow-hidden">
+                    <div className="flex flex-col sm:flex-row items-center min-h-0 sm:min-h-[140px]">
+                      <div className="w-full sm:w-1/3 aspect-square shrink-0 overflow-hidden">
                         {image ? (
                           <img
                             src={image}
@@ -75,9 +75,9 @@ export default function CategoryGrid() {
                           </div>
                         ) : null}
                       </div>
-                      <div className="flex-1 px-6 py-5">
+                      <div className="flex-1 min-w-0 w-full px-3 py-3 sm:px-6 sm:py-5">
                         <h3
-                          className="text-[16px] font-semibold text-[var(--text-primary)]"
+                          className="text-[14px] sm:text-[16px] font-semibold text-[var(--text-primary)] line-clamp-2"
                           style={{ fontFamily: 'var(--font-body)' }}
                         >
                           {category.name}

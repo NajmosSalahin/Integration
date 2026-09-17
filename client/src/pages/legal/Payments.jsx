@@ -2,7 +2,7 @@ import ContentLayout from '../../components/ContentLayout';
 
 export default function Payments() {
   return (
-    <ContentLayout title="Payments">
+    <ContentLayout title="Payments" description="Accepted payment methods including bKash for orders placed on Integration." path="/payments">
       <div className="space-y-6 text-[var(--text-secondary)] leading-relaxed">
         <p>
           We accept bKash as our only payment method. Our process is simple, transparent,

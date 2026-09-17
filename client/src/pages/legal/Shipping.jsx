@@ -2,7 +2,7 @@ import ContentLayout from '../../components/ContentLayout';
 
 export default function Shipping() {
   return (
-    <ContentLayout title="Shipping Policy">
+    <ContentLayout title="Shipping Policy" description="Shipping rates and delivery timeframes for orders within Bangladesh." path="/shipping">
       <div className="space-y-6 text-[var(--text-secondary)] leading-relaxed">
         <div>
           <h2

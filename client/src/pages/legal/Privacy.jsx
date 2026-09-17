@@ -2,7 +2,7 @@ import ContentLayout from '../../components/ContentLayout';
 
 export default function Privacy() {
   return (
-    <ContentLayout title="Privacy Policy">
+    <ContentLayout title="Privacy Policy" description="How Integration handles your personal data and protects your privacy." path="/privacy">
       <div className="space-y-6 text-[var(--text-secondary)] leading-relaxed text-sm">
         <p>
           Last updated: September 2026

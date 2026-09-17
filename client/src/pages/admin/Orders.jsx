@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Helmet } from 'react-helmet-async';
+import MetaTags from '../../components/MetaTags';
 import { Search, AlertCircle, CheckCircle } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getAllOrders, updateOrderStatus } from '../../api/orders';
@@ -67,9 +67,7 @@ export default function Orders() {
 
   return (
     <>
-      <Helmet>
-        <title>Admin Orders — Integration</title>
-      </Helmet>
+      <MetaTags title="Admin Orders" description="Admin dashboard — order management." path="/admin/orders" noindex />
 
       <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
         <Navbar />

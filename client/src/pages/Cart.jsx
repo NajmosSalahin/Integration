@@ -1,11 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
 import { Minus, Plus, X, Check, Trash2, ShoppingBag } from 'lucide-react';
 import useCart from '../stores/cartStore';
 import { useAuth } from '../context/AuthContext';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import MetaTags from '../components/MetaTags';
 
 const MAX_QTY = 10;
 const CONFIRM_MS = 2000;
@@ -76,10 +76,12 @@ export default function Cart() {
 
   return (
     <>
-      <Helmet>
-        <title>Your Cart — Integration</title>
-        <meta name="description" content="Review your cart before checkout." />
-      </Helmet>
+      <MetaTags
+        title="Your Cart"
+        description="Review your cart before checkout."
+        path="/cart"
+        noindex
+      />
 
       <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
         <Navbar />

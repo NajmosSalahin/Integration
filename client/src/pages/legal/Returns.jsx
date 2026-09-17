@@ -2,7 +2,7 @@ import ContentLayout from '../../components/ContentLayout';
 
 export default function Returns() {
   return (
-    <ContentLayout title="Returns & Refunds">
+    <ContentLayout title="Returns & Refunds" description="Our return and refund policy — what to do if your item arrives damaged or incorrect." path="/returns">
       <div className="space-y-6 text-[var(--text-secondary)] leading-relaxed">
         <div>
           <h2
