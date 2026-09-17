@@ -1,11 +1,17 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Helmet } from 'react-helmet-async';
-import { Plus, X, Pencil, Trash2 } from 'lucide-react';
+import { Plus, Pencil, Trash2, AlertCircle } from 'lucide-react';
 import { getAllProductsAdmin, createProduct, updateProduct, deleteProduct, toggleStock } from '../../api/products';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
+import Skeleton from '../../components/ui/Skeleton';
+import EmptyState from '../../components/ui/EmptyState';
+import ErrorState from '../../components/ui/ErrorState';
+import Modal from '../../components/ui/Modal';
+import ConfirmDialog from '../../components/ui/ConfirmDialog';
+import FormField from '../../components/ui/FormField';
+import Spinner from '../../components/ui/Spinner';
 
 const AVAILABLE_SIZES = ['S', 'M', 'L', 'XL', 'XXL'];
 
@@ -25,8 +31,10 @@ export default function Products() {
   const [editing, setEditing] = useState(null);
   const [form, setForm] = useState(emptyForm);
   const [error, setError] = useState(null);
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [toast, setToast] = useState(null);
 
-  const { data: products, isLoading, error: fetchError } = useQuery({
+  const { data: products, isLoading, error: fetchError, refetch } = useQuery({
     queryKey: ['adminProducts'],
     queryFn: getAllProductsAdmin,
   });
@@ -36,6 +44,7 @@ export default function Products() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['adminProducts'] });
       closeModal();
+      setToast({ type: 'success', message: 'Product created successfully.' });
     },
     onError: (err) => setError(err.message),
   });
@@ -45,6 +54,7 @@ export default function Products() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['adminProducts'] });
       closeModal();
+      setToast({ type: 'success', message: 'Product updated successfully.' });
     },
     onError: (err) => setError(err.message),
   });
@@ -53,6 +63,12 @@ export default function Products() {
     mutationFn: deleteProduct,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['adminProducts'] });
+      setDeleteTarget(null);
+      setToast({ type: 'success', message: 'Product deactivated.' });
+    },
+    onError: (err) => {
+      setDeleteTarget(null);
+      setToast({ type: 'error', message: err.message || 'Failed to deactivate product.' });
     },
   });
 
@@ -60,6 +76,9 @@ export default function Products() {
     mutationFn: ({ id, size, inStock }) => toggleStock(id, size, inStock),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['adminProducts'] });
+    },
+    onError: (err) => {
+      setToast({ type: 'error', message: err.message || 'Failed to toggle stock.' });
     },
   });
 
@@ -95,9 +114,7 @@ export default function Products() {
   const toggleSize = (size) => {
     setForm((prev) => ({
       ...prev,
-      sizes: prev.sizes.includes(size)
-        ? prev.sizes.filter((s) => s !== size)
-        : [...prev.sizes, size],
+      sizes: prev.sizes.includes(size) ? prev.sizes.filter((s) => s !== size) : [...prev.sizes, size],
     }));
   };
 
@@ -105,11 +122,38 @@ export default function Products() {
     e.preventDefault();
     setError(null);
 
+    const trimmedTitle = form.title.trim();
+    if (trimmedTitle.length > 100) {
+      setError('Title must be 100 characters or fewer.');
+      return;
+    }
+
+    const price = parseInt(form.price, 10);
+    if (!price || price < 1) {
+      setError('Price must be at least ৳1.');
+      return;
+    }
+
+    const imageUrls = form.images
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean);
+    const invalidUrl = imageUrls.find((u) => !u.startsWith('http://') && !u.startsWith('https://'));
+    if (invalidUrl) {
+      setError(`Invalid image URL: ${invalidUrl}`);
+      return;
+    }
+
+    if (form.sizes.length === 0) {
+      setError('Select at least one size.');
+      return;
+    }
+
     const data = {
-      title: form.title.trim(),
+      title: trimmedTitle,
       description: form.description.trim(),
-      price: parseInt(form.price, 10),
-      images: form.images.split(',').map((s) => s.trim()).filter(Boolean),
+      price,
+      images: imageUrls,
       sizes: form.sizes,
       sizeGuideNote: form.sizeGuideNote.trim(),
       tags: form.tags.split(',').map((s) => s.trim()).filter(Boolean),
@@ -119,12 +163,6 @@ export default function Products() {
       updateMutation.mutate({ id: editing._id, data });
     } else {
       createMutation.mutate(data);
-    }
-  };
-
-  const handleDelete = (product) => {
-    if (window.confirm(`Deactivate "${product.title}"? It will no longer be visible to customers.`)) {
-      deleteMutation.mutate(product._id);
     }
   };
 
@@ -150,69 +188,88 @@ export default function Products() {
               </h1>
               <button
                 onClick={openAdd}
-                className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-sm rounded-sm transition-colors"
+                className="flex items-center gap-2 px-4 py-2 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white text-sm rounded-lg transition-colors"
               >
-                <Plus size={16} />
+                <Plus size={16} aria-hidden="true" />
                 <span className="tracking-wider uppercase">Add Product</span>
               </button>
             </div>
 
             {isLoading && (
-              <div className="text-center py-20">
-                <div className="animate-pulse text-gray-500">Loading products...</div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-[var(--border)]">
+                      {['', 'Title', 'Price', 'Sizes', 'Stock', 'Active', 'Actions'].map((h) => (
+                        <th key={h} className={`text-left py-3 px-3 text-xs tracking-wider uppercase text-[var(--text-secondary)] font-normal ${['Sizes', 'Stock'].includes(h) ? 'hidden sm:table-cell' : ''}`}>{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[1, 2, 3].map((i) => (
+                      <tr key={i} className="border-b border-[var(--border)]/50">
+                        <td className="py-3 px-3"><Skeleton className="w-10 h-10 rounded-lg" /></td>
+                        <td className="py-3 px-3"><Skeleton className="w-32 h-4" /></td>
+                        <td className="py-3 px-3"><Skeleton className="w-16 h-4" /></td>
+                        <td className="py-3 px-3 hidden sm:table-cell"><Skeleton className="w-24 h-4" /></td>
+                        <td className="py-3 px-3 hidden sm:table-cell"><Skeleton className="w-28 h-4" /></td>
+                        <td className="py-3 px-3"><Skeleton className="w-8 h-4 mx-auto" /></td>
+                        <td className="py-3 px-3"><Skeleton className="w-16 h-4 ml-auto" /></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             )}
 
-            {fetchError && (
-              <div className="text-center py-20">
-                <p className="text-red-400">Failed to load products</p>
-                <p className="text-sm text-gray-500 mt-2">{fetchError.message}</p>
-              </div>
-            )}
+            {fetchError && <ErrorState message={fetchError.message} onRetry={refetch} />}
 
             {products && products.length === 0 && (
-              <div className="text-center py-20">
-                <p className="text-gray-400">No products yet</p>
-              </div>
+              <EmptyState
+                icon={Plus}
+                title="No products yet"
+                description="Add your first product to get started."
+                action={
+                  <button onClick={openAdd} className="text-sm text-[var(--accent)] hover:text-blue-400 transition-colors">
+                    Add Product
+                  </button>
+                }
+              />
             )}
 
             {products && products.length > 0 && (
               <div className="overflow-x-auto">
-                <table className="w-full text-sm">
+                <table className="w-full text-sm" aria-label="Admin products">
                   <thead>
-                    <tr className="border-b border-gray-800">
-                      <th className="text-left py-3 px-3 text-xs tracking-wider uppercase text-gray-500 font-normal w-12"></th>
-                      <th className="text-left py-3 px-3 text-xs tracking-wider uppercase text-gray-500 font-normal">Title</th>
-                      <th className="text-right py-3 px-3 text-xs tracking-wider uppercase text-gray-500 font-normal">Price</th>
-                      <th className="text-left py-3 px-3 text-xs tracking-wider uppercase text-gray-500 font-normal hidden sm:table-cell">Sizes</th>
-                      <th className="text-left py-3 px-3 text-xs tracking-wider uppercase text-gray-500 font-normal hidden md:table-cell">Stock</th>
-                      <th className="text-center py-3 px-3 text-xs tracking-wider uppercase text-gray-500 font-normal">Active</th>
-                      <th className="text-right py-3 px-3 text-xs tracking-wider uppercase text-gray-500 font-normal">Actions</th>
+                    <tr className="border-b border-[var(--border)]">
+                      <th className="text-left py-3 px-3 text-xs tracking-wider uppercase text-[var(--text-secondary)] font-normal w-12"></th>
+                      <th className="text-left py-3 px-3 text-xs tracking-wider uppercase text-[var(--text-secondary)] font-normal">Title</th>
+                      <th className="text-right py-3 px-3 text-xs tracking-wider uppercase text-[var(--text-secondary)] font-normal">Price</th>
+                      <th className="text-left py-3 px-3 text-xs tracking-wider uppercase text-[var(--text-secondary)] font-normal hidden sm:table-cell">Sizes</th>
+                      <th className="text-left py-3 px-3 text-xs tracking-wider uppercase text-[var(--text-secondary)] font-normal hidden md:table-cell">Stock</th>
+                      <th className="text-center py-3 px-3 text-xs tracking-wider uppercase text-[var(--text-secondary)] font-normal">Active</th>
+                      <th className="text-right py-3 px-3 text-xs tracking-wider uppercase text-[var(--text-secondary)] font-normal">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
                     {products.map((product) => (
                       <tr
                         key={product._id}
-                        className={`border-b border-gray-800/50 ${!product.active ? 'opacity-40' : 'hover:bg-gray-900/30'}`}
+                        className={`border-b border-[var(--border)]/50 ${!product.active ? 'opacity-50' : 'hover:bg-[var(--bg-secondary)]'}`}
                       >
                         <td className="py-3 px-3">
-                          <div className="w-10 h-10 bg-gray-900 rounded-sm overflow-hidden">
-                            <img
-                              src={product.images[0]}
-                              alt={product.title}
-                              className="w-full h-full object-cover"
-                            />
+                          <div className="w-10 h-10 bg-[var(--bg-secondary)] rounded-lg overflow-hidden">
+                            <img src={product.images[0]} alt={product.title} className="w-full h-full object-cover" />
                           </div>
                         </td>
                         <td className="py-3 px-3">
-                          <p className="text-gray-300 truncate max-w-[150px] sm:max-w-[200px]">{product.title}</p>
+                          <p className="text-[var(--text-primary)] truncate max-w-[150px] sm:max-w-[200px]">{product.title}</p>
                         </td>
                         <td className="py-3 px-3 text-right">
-                          <span className="text-gray-300">৳{product.price.toLocaleString()}</span>
+                          <span className="text-[var(--text-primary)]">৳{product.price.toLocaleString()}</span>
                         </td>
                         <td className="py-3 px-3 hidden sm:table-cell">
-                          <span className="text-gray-400 text-xs">{product.sizes.join(', ')}</span>
+                          <span className="text-[var(--text-secondary)] text-xs">{product.sizes.join(', ')}</span>
                         </td>
                         <td className="py-3 px-3 hidden md:table-cell">
                           <div className="flex gap-1.5">
@@ -221,12 +278,12 @@ export default function Products() {
                                 key={s.size}
                                 onClick={() => stockMutation.mutate({ id: product._id, size: s.size, inStock: !s.inStock })}
                                 disabled={stockMutation.isPending}
+                                aria-label={`${s.size}: ${s.inStock ? 'In stock, click to mark out of stock' : 'Out of stock, click to mark in stock'}`}
                                 className={`w-9 h-9 rounded-lg text-xs flex items-center justify-center border transition-colors ${
                                   s.inStock
-                                    ? 'border-green-700 bg-green-900/30 text-green-400 hover:bg-green-800/50'
+                                    ? 'border-emerald-700 bg-emerald-900/30 text-emerald-400 hover:bg-emerald-800/50'
                                     : 'border-red-800 bg-red-900/20 text-red-500 hover:bg-red-800/30'
                                 }`}
-                                title={`${s.size}: ${s.inStock ? 'In stock (click to toggle)' : 'Out of stock (click to toggle)'}`}
                               >
                                 {s.size}
                               </button>
@@ -234,7 +291,7 @@ export default function Products() {
                           </div>
                         </td>
                         <td className="py-3 px-3 text-center">
-                          <span className={`text-xs ${product.active ? 'text-green-400' : 'text-red-400'}`}>
+                          <span className={`text-xs ${product.active ? 'text-emerald-400' : 'text-red-400'}`}>
                             {product.active ? 'Yes' : 'No'}
                           </span>
                         </td>
@@ -242,17 +299,19 @@ export default function Products() {
                           <div className="flex items-center justify-end gap-2">
                             <button
                               onClick={() => openEdit(product)}
-                              className="p-1.5 text-gray-500 hover:text-blue-400 transition-colors"
+                              className="p-1.5 text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors"
                               title="Edit"
+                              aria-label={`Edit ${product.title}`}
                             >
-                              <Pencil size={14} />
+                              <Pencil size={14} aria-hidden="true" />
                             </button>
                             <button
-                              onClick={() => handleDelete(product)}
-                              className="p-1.5 text-gray-500 hover:text-red-400 transition-colors"
+                              onClick={() => setDeleteTarget(product)}
+                              className="p-1.5 text-[var(--text-secondary)] hover:text-red-400 transition-colors"
                               title="Deactivate"
+                              aria-label={`Deactivate ${product.title}`}
                             >
-                              <Trash2 size={14} />
+                              <Trash2 size={14} aria-hidden="true" />
                             </button>
                           </div>
                         </td>
@@ -268,141 +327,185 @@ export default function Products() {
       </div>
 
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={closeModal} />
-          <div className="relative bg-[#111] border border-gray-800 rounded-sm w-full max-w-lg max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between p-4 border-b border-gray-800">
-              <h2
-                className="text-lg tracking-[0.15em] uppercase"
-                style={{ fontFamily: "'Bebas Neue', sans-serif" }}
-              >
-                {editing ? 'Edit Product' : 'Add Product'}
-              </h2>
-              <button onClick={closeModal} className="text-gray-500 hover:text-white transition-colors">
-                <X size={20} />
-              </button>
-            </div>
+        <Modal onClose={closeModal} labelledBy="product-modal-title">
+          <h2
+            id="product-modal-title"
+            className="text-lg tracking-[0.15em] uppercase"
+            style={{ fontFamily: "'Bebas Neue', sans-serif" }}
+          >
+            {editing ? 'Edit Product' : 'Add Product'}
+          </h2>
 
-            <form onSubmit={handleSubmit} className="p-4 space-y-4">
-              <div>
-                <label className="block text-xs tracking-[0.15em] uppercase text-gray-400 mb-1">Title *</label>
+          {editing?.images?.[0] && (
+            <div className="w-full h-40 bg-[var(--bg-secondary)] rounded-lg overflow-hidden mt-3">
+              <img src={editing.images[0]} alt={editing.title} className="w-full h-full object-cover" />
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-3 mt-4">
+            <FormField label="Title" required>
+              {({ id }) => (
                 <input
+                  id={id}
                   type="text"
                   value={form.title}
                   onChange={(e) => setForm({ ...form, title: e.target.value })}
                   required
-                  className="w-full px-3 py-2 bg-gray-900 border border-gray-800 rounded-sm text-sm text-white focus:border-blue-500 focus:outline-none"
+                  maxLength={100}
+                  className="w-full px-3 py-2 bg-[var(--bg-secondary)] border border-[var(--border)] rounded-lg text-sm text-[var(--text-primary)] focus:border-[var(--accent)] focus:outline-none"
                 />
-              </div>
+              )}
+            </FormField>
 
-              <div>
-                <label className="block text-xs tracking-[0.15em] uppercase text-gray-400 mb-1">Description *</label>
+            <FormField label="Description" required>
+              {({ id }) => (
                 <textarea
+                  id={id}
                   value={form.description}
                   onChange={(e) => setForm({ ...form, description: e.target.value })}
                   required
                   rows={3}
-                  className="w-full px-3 py-2 bg-gray-900 border border-gray-800 rounded-sm text-sm text-white focus:border-blue-500 focus:outline-none resize-none"
+                  className="w-full px-3 py-2 bg-[var(--bg-secondary)] border border-[var(--border)] rounded-lg text-sm text-[var(--text-primary)] focus:border-[var(--accent)] focus:outline-none resize-none"
                 />
-              </div>
+              )}
+            </FormField>
 
-              <div>
-                <label className="block text-xs tracking-[0.15em] uppercase text-gray-400 mb-1">Price (in taka) *</label>
-                <input
-                  type="number"
-                  value={form.price}
-                  onChange={(e) => setForm({ ...form, price: e.target.value })}
-                  required
-                  min="1"
-                  className="w-full px-3 py-2 bg-gray-900 border border-gray-800 rounded-sm text-sm text-white focus:border-blue-500 focus:outline-none"
-                />
-                <p className="text-xs text-gray-600 mt-1">
-                  {form.price ? `৳${parseInt(form.price, 10).toLocaleString()}` : '৳0'}
-                </p>
-              </div>
+            <FormField label="Price (in taka)" required>
+              {({ id }) => (
+                <>
+                  <input
+                    id={id}
+                    type="number"
+                    value={form.price}
+                    onChange={(e) => setForm({ ...form, price: e.target.value })}
+                    required
+                    min="1"
+                    className="w-full px-3 py-2 bg-[var(--bg-secondary)] border border-[var(--border)] rounded-lg text-sm text-[var(--text-primary)] focus:border-[var(--accent)] focus:outline-none"
+                  />
+                  <p className="text-xs text-[var(--text-secondary)] mt-1">
+                    {form.price ? `৳${parseInt(form.price, 10).toLocaleString()}` : '৳0'}
+                  </p>
+                </>
+              )}
+            </FormField>
 
-              <div>
-                <label className="block text-xs tracking-[0.15em] uppercase text-gray-400 mb-1">Image URLs * (comma-separated)</label>
+            <FormField label="Image URLs (comma-separated)" required>
+              {({ id }) => (
                 <input
+                  id={id}
                   type="text"
                   value={form.images}
                   onChange={(e) => setForm({ ...form, images: e.target.value })}
                   required
                   placeholder="https://example.com/img1.jpg, https://example.com/img2.jpg"
-                  className="w-full px-3 py-2 bg-gray-900 border border-gray-800 rounded-sm text-sm text-white placeholder-gray-600 focus:border-blue-500 focus:outline-none"
+                  className="w-full px-3 py-2 bg-[var(--bg-secondary)] border border-[var(--border)] rounded-lg text-sm text-[var(--text-primary)] placeholder-[var(--text-secondary)] focus:border-[var(--accent)] focus:outline-none"
                 />
-              </div>
+              )}
+            </FormField>
 
-              <div>
-                <label className="block text-xs tracking-[0.15em] uppercase text-gray-400 mb-2">Sizes *</label>
-                <div className="flex gap-2">
+            <FormField label="Sizes" required error={form.sizes.length === 0 ? 'Select at least one size.' : null}>
+              {() => (
+                <div className="flex gap-2" role="group" aria-label="Available sizes">
                   {AVAILABLE_SIZES.map((size) => (
                     <button
                       key={size}
                       type="button"
                       onClick={() => toggleSize(size)}
-                      className={`px-3 py-1.5 text-sm border rounded-sm transition-colors ${
+                      aria-pressed={form.sizes.includes(size)}
+                      className={`px-3 py-1.5 text-sm border rounded-lg transition-colors ${
                         form.sizes.includes(size)
-                          ? 'border-blue-500 bg-blue-500/10 text-blue-400'
-                          : 'border-gray-700 text-gray-400 hover:border-gray-500'
+                          ? 'border-[var(--accent)] bg-[var(--accent)]/10 text-[var(--accent)]'
+                          : 'border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--text-secondary)]'
                       }`}
                     >
                       {size}
                     </button>
                   ))}
                 </div>
-              </div>
+              )}
+            </FormField>
 
-              <div>
-                <label className="block text-xs tracking-[0.15em] uppercase text-gray-400 mb-1">Size Guide Note</label>
+            <FormField label="Size Guide Note">
+              {({ id }) => (
                 <input
+                  id={id}
                   type="text"
                   value={form.sizeGuideNote}
                   onChange={(e) => setForm({ ...form, sizeGuideNote: e.target.value })}
                   placeholder="e.g. Runs true to size"
-                  className="w-full px-3 py-2 bg-gray-900 border border-gray-800 rounded-sm text-sm text-white placeholder-gray-600 focus:border-blue-500 focus:outline-none"
+                  className="w-full px-3 py-2 bg-[var(--bg-secondary)] border border-[var(--border)] rounded-lg text-sm text-[var(--text-primary)] placeholder-[var(--text-secondary)] focus:border-[var(--accent)] focus:outline-none"
                 />
-              </div>
+              )}
+            </FormField>
 
-              <div>
-                <label className="block text-xs tracking-[0.15em] uppercase text-gray-400 mb-1">Tags (comma-separated)</label>
+            <FormField label="Tags (comma-separated)">
+              {({ id }) => (
                 <input
+                  id={id}
                   type="text"
                   value={form.tags}
                   onChange={(e) => setForm({ ...form, tags: e.target.value })}
                   placeholder="streetwear, japanese, graphic"
-                  className="w-full px-3 py-2 bg-gray-900 border border-gray-800 rounded-sm text-sm text-white placeholder-gray-600 focus:border-blue-500 focus:outline-none"
+                  className="w-full px-3 py-2 bg-[var(--bg-secondary)] border border-[var(--border)] rounded-lg text-sm text-[var(--text-primary)] placeholder-[var(--text-secondary)] focus:border-[var(--accent)] focus:outline-none"
                 />
-              </div>
-
-              {error && (
-                <div className="p-3 bg-red-900/20 border border-red-800 rounded-sm text-sm text-red-400">
-                  {error}
-                </div>
               )}
+            </FormField>
 
-              <div className="flex gap-3 pt-2">
-                <button
-                  type="button"
-                  onClick={closeModal}
-                  className="flex-1 py-2 border border-gray-700 text-gray-400 text-sm rounded-sm hover:border-gray-500 hover:text-white transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={isSubmitting || form.sizes.length === 0}
-                  className={`flex-1 py-2 text-sm rounded-sm transition-colors ${
-                    isSubmitting || form.sizes.length === 0
-                      ? 'bg-gray-800 text-gray-600 cursor-not-allowed'
-                      : 'bg-blue-600 hover:bg-blue-500 text-white cursor-pointer'
-                  }`}
-                >
-                  {isSubmitting ? 'Saving...' : editing ? 'Update' : 'Create'}
-                </button>
+            {error && (
+              <div className="p-3 bg-red-900/20 border border-red-800 rounded-lg text-sm text-red-400 flex items-start gap-2" role="alert">
+                <AlertCircle size={16} className="shrink-0 mt-0.5" aria-hidden="true" />
+                {error}
               </div>
-            </form>
-          </div>
+            )}
+
+            <div className="flex gap-3 pt-2">
+              <button
+                type="button"
+                onClick={closeModal}
+                className="flex-1 py-2 border border-[var(--border)] text-[var(--text-secondary)] text-sm rounded-lg hover:border-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={isSubmitting || form.sizes.length === 0}
+                className={`flex-1 py-2 text-sm rounded-lg transition-colors inline-flex items-center justify-center gap-2 ${
+                  isSubmitting || form.sizes.length === 0
+                    ? 'bg-[var(--border)] text-[var(--text-secondary)] cursor-not-allowed'
+                    : 'bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white cursor-pointer'
+                }`}
+              >
+                {isSubmitting && <Spinner size={14} />}
+                {isSubmitting ? 'Saving...' : editing ? 'Update' : 'Create'}
+              </button>
+            </div>
+          </form>
+        </Modal>
+      )}
+
+      {deleteTarget && (
+        <ConfirmDialog
+          title="Deactivate Product"
+          message={`Deactivate "${deleteTarget.title}"? It will no longer be visible to customers.`}
+          onConfirm={() => deleteMutation.mutate(deleteTarget._id)}
+          onCancel={() => setDeleteTarget(null)}
+          confirmLabel="Deactivate"
+          loading={deleteMutation.isPending}
+        />
+      )}
+
+      {toast && (
+        <div
+          className={`fixed bottom-6 right-6 z-50 px-4 py-3 rounded-lg text-sm flex items-center gap-2 shadow-lg animate-[fade-in_0.2s_ease] ${
+            toast.type === 'success'
+              ? 'bg-emerald-900/90 border border-emerald-700 text-emerald-300'
+              : 'bg-red-900/90 border border-red-700 text-red-300'
+          }`}
+          role="status"
+          aria-live="polite"
+        >
+          {toast.type === 'success' ? <CheckCircle size={16} /> : <AlertCircle size={16} />}
+          {toast.message}
         </div>
       )}
     </>

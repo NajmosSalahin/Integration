@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { ChevronUp } from 'lucide-react';
 import NewsletterForm from './NewsletterForm';
 
 export default function Footer() {
@@ -19,13 +20,13 @@ export default function Footer() {
             </p>
           </div>
 
-          <div>
-            <h3 className="text-xs tracking-[0.15em] uppercase text-[var(--text-secondary)] mb-2">
+          <nav aria-labelledby="footer-shop-heading">
+            <h3 id="footer-shop-heading" className="text-xs tracking-[0.15em] uppercase text-[var(--text-secondary)] mb-2">
               Shop
             </h3>
             <ul className="space-y-1.5">
               <li>
-                <Link to="/" className="text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">
+                <Link to="/shop" className="text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">
                   Collection
                 </Link>
               </li>
@@ -35,10 +36,10 @@ export default function Footer() {
                 </Link>
               </li>
             </ul>
-          </div>
+          </nav>
 
-          <div>
-            <h3 className="text-xs tracking-[0.15em] uppercase text-[var(--text-secondary)] mb-2">
+          <nav aria-labelledby="footer-support-heading">
+            <h3 id="footer-support-heading" className="text-xs tracking-[0.15em] uppercase text-[var(--text-secondary)] mb-2">
               Support
             </h3>
             <ul className="space-y-1.5">
@@ -68,10 +69,10 @@ export default function Footer() {
                 </Link>
               </li>
             </ul>
-          </div>
+          </nav>
 
-          <div>
-            <h3 className="text-xs tracking-[0.15em] uppercase text-[var(--text-secondary)] mb-2">
+          <nav aria-labelledby="footer-about-heading">
+            <h3 id="footer-about-heading" className="text-xs tracking-[0.15em] uppercase text-[var(--text-secondary)] mb-2">
               About
             </h3>
             <ul className="space-y-1.5">
@@ -96,7 +97,7 @@ export default function Footer() {
                 </Link>
               </li>
             </ul>
-          </div>
+          </nav>
         </div>
 
         <div className="pt-4 border-t border-[var(--border)] mb-6">
@@ -105,10 +106,18 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="pt-4 border-t border-[var(--border)] text-center">
+        <div className="pt-4 border-t border-[var(--border)] text-center flex items-center justify-center gap-4">
           <p className="text-xs text-[var(--text-secondary)]">
             &copy; {new Date().getFullYear()} Integration. All rights reserved.
           </p>
+          <button
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            className="inline-flex items-center gap-1 text-xs text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors"
+            aria-label="Back to top"
+          >
+            Back to top
+            <ChevronUp size={12} aria-hidden="true" />
+          </button>
         </div>
       </div>
     </footer>

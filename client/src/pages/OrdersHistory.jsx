@@ -6,6 +6,9 @@ import { Package } from 'lucide-react';
 import { getMyOrders } from '../api/orders';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import Skeleton from '../components/ui/Skeleton';
+import EmptyState from '../components/ui/EmptyState';
+import ErrorState from '../components/ui/ErrorState';
 
 const STATUS_LABELS = {
   pending_payment: 'Pending Payment',
@@ -18,8 +21,8 @@ const STATUS_LABELS = {
 const STATUS_COLORS = {
   pending_payment: 'text-yellow-400',
   awaiting_confirmation: 'text-orange-400',
-  paid: 'text-blue-400',
-  fulfilled: 'text-green-400',
+  paid: 'text-[var(--accent)]',
+  fulfilled: 'text-emerald-400',
   cancelled: 'text-red-400',
 };
 
@@ -36,14 +39,12 @@ export default function OrdersHistory() {
   const navigate = useNavigate();
   const [filter, setFilter] = useState('');
 
-  const { data: orders, isLoading, error } = useQuery({
+  const { data: orders, isLoading, error, refetch } = useQuery({
     queryKey: ['myOrders'],
     queryFn: getMyOrders,
   });
 
-  const filtered = filter
-    ? orders?.filter((o) => o.status === filter)
-    : orders;
+  const filtered = filter ? orders?.filter((o) => o.status === filter) : orders;
 
   return (
     <>
@@ -63,15 +64,16 @@ export default function OrdersHistory() {
               My Orders
             </h1>
 
-            <div className="flex flex-wrap gap-2 mb-6">
+            <div className="flex flex-wrap gap-2 mb-6" role="group" aria-label="Filter orders by status">
               {FILTER_TABS.map((tab) => (
                 <button
                   key={tab.value}
                   onClick={() => setFilter(tab.value)}
-                  className={`px-3 py-1.5 text-xs tracking-wider uppercase rounded-sm border transition-colors ${
+                  aria-pressed={filter === tab.value}
+                  className={`px-3 py-1.5 text-xs tracking-wider uppercase rounded-lg border transition-colors ${
                     filter === tab.value
-                      ? 'border-blue-500 bg-blue-500/10 text-blue-400'
-                      : 'border-gray-800 text-gray-500 hover:border-gray-600 hover:text-gray-300'
+                      ? 'border-[var(--accent)] bg-[var(--accent)]/10 text-[var(--accent)]'
+                      : 'border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                   }`}
                 >
                   {tab.label}
@@ -80,45 +82,56 @@ export default function OrdersHistory() {
             </div>
 
             {isLoading && (
-              <div className="text-center py-20">
-                <div className="animate-pulse text-gray-500">Loading orders...</div>
+              <div className="space-y-4">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="border border-[var(--border)] rounded-lg p-4">
+                    <div className="flex justify-between mb-2">
+                      <Skeleton className="w-24 h-4" />
+                      <Skeleton className="w-16 h-4" />
+                    </div>
+                    <Skeleton className="w-3/4 h-3 mb-2" />
+                    <div className="flex justify-between">
+                      <Skeleton className="w-12 h-3" />
+                      <Skeleton className="w-20 h-4" />
+                    </div>
+                  </div>
+                ))}
               </div>
             )}
 
-            {error && (
-              <div className="text-center py-20">
-                <p className="text-red-400">Failed to load orders</p>
-                <p className="text-sm text-gray-500 mt-2">{error.message}</p>
-              </div>
-            )}
+            {error && <ErrorState message={error.message} onRetry={refetch} />}
 
             {filtered && filtered.length === 0 && (
-              <div className="text-center py-20">
-                <Package size={48} className="mx-auto text-gray-700 mb-4" />
-                <p className="text-gray-400 mb-2">No orders found</p>
-                <Link
-                  to="/"
-                  className="text-sm text-blue-400 hover:text-blue-300 transition-colors"
-                >
-                  Browse the collection
-                </Link>
-              </div>
+              <EmptyState
+                icon={Package}
+                title={filter ? 'No matching orders' : 'No orders yet'}
+                action={
+                  !filter ? (
+                    <Link
+                      to="/"
+                      className="text-sm text-[var(--accent)] hover:text-blue-400 transition-colors"
+                    >
+                      Browse the collection
+                    </Link>
+                  ) : null
+                }
+              />
             )}
 
             {filtered && filtered.length > 0 && (
-              <div className="space-y-4">
+              <div className="space-y-4" aria-label={`Showing ${filtered.length} order${filtered.length !== 1 ? 's' : ''}`}>
                 {filtered.map((order) => (
                   <button
                     key={order._id}
                     onClick={() => navigate(`/order-confirmation/${order._id}`)}
-                    className="w-full text-left p-4 border border-gray-800 rounded-sm hover:bg-gray-900/30 hover:border-gray-700 transition-colors"
+                    className="w-full text-left p-4 border border-[var(--border)] rounded-lg hover:bg-[var(--bg-secondary)] hover:border-[var(--text-secondary)] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
                   >
                     <div className="flex items-start justify-between gap-4 mb-2">
                       <div>
-                        <p className="text-sm text-gray-300">
+                        <p className="text-sm text-[var(--text-primary)] font-mono">
                           #{String(order._id).slice(-8).toUpperCase()}
                         </p>
-                        <p className="text-xs text-gray-600 mt-0.5">
+                        <p className="text-xs text-[var(--text-secondary)] mt-0.5">
                           {new Date(order.createdAt).toLocaleDateString('en-US', {
                             year: 'numeric',
                             month: 'long',
@@ -126,23 +139,20 @@ export default function OrdersHistory() {
                           })}
                         </p>
                       </div>
-                      <span className={`text-xs ${STATUS_COLORS[order.status] || 'text-gray-400'}`}>
+                      <span className={`text-xs ${STATUS_COLORS[order.status] || 'text-[var(--text-secondary)]'}`}>
                         {STATUS_LABELS[order.status] || order.status}
                       </span>
                     </div>
 
-                    <div className="text-sm text-gray-400 mb-2">
+                    <div className="text-sm text-[var(--text-secondary)] mb-2">
                       {order.items.map((i) => `${i.title} (${i.size}) x${i.quantity}`).join(', ')}
                     </div>
 
                     <div className="flex items-center justify-between">
-                      <span className="text-xs text-gray-500">
+                      <span className="text-xs text-[var(--text-secondary)]">
                         {order.items.length} item{order.items.length !== 1 ? 's' : ''}
                       </span>
-                      <span
-                        className="text-blue-400"
-                        style={{ fontFamily: "'Bebas Neue', sans-serif" }}
-                      >
+                      <span className="text-[var(--accent)]" style={{ fontFamily: "'Bebas Neue', sans-serif" }}>
                         ৳{order.totalAmount.toLocaleString()}
                       </span>
                     </div>

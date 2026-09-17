@@ -1,13 +1,26 @@
 import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { AlertCircle, CheckCircle, Send } from 'lucide-react';
 import ContentLayout from '../components/ContentLayout';
 import { submitContact } from '../api/contact';
+import { useAuth } from '../context/AuthContext';
+import FormField from '../components/ui/FormField';
+import Spinner from '../components/ui/Spinner';
+
+const MAX_MESSAGE = 500;
 
 export default function Contact() {
-  const [form, setForm] = useState({ name: '', email: '', message: '' });
+  const { user } = useAuth();
+  const [form, setForm] = useState({ name: user?.name || '', email: user?.email || '', message: '' });
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(null);
+
+  const handleChange = (key) => (e) => {
+    setForm((f) => ({ ...f, [key]: e.target.value }));
+    setError(null);
+    setSuccess(false);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -18,83 +31,96 @@ export default function Contact() {
     try {
       await submitContact(form);
       setSuccess(true);
-      setForm({ name: '', email: '', message: '' });
+      setForm((f) => ({ ...f, message: '' }));
     } catch (err) {
-      setError(err.message);
+      setError(err.message || 'Failed to send message. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
+  const canSubmit = form.name.trim() && form.email.trim() && form.message.trim() && !loading;
+
   return (
     <ContentLayout title="Contact Us">
       <div className="space-y-6">
-        <p className="text-gray-400 leading-relaxed">
+        <p className="text-[var(--text-secondary)] leading-relaxed">
           Have a question about an order, a product, or just want to say hello?
           Fill out the form below and we will get back to you as soon as possible.
         </p>
 
         {success && (
-          <div className="p-4 border border-green-500/30 bg-green-500/10 rounded-sm">
-            <p className="text-green-400 text-sm">
+          <div className="p-4 border border-emerald-500/40 bg-emerald-500/20 rounded-lg flex items-start gap-2" role="status">
+            <CheckCircle size={18} className="shrink-0 mt-0.5 text-emerald-400" aria-hidden="true" />
+            <p className="text-emerald-400 text-sm">
               Your message has been sent. We will get back to you shortly.
             </p>
           </div>
         )}
 
         {error && (
-          <div className="p-4 border border-red-500/30 bg-red-500/10 rounded-sm">
+          <div className="p-4 border border-red-500/40 bg-red-500/20 rounded-lg flex items-start gap-2" role="alert">
+            <AlertCircle size={18} className="shrink-0 mt-0.5 text-red-400" aria-hidden="true" />
             <p className="text-red-400 text-sm">{error}</p>
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4" noValidate>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs tracking-[0.15em] uppercase text-gray-400 mb-1">
-                Name
-              </label>
-              <input
-                type="text"
-                required
-                value={form.name}
-                onChange={(e) => setForm({ ...form, name: e.target.value })}
-                className="w-full px-3 py-2.5 bg-[#111] border border-[var(--border)] rounded-lg text-[var(--text-primary)] text-sm focus:outline-none focus:border-[var(--accent)] transition-colors"
-              />
-            </div>
+            <FormField label="Name" required>
+              {({ id }) => (
+                <input
+                  id={id}
+                  type="text"
+                  required
+                  value={form.name}
+                  onChange={handleChange('name')}
+                  autoComplete="name"
+                  className="w-full px-3 py-2.5 bg-[var(--bg-secondary)] border border-[var(--border)] rounded-lg text-[var(--text-primary)] text-sm focus:outline-none focus:border-[var(--accent)] transition-colors"
+                />
+              )}
+            </FormField>
 
-            <div>
-              <label className="block text-xs tracking-[0.15em] uppercase text-gray-400 mb-1">
-                Email
-              </label>
-              <input
-                type="email"
-                required
-                value={form.email}
-                onChange={(e) => setForm({ ...form, email: e.target.value })}
-                className="w-full px-3 py-2.5 bg-[#111] border border-[var(--border)] rounded-lg text-[var(--text-primary)] text-sm focus:outline-none focus:border-[var(--accent)] transition-colors"
-              />
-            </div>
+            <FormField label="Email" required>
+              {({ id }) => (
+                <input
+                  id={id}
+                  type="email"
+                  required
+                  value={form.email}
+                  onChange={handleChange('email')}
+                  autoComplete="email"
+                  className="w-full px-3 py-2.5 bg-[var(--bg-secondary)] border border-[var(--border)] rounded-lg text-[var(--text-primary)] text-sm focus:outline-none focus:border-[var(--accent)] transition-colors"
+                />
+              )}
+            </FormField>
           </div>
 
-          <div>
-            <label className="block text-xs tracking-[0.15em] uppercase text-gray-400 mb-1">
-              Message
-            </label>
-            <textarea
-              required
-              rows={6}
-              value={form.message}
-              onChange={(e) => setForm({ ...form, message: e.target.value })}
-              className="w-full px-3 py-2.5 bg-gray-900 border border-gray-700 rounded-sm text-white text-sm focus:outline-none focus:border-blue-500 transition-colors resize-none"
-            />
-          </div>
+          <FormField label="Message" required>
+            {({ id }) => (
+              <div>
+                <textarea
+                  id={id}
+                  required
+                  rows={6}
+                  maxLength={MAX_MESSAGE}
+                  value={form.message}
+                  onChange={handleChange('message')}
+                  className="w-full px-3 py-2.5 bg-[var(--bg-secondary)] border border-[var(--border)] rounded-lg text-[var(--text-primary)] text-sm focus:outline-none focus:border-[var(--accent)] transition-colors resize-none"
+                />
+                <p className="text-xs text-[var(--text-secondary)] mt-1 text-right">
+                  {form.message.length}/{MAX_MESSAGE}
+                </p>
+              </div>
+            )}
+          </FormField>
 
           <button
             type="submit"
-            disabled={loading}
-              className="px-8 py-2.5 bg-[var(--accent)] hover:bg-blue-500 disabled:bg-gray-800 disabled:text-gray-600 text-white text-sm tracking-[0.2em] uppercase rounded-lg transition-colors cursor-pointer disabled:cursor-not-allowed"
+            disabled={!canSubmit}
+            className="px-8 py-2.5 bg-[var(--accent)] hover:bg-[var(--accent-hover)] disabled:bg-[var(--border)] disabled:text-[var(--text-secondary)] text-white text-sm tracking-[0.2em] uppercase rounded-lg transition-colors cursor-pointer disabled:cursor-not-allowed inline-flex items-center gap-2"
           >
+            {loading && <Spinner size={15} />}
             {loading ? 'Sending...' : 'Send Message'}
           </button>
         </form>

@@ -3,7 +3,7 @@ import ContentLayout from '../../components/ContentLayout';
 export default function Shipping() {
   return (
     <ContentLayout title="Shipping Policy">
-      <div className="space-y-6 text-gray-400 leading-relaxed">
+      <div className="space-y-6 text-[var(--text-secondary)] leading-relaxed">
         <div>
           <h2
             className="text-lg tracking-[0.15em] uppercase text-[#e8e8e8] mb-3"
@@ -26,11 +26,11 @@ export default function Shipping() {
           </h2>
           <ul className="space-y-2">
             <li className="flex items-start gap-3">
-              <span className="text-blue-400 mt-1">&#x2022;</span>
+              <span className="text-[var(--accent)] mt-1">&#x2022;</span>
               <span><strong className="text-[#e8e8e8]">Inside Dhaka:</strong> 2-3 business days after order confirmation</span>
             </li>
             <li className="flex items-start gap-3">
-              <span className="text-blue-400 mt-1">&#x2022;</span>
+              <span className="text-[var(--accent)] mt-1">&#x2022;</span>
               <span><strong className="text-[#e8e8e8]">Outside Dhaka:</strong> 3-5 business days after order confirmation</span>
             </li>
           </ul>

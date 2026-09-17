@@ -7,6 +7,7 @@ export default function FeaturedRow({ products }) {
   const trackRef = useRef(null);
   const [canPrev, setCanPrev] = useState(false);
   const [canNext, setCanNext] = useState(true);
+  const [paused, setPaused] = useState(false);
 
   const count = products?.length || 0;
 
@@ -39,20 +40,21 @@ export default function FeaturedRow({ products }) {
     return () => el.removeEventListener('scroll', updateArrows);
   }, [count]);
 
+  const dirRef = useRef(1);
+
   useEffect(() => {
-    if (count === 0) return;
+    if (count === 0 || paused) return;
     const id = setInterval(() => {
       const el = trackRef.current;
       if (!el) return;
       const atEnd = el.scrollLeft >= el.scrollWidth - el.clientWidth - 2;
-      if (atEnd) {
-        el.scrollTo({ left: 0, behavior: 'smooth' });
-      } else {
-        el.scrollBy({ left: step(), behavior: 'smooth' });
-      }
+      const atStart = el.scrollLeft <= 2;
+      if (atEnd) dirRef.current = -1;
+      if (atStart) dirRef.current = 1;
+      el.scrollBy({ left: dirRef.current * step(), behavior: 'smooth' });
     }, 5000);
     return () => clearInterval(id);
-  }, [count]);
+  }, [count, paused]);
 
   if (count === 0) return null;
 
@@ -61,7 +63,7 @@ export default function FeaturedRow({ products }) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between mb-6">
           <h2
-            className="text-[26px] sm:text-[20px] font-bold text-[var(--text-primary)]"
+            className="text-[20px] sm:text-[26px] font-bold text-[var(--text-primary)]"
             style={{ fontFamily: 'var(--font-utility)' }}
           >
             Featured Products
@@ -72,14 +74,20 @@ export default function FeaturedRow({ products }) {
             style={{ fontFamily: 'var(--font-body)' }}
           >
             View All
-            <ArrowRight size={14} />
+            <ArrowRight size={14} aria-hidden="true" />
           </Link>
         </div>
 
         <div className="relative">
           <div
             ref={trackRef}
-            className="flex gap-4 sm:gap-6 overflow-x-auto scrollbar-thin scroll-smooth snap-x snap-mandatory pb-1"
+            onMouseEnter={() => setPaused(true)}
+            onMouseLeave={() => setPaused(false)}
+            className="flex gap-4 sm:gap-6 overflow-x-auto scrollbar-thin scroll-smooth snap-x snap-mandatory pb-1 px-14"
+            role="region"
+            aria-roledescription="carousel"
+            aria-label="Featured products"
+            aria-live="off"
           >
             {products.map((product, i) => (
               <div
@@ -97,7 +105,7 @@ export default function FeaturedRow({ products }) {
             className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-[42px] h-[42px] flex items-center justify-center bg-black/40 hover:bg-[var(--accent)] text-white rounded-full transition-colors disabled:opacity-40 disabled:hover:bg-black/40"
             aria-label="Previous featured"
           >
-            <ChevronLeft size={20} />
+            <ChevronLeft size={20} aria-hidden="true" />
           </button>
           <button
             onClick={() => scrollByStep(1)}
@@ -105,7 +113,7 @@ export default function FeaturedRow({ products }) {
             className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-[42px] h-[42px] flex items-center justify-center bg-black/40 hover:bg-[var(--accent)] text-white rounded-full transition-colors disabled:opacity-40 disabled:hover:bg-black/40"
             aria-label="Next featured"
           >
-            <ChevronRight size={20} />
+            <ChevronRight size={20} aria-hidden="true" />
           </button>
         </div>
       </div>

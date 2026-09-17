@@ -3,7 +3,7 @@ import ContentLayout from '../../components/ContentLayout';
 export default function Payments() {
   return (
     <ContentLayout title="Payments">
-      <div className="space-y-6 text-gray-400 leading-relaxed">
+      <div className="space-y-6 text-[var(--text-secondary)] leading-relaxed">
         <p>
           We accept bKash as our only payment method. Our process is simple, transparent,
           and designed to feel safe even for first-time buyers.
@@ -18,7 +18,7 @@ export default function Payments() {
           </h2>
           <ol className="space-y-4">
             <li className="flex items-start gap-3">
-              <span className="text-blue-400 font-bold mt-0.5">1.</span>
+              <span className="text-[var(--accent)] font-bold mt-0.5">1.</span>
               <div>
                 <strong className="text-[#e8e8e8]">Place your order</strong>
                 <p className="mt-1">
@@ -28,7 +28,7 @@ export default function Payments() {
               </div>
             </li>
             <li className="flex items-start gap-3">
-              <span className="text-blue-400 font-bold mt-0.5">2.</span>
+              <span className="text-[var(--accent)] font-bold mt-0.5">2.</span>
               <div>
                 <strong className="text-[#e8e8e8]">Receive payment instructions</strong>
                 <p className="mt-1">
@@ -38,7 +38,7 @@ export default function Payments() {
               </div>
             </li>
             <li className="flex items-start gap-3">
-              <span className="text-blue-400 font-bold mt-0.5">3.</span>
+              <span className="text-[var(--accent)] font-bold mt-0.5">3.</span>
               <div>
                 <strong className="text-[#e8e8e8]">Send payment via bKash</strong>
                 <p className="mt-1">
@@ -49,7 +49,7 @@ export default function Payments() {
               </div>
             </li>
             <li className="flex items-start gap-3">
-              <span className="text-blue-400 font-bold mt-0.5">4.</span>
+              <span className="text-[var(--accent)] font-bold mt-0.5">4.</span>
               <div>
                 <strong className="text-[#e8e8e8]">Order confirmed</strong>
                 <p className="mt-1">

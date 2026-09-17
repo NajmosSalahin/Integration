@@ -3,7 +3,7 @@ import ContentLayout from '../../components/ContentLayout';
 export default function Cookies() {
   return (
     <ContentLayout title="Cookie Policy">
-      <div className="space-y-6 text-gray-400 leading-relaxed text-sm">
+      <div className="space-y-6 text-[var(--text-secondary)] leading-relaxed text-sm">
         <p>
           Last updated: September 2026
         </p>
