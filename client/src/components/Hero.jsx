@@ -95,7 +95,7 @@ export default function Hero() {
       <div className="absolute inset-0 z-10 flex items-end justify-center pb-5 sm:pb-10">
         <Link
           to={slides[current].cta}
-          className="inline-flex items-center gap-2 bg-[var(--accent)] hover:bg-[var(--accent)]/90 text-white px-7 py-[11px] text-sm font-medium transition-all hover:scale-[1.03] active:scale-[0.98]"
+          className="inline-flex items-center gap-2 bg-transparent md:bg-[var(--accent)] hover:bg-white/10 md:hover:bg-[var(--accent)]/90 text-white border border-white/70 md:border-transparent px-7 py-[11px] text-sm font-medium transition-all hover:scale-[1.03] active:scale-[0.98]"
           style={{ fontFamily: 'var(--font-body)' }}
         >
           {slides[current].label}
