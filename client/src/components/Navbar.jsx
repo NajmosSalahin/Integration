@@ -111,7 +111,7 @@ export default function Navbar() {
     exact ? location.pathname === path : location.pathname.startsWith(path);
 
   const navLinkClass = (active) =>
-    `transition-colors text-sm mr-2 ${
+    `transition-colors text-sm ${
       active
         ? 'text-[var(--accent)]'
         : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
@@ -160,7 +160,7 @@ export default function Navbar() {
               </form>
             </div>
 
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-2">
               <button
                 onClick={() => setMobileSearchOpen(!mobileSearchOpen)}
                 className="md:hidden p-2.5 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
@@ -237,7 +237,7 @@ export default function Navbar() {
               <div className="relative" ref={userMenuRef}>
                 <button
                   onClick={() => setUserMenuOpen(!userMenuOpen)}
-                  className="w-9 h-9 rounded-full border border-[var(--border)] flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--accent)] transition-all"
+                  className="w-10 h-10 rounded-full border border-[var(--border)] flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--accent)] transition-all"
                   aria-label="Account menu"
                   aria-expanded={userMenuOpen}
                   aria-haspopup="menu"
