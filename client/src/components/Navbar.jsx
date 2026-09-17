@@ -173,7 +173,7 @@ export default function Navbar() {
 
               <nav
                 aria-label="Main navigation"
-                className="hidden md:flex items-center"
+                className="hidden md:flex items-center gap-6"
               >
                 <Link
                   to="/"
