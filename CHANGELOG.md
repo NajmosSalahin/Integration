@@ -5,6 +5,23 @@ All notable changes to the Integration storefront will be documented in this fil
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.10] - 2026-09-18
+
+**Status:** Pre-Release — v0.1.10 In Development
+
+Mobile responsiveness follow-up pass (Phase 2 polish) on the storefront skeleton and cart. No API, data-model, or dependency changes.
+
+- Hero now uses a single `aspect-[2.4/1]` that matches the source banner ratio on all breakpoints (fixed 600px height at `lg`), replacing the Phase 1 `4/3` crop; the interim letterbox-gradient approach was superseded
+- Hero CTA is a transparent white-outline button on phones, solid accent pill restored at `md`+
+- Navbar search icon vertically centered (`appearance-none` input); header icon cluster unified on one `gap-2` scale with a 40px account avatar; desktop nav uses `gap-6` (was per-link margins)
+- Shop gets a compact `Sort` trigger + animated dropdown on mobile (`AnimatePresence`); native select kept on desktop — both share value-driven `handleSortChange`
+- Footer reflows at 320–414px: `gap-x-6 gap-y-8` grid, About column spans the row on mobile, bottom strip stacks vertically below `sm`
+- Clear cart now uses the reusable `ConfirmDialog` modal (danger-styled) with animated open/close — replaces the two-tap inline arm + 2s timeout
+
+**Detailed snapshot:** [versions/v0.1.10.md](versions/v0.1.10.md)
+
+------
+
 ## [0.1.9] - 2026-09-17
 
 **Status:** Pre-Release — v0.1.9 In Development
