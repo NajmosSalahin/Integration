@@ -6,11 +6,12 @@ export default function MetaTags({
   description = '',
   path = '/',
   image,
+  imageAlt,
   type = 'website',
   noindex = false,
   jsonLd,
 }) {
-  const seo = buildSeo({ title, description, path, image, type, noindex, jsonLd });
+  const seo = buildSeo({ title, description, path, image, imageAlt, type, noindex, jsonLd });
 
   return (
     <Helmet>
@@ -23,6 +24,9 @@ export default function MetaTags({
       <meta property="og:description" content={seo.og.description} />
       <meta property="og:url" content={seo.og.url} />
       <meta property="og:image" content={seo.og.image} />
+      <meta property="og:image:width" content={String(seo.og.imageWidth)} />
+      <meta property="og:image:height" content={String(seo.og.imageHeight)} />
+      <meta property="og:image:alt" content={seo.og.imageAlt} />
       <meta property="og:type" content={seo.og.type} />
       <meta property="og:site_name" content={seo.og.siteName} />
 

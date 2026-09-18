@@ -18,6 +18,7 @@ Performance and accessibility follow-up to v0.1.11, driven by a PageSpeed Insigh
 - **Console error:** `/auth/refresh` no longer 401s on every load — `AuthContext` now only refreshes when a `refreshToken` cookie exists
 - **A11y:** hero CTA mobile fill `bg-black/45` for contrast; SUBSCRIBE buttons render `text-[#0e1320]` on the accent pill; carousel dots are 24 px hit targets; single `<main>` landmark wraps all routes; duplicate thumbnail `alt` text removed
 - **Agentic Browsing:** added spec-compliant `llms.txt` + `llms-full.txt`
+- **Site identity head:** `favicon-32.png` + `icon-256/512.png` from the official brand package, `site.webmanifest` PWA manifest, `theme-color #0a0a0a`, `og:image:width/height/alt` (1200×630) on static + per-page tags, and a `<noscript>` fallback with the support email
 
 **Detailed snapshot:** [versions/v0.1.12.md](versions/v0.1.12.md)
 
