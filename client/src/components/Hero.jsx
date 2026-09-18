@@ -114,14 +114,14 @@ export default function Hero() {
 
       <button
         onClick={() => { prev(); setPaused(true); }}
-        className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20 w-[44px] h-[44px] flex items-center justify-center bg-black/20 hover:bg-black/35 text-white rounded-full transition-colors"
+        className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20 w-[44px] h-[44px] flex items-center justify-center bg-black/50 hover:bg-black/70 text-white rounded-full transition-colors"
         aria-label="Previous slide"
       >
         <ChevronLeft size={22} aria-hidden="true" />
       </button>
       <button
         onClick={() => { next(); setPaused(true); }}
-        className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20 w-[44px] h-[44px] flex items-center justify-center bg-black/20 hover:bg-black/35 text-white rounded-full transition-colors"
+        className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20 w-[44px] h-[44px] flex items-center justify-center bg-black/50 hover:bg-black/70 text-white rounded-full transition-colors"
         aria-label="Next slide"
       >
         <ChevronRight size={22} aria-hidden="true" />
@@ -133,12 +133,12 @@ export default function Hero() {
             key={i}
             onClick={() => { goTo(i); setPaused(true); }}
             className={`w-6 h-6 flex items-center justify-center transition-colors ${
-              i === current ? 'text-white' : 'text-white/30 hover:text-white/60'
+              i === current ? 'text-white' : 'text-white/50 hover:text-white/90'
             }`}
             aria-label={`Go to slide ${i + 1}`}
             aria-current={i === current}
           >
-            <span className="w-2 h-2 rounded-full bg-current" />
+            <span className="w-3 h-3 rounded-full bg-current" />
           </button>
         ))}
       </div>
