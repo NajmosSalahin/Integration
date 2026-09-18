@@ -6,7 +6,7 @@ export default function Footer() {
   return (
     <footer className="px-4 sm:px-6 lg:px-8 py-8 border-t border-[var(--border)]">
       <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 mb-6">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-8 mb-6">
           <div className="col-span-2 sm:col-span-1">
             <Link
               to="/"
@@ -71,7 +71,7 @@ export default function Footer() {
             </ul>
           </nav>
 
-          <nav aria-labelledby="footer-about-heading">
+          <nav aria-labelledby="footer-about-heading" className="col-span-2 sm:col-span-1">
             <h3 id="footer-about-heading" className="text-xs tracking-[0.15em] uppercase text-[var(--text-secondary)] mb-2">
               About
             </h3>
@@ -106,7 +106,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="pt-4 border-t border-[var(--border)] text-center flex items-center justify-center gap-4">
+        <div className="pt-4 border-t border-[var(--border)] text-center flex flex-col items-center gap-2 sm:flex-row sm:justify-center sm:gap-4">
           <p className="text-xs text-[var(--text-secondary)]">
             &copy; {new Date().getFullYear()} Integration. All rights reserved.
           </p>
