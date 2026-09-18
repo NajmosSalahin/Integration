@@ -46,8 +46,48 @@ export const createOrderSchema = z.object({
 });
 
 export const updateStatusSchema = z.object({
-  status: z.enum(['pending_payment', 'awaiting_confirmation', 'paid', 'fulfilled', 'cancelled']),
+  status: z.enum(['pending_payment', 'awaiting_confirmation', 'paid', 'shipped', 'fulfilled', 'cancelled']),
 });
+
+export const updateProfileSchema = z.object({
+  name: z.string().min(2, 'Name must be at least 2 characters').max(50).optional(),
+  phone: z.string().max(20, 'Phone number must be at most 20 characters').optional(),
+  notificationPrefs: z.object({
+    orderUpdates: z.boolean().optional(),
+    newDrops: z.boolean().optional(),
+  }).optional(),
+});
+
+export const changePasswordSchema = z.object({
+  currentPassword: z.string().min(1, 'Current password is required'),
+  newPassword: z.string().min(8, 'Password must be at least 8 characters')
+    .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
+    .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
+    .regex(/[0-9]/, 'Password must contain at least one number'),
+  confirmPassword: z.string(),
+}).refine((data) => data.newPassword === data.confirmPassword, {
+  message: 'Passwords do not match',
+  path: ['confirmPassword'],
+});
+
+export const wishlistSchema = z.object({
+  productId: z.string().min(1, 'productId is required'),
+});
+
+export const addressSchema = z.object({
+  label: z.string().min(1, 'Label is required').max(30),
+  name: z.string().min(2, 'Name must be at least 2 characters').max(60),
+  phone: z.string().min(5, 'Phone number is required').max(20),
+  line1: z.string().min(3, 'Address is required').max(120),
+  line2: z.string().max(120).optional().default(''),
+  city: z.string().min(2, 'City is required').max(60),
+  region: z.string().max(60).optional().default(''),
+  postal: z.string().max(20).optional().default(''),
+  country: z.string().max(40).optional().default('Bangladesh'),
+  isDefault: z.boolean().optional().default(false),
+});
+
+export const updateAddressSchema = addressSchema.partial();
 
 export const createProductSchema = z.object({
   title: z.string().min(1, 'Title is required').max(100),

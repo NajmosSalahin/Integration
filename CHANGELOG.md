@@ -5,6 +5,26 @@ All notable changes to the Integration storefront will be documented in this fil
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.13] - 2026-09-18
+
+**Status:** Pre-Release — v0.1.13 In Development
+
+Customer account hub at `/account` (protected), reached from the navbar account menu. A single fixed navbar stays on top; a Shop-style sidebar (blue-fill active, sticky below the navbar, in-box scroll) switches between six sections on desktop, horizontal scroll pills on mobile:
+
+- **My Profile** — avatar upload (Cloudinary), editable name/phone, email read-only, "Save Changes"
+- **My Orders** — order cards with product thumbnails, order #, date, ৳ total, and color-coded badges (yellow Processing / blue Shipped / green Delivered / red Cancelled); clicking opens the existing order detail page
+- **Addresses** — server-saved cards with add/edit/delete and "Make default"; "Add New Address" uses the accent SUBSCRIBE-style pill
+- **Wishlist / Saved Designs** — server-saved, reuses the exact shop product card grid with a remove chip
+- **Payment Methods** — informational bKash / Nagad / Rocket / COD cards
+- **Account Settings** — change password (verifies current) + notification toggles
+- **Log Out** — red, separated, in the sidebar (and existing navbar menu)
+
+Backend additions: `PATCH /api/auth/me`, `POST /api/auth/avatar` (multer → Cloudinary), `PATCH /api/auth/password`, `PATCH /api/auth/wishlist`, addresses CRUD (`POST`/`PUT`/`DELETE` + `PATCH .../default`); `User` gains `avatar`, `notificationPrefs`, `addresses`, `wishlist`; `Order` status enum gains `shipped` (admin dropdown + profile badges). `/orders` now redirects to `/account?tab=orders`.
+
+**Detailed snapshot:** [versions/v0.1.13.md](versions/v0.1.13.md)
+
+------
+
 ## [0.1.12] - 2026-09-18
 
 **Status:** Pre-Release — v0.1.12 In Development

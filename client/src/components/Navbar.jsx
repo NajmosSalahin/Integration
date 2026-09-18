@@ -272,9 +272,18 @@ export default function Navbar() {
                       )}
                       <div role="none">
                         <div className="py-0.5" role="none">
+                        <Link
+                          to="/account"
+                          onClick={() => setUserMenuOpen(false)}
+                          className="flex items-center gap-3 px-4 py-2 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-primary)] transition-colors"
+                          role="menuitem"
+                        >
+                          <User size={16} aria-hidden="true" />
+                          My Account
+                        </Link>
                         {user ? (
                           <Link
-                            to="/orders"
+                            to="/account?tab=orders"
                             onClick={() => setUserMenuOpen(false)}
                             className="flex items-center gap-3 px-4 py-2 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-primary)] transition-colors"
                             role="menuitem"
@@ -412,7 +421,7 @@ export default function Navbar() {
                 <Link to="/cart" className="block py-2 px-1 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">
                   Cart {itemCount > 0 && <span className="text-[var(--accent)]">({itemCount})</span>}
                 </Link>
-                <Link to={user ? "/orders" : "/login"} className="block py-2 px-1 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">My Orders</Link>
+                <Link to={user ? "/account?tab=orders" : "/login"} className="block py-2 px-1 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">My Orders</Link>
                 <Link to="/about" className="block py-2 px-1 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">About</Link>
                 <Link to="/contact" className="block py-2 px-1 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">Contact</Link>
                 <Link to="/faq" className="block py-2 px-1 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">FAQ</Link>

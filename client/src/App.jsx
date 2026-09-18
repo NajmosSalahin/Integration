@@ -1,5 +1,5 @@
 import { lazy, Suspense } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import ScrollToTop from './components/ScrollToTop';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminRoute from './components/AdminRoute';
@@ -18,7 +18,7 @@ const ResetPassword = lazy(() => import('./pages/ResetPassword'));
 const VerifyEmail = lazy(() => import('./pages/VerifyEmail'));
 const AdminOrders = lazy(() => import('./pages/admin/Orders'));
 const AdminProducts = lazy(() => import('./pages/admin/Products'));
-const OrdersHistory = lazy(() => import('./pages/OrdersHistory'));
+const Account = lazy(() => import('./pages/Account'));
 const About = lazy(() => import('./pages/About'));
 const Contact = lazy(() => import('./pages/Contact'));
 const FAQ = lazy(() => import('./pages/legal/FAQ'));
@@ -85,13 +85,14 @@ function App() {
             }
           />
           <Route
-            path="/orders"
+            path="/account"
             element={
               <ProtectedRoute>
-                <OrdersHistory />
+                <Account />
               </ProtectedRoute>
             }
           />
+          <Route path="/orders" element={<Navigate to="/account?tab=orders" replace />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/faq" element={<FAQ />} />

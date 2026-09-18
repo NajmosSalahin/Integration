@@ -4,6 +4,7 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import compression from 'compression';
+import multer from 'multer';
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import { dirname, join, sep } from 'path';
@@ -135,6 +136,12 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 app.use((err, req, res, next) => {
+  if (err instanceof multer.MulterError) {
+    return res.status(400).json({ error: 'Image upload failed — max 5 MB allowed' });
+  }
+  if (err?.message === 'Only image files are allowed') {
+    return res.status(400).json({ error: 'Only image files are allowed' });
+  }
   console.error(err.stack);
   res.status(500).json({ error: 'Something went wrong' });
 });

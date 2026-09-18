@@ -52,6 +52,8 @@ export function AuthProvider({ children }) {
     },
   });
 
+  const refreshUser = () => queryClient.invalidateQueries({ queryKey: ['user'] });
+
   return (
     <AuthContext.Provider
       value={{
@@ -60,6 +62,7 @@ export function AuthProvider({ children }) {
         login: loginMutation.mutateAsync,
         signup: signupMutation.mutateAsync,
         logout: logoutMutation.mutateAsync,
+        refreshUser,
         loginError: loginMutation.error,
         signupError: signupMutation.error,
       }}

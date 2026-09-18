@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { ShoppingCart, Check } from 'lucide-react';
+import { ShoppingCart, Check, X } from 'lucide-react';
 import useCart from '../stores/cartStore';
 import { useToast } from './ui/Toast';
 import { cloudinaryUrl } from '../lib/image';
 
-export default function ShopProductCard({ product, index }) {
+export default function ShopProductCard({ product, index, onRemove }) {
   const addItem = useCart((s) => s.addItem);
   const toast = useToast();
   const [added, setAdded] = useState(false);
@@ -100,6 +100,21 @@ export default function ShopProductCard({ product, index }) {
             {added ? <Check size={14} aria-hidden="true" /> : <ShoppingCart size={14} aria-hidden="true" />}
           </button>
         </div>
+
+        {onRemove && (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onRemove(product);
+            }}
+            aria-label={`Remove ${product.title} from saved designs`}
+            className="absolute top-2 left-2 z-10 w-8 h-8 flex items-center justify-center rounded-lg bg-black/70 border border-white/25 text-white hover:bg-red-500 hover:border-red-500 transition-colors"
+          >
+            <X size={14} aria-hidden="true" />
+          </button>
+        )}
       </div>
     </motion.div>
   );

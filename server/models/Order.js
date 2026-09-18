@@ -27,7 +27,7 @@ const orderSchema = new mongoose.Schema({
   contactPhone: { type: String, required: true, trim: true },
   status: {
     type: String,
-    enum: ['pending_payment', 'awaiting_confirmation', 'paid', 'fulfilled', 'cancelled'],
+    enum: ['pending_payment', 'awaiting_confirmation', 'paid', 'shipped', 'fulfilled', 'cancelled'],
     default: 'pending_payment',
   },
   paymentMethod: {
