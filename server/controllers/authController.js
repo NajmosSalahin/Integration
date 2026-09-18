@@ -63,13 +63,7 @@ export async function signup(req, res) {
 
     res.status(201).json({
       accessToken,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        emailVerified: user.emailVerified,
-      },
+      user: formatUser(user),
     });
   } catch (err) {
     console.error('Signup error:', err);
@@ -97,13 +91,7 @@ export async function login(req, res) {
 
     res.json({
       accessToken,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        emailVerified: user.emailVerified,
-      },
+      user: formatUser(user),
     });
   } catch (err) {
     console.error('Login error:', err);

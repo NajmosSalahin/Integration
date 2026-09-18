@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AlertCircle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
@@ -9,6 +9,7 @@ import Footer from '../components/Footer';
 import FormField from '../components/ui/FormField';
 import MetaTags from '../components/MetaTags';
 import { PAYMENT_METHODS, paymentLabel } from '../lib/paymentMethods';
+import { composeAddress, defaultAddress } from '../lib/address';
 
 const PHONE_RE = /^(\+?[\d\s()-]{8,16})$/;
 const MIN_ADDRESS_LEN = 10;
@@ -32,6 +33,14 @@ export default function Checkout() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
   const [fieldErrors, setFieldErrors] = useState({ phone: null, address: null });
+  const touched = useRef(false);
+
+  useEffect(() => {
+    if (!user || touched.current) return;
+    const saved = defaultAddress(user);
+    if (!phone && (user.phone || saved?.phone)) setPhone(user.phone || saved.phone);
+    if (!address && saved) setAddress(composeAddress(saved));
+  }, [user]);
 
   if (items.length === 0) {
     return (
@@ -176,6 +185,7 @@ export default function Checkout() {
                         value={phone}
                         onChange={(e) => {
                           setPhone(e.target.value);
+                          touched.current = true;
                           setFieldErrors((f) => ({ ...f, phone: null }));
                         }}
                         disabled={submitting}
@@ -199,6 +209,7 @@ export default function Checkout() {
                         value={address}
                         onChange={(e) => {
                           setAddress(e.target.value);
+                          touched.current = true;
                           setFieldErrors((f) => ({ ...f, address: null }));
                         }}
                         disabled={submitting}

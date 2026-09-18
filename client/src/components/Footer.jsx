@@ -3,8 +3,8 @@ import { ChevronUp, Facebook, X, Instagram } from 'lucide-react';
 import NewsletterForm from './NewsletterForm';
 
 const SOCIAL_LINKS = [
-  { label: 'Facebook', href: 'https://www.facebook.com/YOUR_PAGE', Icon: Facebook },
-  { label: 'X', href: 'https://x.com/YOUR_HANDLE', Icon: X },
+  { label: 'Facebook', href: 'https://www.facebook.com/profile.php?id=61594204353841', Icon: Facebook },
+  { label: 'X', href: 'https://x.com/integration09', Icon: X },
   { label: 'Instagram', href: 'https://www.instagram.com/YOUR_HANDLE', Icon: Instagram },
 ];
 

@@ -5,6 +5,18 @@ All notable changes to the Integration storefront will be documented in this fil
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.14] - 2026-09-18
+
+**Status:** Pre-Release — v0.1.14 In Development
+
+Closes the saved-address loop from v0.1.13: `/checkout` now auto-pre-fills the phone and delivery address for signed-in users from their saved account data (`user.phone`, falling back to the default address's phone; the composed default address string). A `touched` guard ensures the pre-fill only seeds untouched, empty fields and never overwrites typing; guests and users with no saved data see the unchanged empty form. Also replaces the footer `YOUR_PAGE`/`YOUR_HANDLE` placeholders with the real Facebook (`profile.php?id=61594204353841`) and X (`integration09`) links — Instagram keeps its placeholder until a URL is provided.
+
+New `client/src/lib/address.js` (`defaultAddress`, `composeAddress`) backs the pre-fill. To make the pre-fill work immediately after a fresh UI login (not just after a page reload), `POST /api/auth/login` and `signup` now return the full public user via `formatUser()` — additive response change, no migration. No new dependencies or models.
+
+**Detailed snapshot:** [versions/v0.1.14.md](versions/v0.1.14.md)
+
+------
+
 ## [0.1.13] - 2026-09-18
 
 **Status:** Pre-Release — v0.1.13 In Development
