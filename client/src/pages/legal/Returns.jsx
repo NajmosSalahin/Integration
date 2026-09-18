@@ -66,9 +66,10 @@ export default function Returns() {
             Refund Process
           </h2>
           <p>
-            Given that we operate on manual bKash payments, refunds are processed manually
-            as well. Once we receive and inspect your returned item, we will send the refund
-            directly to your bKash number within 3-5 business days.
+            Refunds are processed manually. Once we receive and inspect your returned item,
+            we will send the refund to your original payment method (bKash, Nagad, or
+            Rocket) within 3-5 business days. For cash on delivery orders, we will arrange
+            the refund through the payment method of your choice.
           </p>
           <p className="mt-2">
             You will receive a confirmation email once the refund has been sent.

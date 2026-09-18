@@ -51,7 +51,8 @@ export default function Privacy() {
           <p>
             Your data is stored securely in our database, hosted on MongoDB Atlas with
             industry-standard encryption. We do not store any payment card details, as
-            all payments are made via bKash directly between you and us.
+            all payments are made via bKash, Nagad, or Rocket directly between you and us,
+            or as cash on delivery.
           </p>
         </div>
 

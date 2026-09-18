@@ -3,11 +3,11 @@ import ContentLayout from '../../components/ContentLayout';
 const faqs = [
   {
     q: 'How do I place an order?',
-    a: 'Browse our collection, select your size, and add items to your cart. When you are ready, proceed to checkout and fill in your delivery details. You will then receive instructions on how to complete payment via bKash.',
+    a: 'Browse our collection, select your size, and add items to your cart. When you are ready, proceed to checkout, choose your preferred payment method, and fill in your delivery details. For bKash, Nagad, or Rocket orders, you will then receive instructions on how to complete your payment.',
   },
   {
     q: 'What payment methods do you accept?',
-    a: 'We currently accept bKash payments only. After placing your order, you will receive a confirmation with our bKash number and the exact amount to send. Once we verify your payment, your order moves to confirmed status.',
+    a: 'We accept bKash, Nagad, Rocket, and cash on delivery. For manual digital payments, you will receive a confirmation with our number and the exact amount to send. Once we verify your payment, your order moves to confirmed status. For cash on delivery, no advance payment is required.',
   },
   {
     q: 'How do I know my size?',

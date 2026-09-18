@@ -10,6 +10,7 @@ import Skeleton from '../../components/ui/Skeleton';
 import EmptyState from '../../components/ui/EmptyState';
 import ErrorState from '../../components/ui/ErrorState';
 import Spinner from '../../components/ui/Spinner';
+import { paymentLabel } from '../../lib/paymentMethods';
 
 const STATUS_OPTIONS = [
   { value: 'pending_payment', label: 'Pending Payment' },
@@ -25,6 +26,13 @@ const STATUS_COLORS = {
   paid: 'text-[var(--accent)]',
   fulfilled: 'text-emerald-400',
   cancelled: 'text-red-400',
+};
+
+const PAYMENT_BADGES = {
+  bkash: 'bg-[var(--accent)]/10 text-[var(--accent)]',
+  nagad: 'bg-pink-500/10 text-pink-400',
+  rocket: 'bg-purple-500/10 text-purple-400',
+  cod: 'bg-orange-500/10 text-orange-400',
 };
 
 const FILTER_TABS = [
@@ -230,11 +238,9 @@ export default function Orders() {
                           </td>
                           <td className="py-3 px-3 hidden md:table-cell">
                             <span className={`text-xs px-2 py-0.5 rounded-lg ${
-                              order.paymentMethod === 'cod'
-                                ? 'bg-orange-500/10 text-orange-400'
-                                : 'bg-[var(--accent)]/10 text-[var(--accent)]'
+                              PAYMENT_BADGES[order.paymentMethod] || 'bg-[var(--accent)]/10 text-[var(--accent)]'
                             }`}>
-                              {order.paymentMethod === 'cod' ? 'COD' : 'bKash'}
+                              {paymentLabel(order.paymentMethod)}
                             </span>
                           </td>
                           <td className="py-3 px-3 hidden md:table-cell">

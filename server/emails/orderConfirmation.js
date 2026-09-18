@@ -1,5 +1,6 @@
 import { BrevoClient } from '@getbrevo/brevo';
 import { wrap, heading, sectionLabel, detailRow, itemsTable, orderTotal, button, spacer, divider, step, contactButtons, buildWhatsappLinks } from './template.js';
+import { isCod, paymentMethodLabel } from '../utils/paymentMethods.js';
 
 export async function sendOrderConfirmationEmail({ order, customerEmail, customerName }) {
   if (!process.env.BREVO_API_KEY || process.env.BREVO_API_KEY === 'your-brevo-api-key') {
@@ -38,12 +39,12 @@ export async function sendOrderConfirmationEmail({ order, customerEmail, custome
     ${divider()}
 
     ${sectionLabel('What Happens Next')}
-    ${order.paymentMethod === 'cod'
+    ${isCod(order.paymentMethod)
       ? `${step(1, "We'll contact you shortly to confirm your order details.")}
          ${step(2, 'Your order ships within 2-3 business days after confirmation.')}
          ${step(3, 'Pay <strong>cash on delivery</strong> when your order arrives. No advance payment required.')}`
       : `${step(1, "We'll contact you shortly to confirm your order details.")}
-         ${step(2, 'Send your payment via <strong>bKash</strong> to the number we provide.')}
+         ${step(2, `Send your payment via <strong>${paymentMethodLabel(order.paymentMethod)}</strong> to the number we provide.`)}
          ${step(3, 'Once payment is confirmed, your order ships within 2-3 business days.')}`
     }
 

@@ -7,6 +7,7 @@ import { getOrder } from '../api/orders';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import Spinner from '../components/ui/Spinner';
+import { paymentLabel } from '../lib/paymentMethods';
 
 export default function OrderConfirmation() {
   const { id } = useParams();
@@ -155,7 +156,8 @@ export default function OrderConfirmation() {
                     <>
                       <Step num="1">We'll contact you shortly to confirm your order details.</Step>
                       <Step num="2">
-                        Send your payment via <strong>bKash</strong> to the number we provide.
+                        Send your payment via <strong>{paymentLabel(order.paymentMethod)}</strong> to the number we
+                        provide.
                       </Step>
                       <Step num="3">Once payment is confirmed, your order ships within 2–3 business days.</Step>
                     </>

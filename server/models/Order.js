@@ -30,7 +30,11 @@ const orderSchema = new mongoose.Schema({
     enum: ['pending_payment', 'awaiting_confirmation', 'paid', 'fulfilled', 'cancelled'],
     default: 'pending_payment',
   },
-  paymentMethod: { type: String, default: 'bkash' },
+  paymentMethod: {
+    type: String,
+    enum: ['bkash', 'nagad', 'rocket', 'cod'],
+    default: 'bkash',
+  },
   paymentNote: { type: String, default: '' },
   paidAt: Date,
   fulfilledAt: Date,

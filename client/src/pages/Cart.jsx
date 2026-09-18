@@ -223,7 +223,8 @@ export default function Cart() {
 
                   <div className="p-3 bg-blue-500/20 border border-blue-500/40 rounded-lg">
                     <p className="text-xs text-blue-300">
-                      Payment is manual via bKash. You will be contacted after placing your order.
+                      Payment is manual via bKash, Nagad, or Rocket. For Cash on Delivery, no advance payment is needed.
+                      You will be contacted after placing your order.
                     </p>
                   </div>
 

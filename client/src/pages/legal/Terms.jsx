@@ -60,9 +60,10 @@ export default function Terms() {
             Payment
           </h2>
           <p>
-            All payments are made via bKash. Orders not paid within 24 hours will be
-            automatically cancelled. We are not responsible for any issues arising from
-            incorrect payment amounts or wrong recipient numbers provided by the buyer.
+            Payments are made via bKash, Nagad, Rocket, or cash on delivery. For manual
+            digital payments, orders not paid within 24 hours will be automatically
+            cancelled. We are not responsible for any issues arising from incorrect
+            payment amounts or wrong recipient numbers provided by the buyer.
           </p>
         </div>
 

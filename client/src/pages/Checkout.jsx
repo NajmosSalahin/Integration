@@ -8,6 +8,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import FormField from '../components/ui/FormField';
 import MetaTags from '../components/MetaTags';
+import { PAYMENT_METHODS, paymentLabel } from '../lib/paymentMethods';
 
 const PHONE_RE = /^(\+?[\d\s()-]{8,16})$/;
 const MIN_ADDRESS_LEN = 10;
@@ -215,27 +216,20 @@ export default function Checkout() {
                     <legend className="block text-xs tracking-[0.15em] uppercase text-[var(--text-secondary)] mb-2">
                       Payment Method *
                     </legend>
-                    <div className="flex gap-3" role="radiogroup" aria-label="Payment method">
-                      <button
-                        type="button"
-                        onClick={() => setPaymentMethod('bkash')}
-                        disabled={submitting}
-                        role="radio"
-                        aria-checked={paymentMethod === 'bkash'}
-                        className={paymentButtonClass(paymentMethod === 'bkash')}
-                      >
-                        bKash
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setPaymentMethod('cod')}
-                        disabled={submitting}
-                        role="radio"
-                        aria-checked={paymentMethod === 'cod'}
-                        className={paymentButtonClass(paymentMethod === 'cod')}
-                      >
-                        Cash on Delivery
-                      </button>
+                    <div className="grid grid-cols-2 gap-3" role="radiogroup" aria-label="Payment method">
+                      {PAYMENT_METHODS.map((method) => (
+                        <button
+                          key={method.value}
+                          type="button"
+                          onClick={() => setPaymentMethod(method.value)}
+                          disabled={submitting}
+                          role="radio"
+                          aria-checked={paymentMethod === method.value}
+                          className={paymentButtonClass(paymentMethod === method.value)}
+                        >
+                          {method.label}
+                        </button>
+                      ))}
                     </div>
                   </fieldset>
                 </div>
@@ -306,7 +300,7 @@ export default function Checkout() {
                   <p className="text-xs text-[var(--text-secondary)]">
                     {paymentMethod === 'cod'
                       ? 'Pay when your order arrives. No advance payment required.'
-                      : 'Pay instantly via bKash for faster delivery. You will be contacted after placing your order.'}
+                      : `Pay instantly via ${paymentLabel(paymentMethod)} for faster delivery. You will be contacted after placing your order.`}
                   </p>
                 </div>
               </aside>

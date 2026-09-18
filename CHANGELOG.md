@@ -5,6 +5,23 @@ All notable changes to the Integration storefront will be documented in this fil
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.11] - 2026-09-18
+
+**Status:** Pre-Release — v0.1.11 In Development
+
+Manual payment methods expanded from bKash-only to bKash, Nagad, Rocket, and Cash on Delivery. The `paymentMethod` field is now enum-constrained (Zod + Mongoose) and payment copy is un-hardcoded across the whole order flow.
+
+- New shared payment helpers: `client/src/lib/paymentMethods.js` (`PAYMENT_METHODS` + `paymentLabel()`) and `server/utils/paymentMethods.js` (`paymentMethodLabel()`, `isCod()`)
+- Checkout radio group renders 4 methods in a `grid grid-cols-2 gap-3` (was 2-up flex); helper text under the total is parameterized per method
+- bKash/Nagad/Rocket keep the "we'll contact you to confirm payment" flow, labelled by the selected method; COD keep the no-advance-payment copy — in the customer email, owner email, PDF receipt footer, and OrderConfirmation page
+- Admin orders list shows tinted per-method badges (bKash blue, Nagad pink, Rocket purple, COD orange)
+- Legal pages updated: Payments, FAQ, Terms, Returns, Privacy; cart notice generalized
+- `paymentMethod` enum widened in `server/utils/validate.js` and `Order.js`; existing orders unaffected (no migration)
+
+**Detailed snapshot:** [versions/v0.1.11.md](versions/v0.1.11.md)
+
+------
+
 ## [0.1.10] - 2026-09-18
 
 **Status:** Pre-Release — v0.1.10 In Development
