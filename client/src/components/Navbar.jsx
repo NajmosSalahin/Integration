@@ -135,7 +135,7 @@ export default function Navbar() {
               </span>
             </Link>
 
-            <div className="flex-1 max-w-xl hidden md:block" ref={searchRef}>
+            <div className="flex-1 max-w-2xl min-w-0 hidden md:block" ref={searchRef}>
               <form onSubmit={handleSearch} className="relative" role="search">
                 <input
                   type="search"
