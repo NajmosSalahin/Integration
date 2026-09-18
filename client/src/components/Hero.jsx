@@ -99,7 +99,7 @@ export default function Hero() {
         ))}
       </div>
 
-      <div className="absolute inset-0 bg-black/30" />
+      <div className="absolute inset-0 bg-black/15" />
 
       <div className="absolute inset-0 z-10 flex items-end justify-center pb-5 sm:pb-10">
         <Link
