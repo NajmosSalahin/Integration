@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { cloudinaryUrl } from '../lib/image';
 import { motion } from 'framer-motion';
 import { SearchX, Search } from 'lucide-react';
 
@@ -30,7 +31,7 @@ export default function SearchResults({ results, query, onSelect }) {
                   className="flex items-center gap-3 px-3 py-2.5 hover:bg-[var(--bg-primary)] transition-colors"
                 >
                   <img
-                    src={product.images[0]}
+                    src={cloudinaryUrl(product.images[0], 96)}
                     alt={product.title}
                     width={48}
                     height={48}

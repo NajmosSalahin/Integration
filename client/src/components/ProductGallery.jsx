@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ZoomIn, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { cloudinaryUrl } from '../lib/image';
 
 export default function ProductGallery({ images }) {
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -111,7 +112,7 @@ export default function ProductGallery({ images }) {
         <AnimatePresence mode="wait">
           <motion.img
             key={selectedIndex}
-            src={images[selectedIndex]}
+            src={cloudinaryUrl(images[selectedIndex], 1200)}
             alt={`Product image ${selectedIndex + 1}`}
             width={800}
             height={800}
@@ -153,7 +154,7 @@ export default function ProductGallery({ images }) {
               }`}
             >
               <img
-                src={img}
+                src={cloudinaryUrl(img, 128)}
                 alt={`Thumbnail ${i + 1}`}
                 width={64}
                 height={64}
@@ -210,7 +211,7 @@ export default function ProductGallery({ images }) {
             )}
 
             <motion.img
-              src={images[selectedIndex]}
+              src={cloudinaryUrl(images[selectedIndex], 1600)}
               alt={`Product zoomed — image ${selectedIndex + 1}`}
               className="max-h-[90vh] max-w-[90vw] object-contain select-none"
               initial={{ scale: 0.9, opacity: 0 }}

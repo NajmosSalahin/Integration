@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { ArrowRight, Shirt, Shield, Crown, Footprints, ShoppingBag, Backpack, BaggageClaim, Briefcase, TvMinimal, BookOpenText } from 'lucide-react';
 import { fetchProducts } from '../api/products';
 import { categories } from '../data/categories';
+import { cloudinaryUrl } from '../lib/image';
 
 const iconMap = { Shirt, Shield, Crown, Footprints, ShoppingBag, Backpack, BaggageClaim, Briefcase, TvMinimal, BookOpenText };
 
@@ -17,7 +18,7 @@ export default function CategoryGrid() {
     const match = products.find((p) =>
       p.tags?.some((t) => t.toLowerCase() === tag)
     );
-    return match?.images?.[0] || null;
+    return cloudinaryUrl(match?.images?.[0], 240) || null;
   };
 
   const homeCategories = categories.filter((c) => c.home);

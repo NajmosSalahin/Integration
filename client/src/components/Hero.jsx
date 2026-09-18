@@ -2,11 +2,17 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
+const CLOUD_BASE = 'https://res.cloudinary.com/zo1t9pye/image/upload';
+const BANNER_WIDTHS = [480, 900, 1600];
+
 const slides = [
-  { image: '/banner1.jpg', alt: 'New Collection', cta: '/shop', label: 'Shop New Collection' },
-  { image: '/banner2.jpg', alt: 'Street Essentials', cta: '/shop?tag=streetwear', label: 'Shop Street Essentials' },
-  { image: '/banner3.jpg', alt: 'Featured Designs', cta: '/shop', label: 'Shop Featured Designs' },
+  { id: 'banner1', version: 'v1789713367', alt: 'New Collection', cta: '/shop', label: 'Shop New Collection' },
+  { id: 'banner2', version: 'v1789713379', alt: 'Street Essentials', cta: '/shop?tag=streetwear', label: 'Shop Street Essentials' },
+  { id: 'banner3', version: 'v1789713387', alt: 'Featured Designs', cta: '/shop', label: 'Shop Featured Designs' },
 ];
+
+const bannerUrl = (id, version, width) =>
+  `${CLOUD_BASE}/f_auto,q_auto,w_${width}/${version}/integration/banners/${id}`;
 
 const FALLBACK_IMAGE = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="500"><rect width="100%25" height="100%25" fill="%23111111"/></svg>';
 
@@ -73,7 +79,9 @@ export default function Hero() {
         {slides.map((slide, i) => (
           <img
             key={i}
-            src={slide.image}
+            src={bannerUrl(slide.id, slide.version, 1600)}
+            srcSet={BANNER_WIDTHS.map((w) => `${bannerUrl(slide.id, slide.version, w)} ${w}w`).join(', ')}
+            sizes="100vw"
             alt={slide.alt}
             aria-hidden={i !== current}
             width={1942}

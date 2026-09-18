@@ -10,6 +10,7 @@ import EmptyState from '../../components/ui/EmptyState';
 import ErrorState from '../../components/ui/ErrorState';
 import Modal from '../../components/ui/Modal';
 import ConfirmDialog from '../../components/ui/ConfirmDialog';
+import { cloudinaryUrl } from '../../lib/image';
 import FormField from '../../components/ui/FormField';
 import Spinner from '../../components/ui/Spinner';
 
@@ -257,7 +258,7 @@ export default function Products() {
                       >
                         <td className="py-3 px-3">
                           <div className="w-10 h-10 bg-[var(--bg-secondary)] rounded-lg overflow-hidden">
-                            <img src={product.images[0]} alt={product.title} className="w-full h-full object-cover" />
+                            <img src={cloudinaryUrl(product.images[0], 120)} alt={product.title} className="w-full h-full object-cover" />
                           </div>
                         </td>
                         <td className="py-3 px-3">
@@ -336,7 +337,7 @@ export default function Products() {
 
           {editing?.images?.[0] && (
             <div className="w-full h-40 bg-[var(--bg-secondary)] rounded-lg overflow-hidden mt-3">
-              <img src={editing.images[0]} alt={editing.title} className="w-full h-full object-cover" />
+              <img src={cloudinaryUrl(editing.images[0], 400)} alt={editing.title} className="w-full h-full object-cover" />
             </div>
           )}
 
