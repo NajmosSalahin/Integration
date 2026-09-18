@@ -5,6 +5,24 @@ All notable changes to the Integration storefront will be documented in this fil
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.12] - 2026-09-18
+
+**Status:** Pre-Release — v0.1.12 In Development
+
+Performance and accessibility follow-up to v0.1.11, driven by a PageSpeed Insights audit. The report's headline "60 MB page weight" was already stale (the deployed Cloudinary build serves ~17 KB JPEG / ~11 KB WebP per product image), so this release ships the genuinely remaining findings:
+
+- **LCP:** hero banner1 preloaded in `index.html` with `imagesrcset` (480/900/1600w) + `imagesizes="100vw"`; first slide gets `fetchPriority="high"`
+- **Render-blocking:** Google Fonts CSS is now non-blocking (`media="print"` swap + `<noscript>` fallback); `display=swap` → `display=optional` — kills both the ~150 ms blocked render and the Inter swap CLS 0.220
+- **Preconnects:** added `res.cloudinary.com` (crossorigin) and `plausible.io`
+- **Forced reflow:** `FeaturedRow` caches card width + gap (mount + `ResizeObserver`) and coalesces arrow updates into one `requestAnimationFrame`, removing the per-scroll-tick layout reads
+- **Console error:** `/auth/refresh` no longer 401s on every load — `AuthContext` now only refreshes when a `refreshToken` cookie exists
+- **A11y:** hero CTA mobile fill `bg-black/45` for contrast; SUBSCRIBE buttons render `text-[#0e1320]` on the accent pill; carousel dots are 24 px hit targets; single `<main>` landmark wraps all routes; duplicate thumbnail `alt` text removed
+- **Agentic Browsing:** added spec-compliant `llms.txt` + `llms-full.txt`
+
+**Detailed snapshot:** [versions/v0.1.12.md](versions/v0.1.12.md)
+
+------
+
 ## [0.1.11] - 2026-09-18
 
 **Status:** Pre-Release — v0.1.11 In Development
