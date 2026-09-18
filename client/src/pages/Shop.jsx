@@ -14,7 +14,8 @@ import Pagination from '../components/ui/Pagination';
 import ErrorState from '../components/ui/ErrorState';
 import EmptyState from '../components/ui/EmptyState';
 import Skeleton from '../components/ui/Skeleton';
-import { categories } from '../data/categories';
+import { categories, CATEGORY_GROUPS } from '../data/categories';
+import ShopFilters from '../components/ShopFilters';
 
 const PER_PAGE = 16;
 
@@ -32,6 +33,8 @@ export default function Shop() {
   const tagFilter = searchParams.get('tag') || '';
   const searchQuery = searchParams.get('q') || '';
   const sort = searchParams.get('sort') || 'newest';
+  const priceMin = searchParams.get('min') || '';
+  const priceMax = searchParams.get('max') || '';
   const pageParam = Number(searchParams.get('page')) || 1;
   const page = pageParam < 1 ? 1 : pageParam;
 
@@ -43,10 +46,13 @@ export default function Shop() {
   const filtered = useMemo(() => {
     if (!products) return undefined;
     const base = searchQuery ? searchProducts(products, searchQuery) : products;
-    return tagFilter
+    const byTag = tagFilter
       ? base.filter((p) => p.tags?.some((t) => t.toLowerCase() === tagFilter.toLowerCase()))
       : base;
-  }, [products, searchQuery, tagFilter]);
+    if (priceMin !== '' && priceMax !== '' && Number(priceMin) > Number(priceMax)) return [];
+    const byMin = priceMin !== '' ? byTag.filter((p) => p.price >= Number(priceMin)) : byTag;
+    return priceMax !== '' ? byMin.filter((p) => p.price <= Number(priceMax)) : byMin;
+  }, [products, searchQuery, tagFilter, priceMin, priceMax]);
 
   const sorted = filtered ? [...filtered] : undefined;
   if (sorted && !searchQuery) {
@@ -118,6 +124,16 @@ export default function Shop() {
     setParams({ sort: value, page: '' });
     setSortOpen(false);
   };
+
+  const handlePriceChange = (key, value) => {
+    setParams({ [key]: value || '', page: '' });
+  };
+
+  const handleClearFilters = () => {
+    setParams({ min: '', max: '', tag: '', page: '' });
+  };
+
+  const activeFilterCount = [tagFilter, priceMin, priceMax].filter((value) => value !== '').length;
 
   const pillClass = (active) =>
     `px-4 py-2 text-sm rounded-full border transition-colors whitespace-nowrap ${
@@ -264,9 +280,17 @@ export default function Shop() {
               </div>
             </div>
 
+            <ShopFilters
+              min={priceMin}
+              max={priceMax}
+              onChange={handlePriceChange}
+              activeCount={activeFilterCount}
+              onClear={handleClearFilters}
+            />
+
             <div className="lg:flex lg:gap-8">
               <aside className="hidden lg:block w-60 shrink-0">
-                <div className="sticky top-6 space-y-1">
+                <div className="sticky top-20 max-h-[calc(100vh-9rem)] overflow-y-auto scrollbar-thin pr-1">
                   <button
                     onClick={() => handleTagChange('')}
                     className={sidebarClass(!tagFilter)}
@@ -274,15 +298,29 @@ export default function Shop() {
                   >
                     All
                   </button>
-                  {categories.map((category) => (
-                    <button
-                      key={category.tag}
-                      onClick={() => handleTagChange(category.tag)}
-                      className={sidebarClass(tagFilter === category.tag)}
-                      style={{ fontFamily: 'var(--font-body)' }}
-                    >
-                      {category.name}
-                    </button>
+                  {CATEGORY_GROUPS.map((group) => (
+                    <div key={group} className="pt-4">
+                      <p
+                        className="px-3 pb-1 text-[10px] tracking-[0.15em] uppercase text-[var(--text-secondary)]"
+                        style={{ fontFamily: 'var(--font-body)' }}
+                      >
+                        {group}
+                      </p>
+                      <div className="space-y-0.5">
+                        {categories
+                          .filter((category) => category.group === group)
+                          .map((category) => (
+                            <button
+                              key={category.tag}
+                              onClick={() => handleTagChange(category.tag)}
+                              className={`${sidebarClass(tagFilter === category.tag)} pl-5`}
+                              style={{ fontFamily: 'var(--font-body)' }}
+                            >
+                              {category.name}
+                            </button>
+                          ))}
+                      </div>
+                    </div>
                   ))}
                 </div>
               </aside>
@@ -311,21 +349,21 @@ export default function Shop() {
                   <EmptyState
                     message={searchQuery || tagFilter ? `No designs match "${searchQuery || tagFilter}"` : 'No designs found yet'}
                     actionLabel="Clear filters"
-                    onAction={() => setParams({ q: '', tag: '', page: '' })}
+                    onAction={() => setParams({ q: '', tag: '', min: '', max: '', page: '' })}
                   />
                 )}
 
                 {sorted && sorted.length > 0 && (
                   <div className="flex items-center justify-between mb-5" aria-live="polite">
-                    <p className="text-sm text-[var(--text-secondary)]" style={{ fontFamily: 'var(--font-body)' }}>
+                    <p className="text-sm font-medium text-[var(--text-primary)]" style={{ fontFamily: 'var(--font-body)' }}>
                       {sorted.length} design{sorted.length !== 1 ? 's' : ''}
                     </p>
                     {searchQuery ? (
-                      <p className="text-sm text-[var(--text-secondary)]" style={{ fontFamily: 'var(--font-body)' }}>
+                      <p className="text-sm font-medium text-[var(--text-primary)]" style={{ fontFamily: 'var(--font-body)' }}>
                         Results for "{searchQuery}"
                       </p>
                     ) : totalPages > 1 ? (
-                      <p className="text-sm text-[var(--text-secondary)]" style={{ fontFamily: 'var(--font-body)' }}>
+                      <p className="text-sm font-medium text-[var(--text-primary)]" style={{ fontFamily: 'var(--font-body)' }}>
                         Showing {rangeStart}–{rangeEnd}
                       </p>
                     ) : null}
