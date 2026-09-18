@@ -12,7 +12,9 @@ export function AuthProvider({ children }) {
     queryKey: ['user'],
     queryFn: async () => {
       try {
-        await refresh();
+        if (document.cookie.includes('refreshToken=')) {
+          await refresh();
+        }
         return await getMe();
       } catch {
         return null;
