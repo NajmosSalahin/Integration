@@ -71,6 +71,10 @@ input[type="number"] {
   transform: rotate(1.5deg);
 }
 
+.hand-drawn-underline.full::after {
+  width: 100%;
+}
+
 .scrollbar-thin::-webkit-scrollbar {
   height: 4px;
 }

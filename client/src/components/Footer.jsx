@@ -107,15 +107,15 @@ export default function Footer() {
         </div>
 
         <div className="pt-4 border-t border-[var(--border)] mb-6">
-          <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+          <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
             <div className="max-w-md w-full">
               <NewsletterForm />
             </div>
-            <div className="flex items-center gap-3 shrink-0">
-              <span className="hand-drawn-underline text-xs tracking-[0.15em] uppercase text-[var(--text-secondary)] mb-1">
+            <div className="shrink-0">
+              <span className="hand-drawn-underline full inline-block text-xs tracking-[0.15em] uppercase text-[var(--text-secondary)]">
                 Follow us on
               </span>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3 mt-4">
                 {SOCIAL_LINKS.map(({ label, href, Icon }) => (
                   <a
                     key={label}
