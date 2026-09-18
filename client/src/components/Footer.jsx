@@ -111,8 +111,8 @@ export default function Footer() {
             <div className="max-w-md w-full">
               <NewsletterForm />
             </div>
-            <div className="shrink-0">
-              <span className="hand-drawn-underline full inline-block text-xs tracking-[0.15em] uppercase text-[var(--text-secondary)]">
+            <div className="shrink-0 md:-translate-y-1">
+              <span className="hand-drawn-underline text-xs tracking-[0.15em] uppercase text-[var(--text-secondary)]">
                 Follow us on
               </span>
               <div className="flex items-center gap-3 mt-4">
