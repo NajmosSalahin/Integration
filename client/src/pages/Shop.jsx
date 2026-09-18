@@ -1,7 +1,8 @@
-import { useMemo, useEffect } from 'react';
+import { useMemo, useEffect, useState, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useSearchParams } from 'react-router-dom';
+import { ArrowUpDown, Check } from 'lucide-react';
 import { fetchProducts } from '../api/products';
 import { searchProducts } from '../lib/smartSearch';
 import { SITE_URL } from '../lib/seo';
@@ -26,6 +27,8 @@ const SORTS = [
 
 export default function Shop() {
   const [searchParams, setSearchParams] = useSearchParams();
+  const [sortOpen, setSortOpen] = useState(false);
+  const sortRef = useRef(null);
   const tagFilter = searchParams.get('tag') || '';
   const searchQuery = searchParams.get('q') || '';
   const sort = searchParams.get('sort') || 'newest';
@@ -87,6 +90,22 @@ export default function Shop() {
     setSearchParams(next);
   };
 
+  useEffect(() => {
+    if (!sortOpen) return;
+    const onKeyDown = (e) => {
+      if (e.key === 'Escape') setSortOpen(false);
+    };
+    const onMouseDown = (e) => {
+      if (sortRef.current && !sortRef.current.contains(e.target)) setSortOpen(false);
+    };
+    document.addEventListener('keydown', onKeyDown);
+    document.addEventListener('mousedown', onMouseDown);
+    return () => {
+      document.removeEventListener('keydown', onKeyDown);
+      document.removeEventListener('mousedown', onMouseDown);
+    };
+  }, [sortOpen]);
+
   const handleTagChange = (tag) => {
     if (tag) {
       setParams({ tag, page: '' });
@@ -95,8 +114,9 @@ export default function Shop() {
     }
   };
 
-  const handleSortChange = (e) => {
-    setParams({ sort: e.target.value, page: '' });
+  const handleSortChange = (value) => {
+    setParams({ sort: value, page: '' });
+    setSortOpen(false);
   };
 
   const pillClass = (active) =>
@@ -174,23 +194,73 @@ export default function Shop() {
                 <div className="pointer-events-none absolute right-0 top-0 bottom-1 w-10 bg-gradient-to-l from-[var(--bg-primary)] to-transparent" aria-hidden="true" />
               </div>
 
-              <div className="flex items-center gap-2 ml-auto">
-                <label htmlFor="shop-sort" className="sr-only">Sort products</label>
-                <select
-                  id="shop-sort"
-                  value={sort}
-                  onChange={handleSortChange}
+              <div className="relative ml-auto" ref={sortRef}>
+                <label id="shop-sort-label" className="sr-only">Sort products</label>
+                <button
+                  type="button"
+                  onClick={() => setSortOpen((open) => !open)}
                   disabled={Boolean(searchQuery)}
                   title={searchQuery ? 'Sorting is unavailable while searching — search results are relevance-ordered.' : undefined}
-                  className="px-3 py-2 text-sm rounded-lg border border-[var(--border)] bg-[var(--bg-primary)] text-[var(--text-primary)] focus:outline-none focus:border-[var(--accent)] disabled:opacity-40"
+                  aria-haspopup="listbox"
+                  aria-expanded={sortOpen}
+                  aria-labelledby="shop-sort-label"
+                  className="lg:hidden inline-flex items-center gap-1.5 px-3 py-2 text-sm rounded-lg border border-[var(--border)] bg-[var(--bg-primary)] text-[var(--text-primary)] cursor-pointer focus:outline-none focus:border-[var(--accent)] disabled:opacity-40"
                   style={{ fontFamily: 'var(--font-body)' }}
                 >
-                  {SORTS.map((s) => (
-                    <option key={s.value} value={s.value}>
-                      {s.label}
-                    </option>
-                  ))}
-                </select>
+                  Sort
+                  <ArrowUpDown className="w-4 h-4" />
+                </button>
+                <AnimatePresence>
+                  {sortOpen && (
+                    <motion.ul
+                      role="listbox"
+                      aria-labelledby="shop-sort-label"
+                      initial={{ opacity: 0, y: -4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -4 }}
+                      transition={{ duration: 0.15 }}
+                      className="absolute right-0 top-full mt-2 min-w-44 z-50 rounded-[8px] border border-[var(--border)] bg-[var(--bg-secondary)] shadow-xl overflow-hidden"
+                    >
+                      {SORTS.map((s) => (
+                        <li key={s.value}>
+                          <button
+                            type="button"
+                            role="option"
+                            aria-selected={sort === s.value}
+                            onClick={() => handleSortChange(s.value)}
+                            className={`w-full flex items-center justify-between gap-3 text-left px-4 py-2.5 text-sm transition-colors ${
+                              sort === s.value
+                                ? 'text-[var(--accent)]'
+                                : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-primary)]'
+                            }`}
+                            style={{ fontFamily: 'var(--font-body)' }}
+                          >
+                            {s.label}
+                            {sort === s.value && <Check className="w-4 h-4" />}
+                          </button>
+                        </li>
+                      ))}
+                    </motion.ul>
+                  )}
+                </AnimatePresence>
+                <div className="hidden lg:flex items-center gap-2">
+                  <label htmlFor="shop-sort" className="sr-only">Sort products</label>
+                  <select
+                    id="shop-sort"
+                    value={sort}
+                    onChange={(e) => handleSortChange(e.target.value)}
+                    disabled={Boolean(searchQuery)}
+                    title={searchQuery ? 'Sorting is unavailable while searching — search results are relevance-ordered.' : undefined}
+                    className="px-3 py-2 text-sm rounded-lg border border-[var(--border)] bg-[var(--bg-primary)] text-[var(--text-primary)] focus:outline-none focus:border-[var(--accent)] disabled:opacity-40"
+                    style={{ fontFamily: 'var(--font-body)' }}
+                  >
+                    {SORTS.map((s) => (
+                      <option key={s.value} value={s.value}>
+                        {s.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
             </div>
 
