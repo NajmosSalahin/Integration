@@ -46,7 +46,11 @@ export default function Home() {
 
   useEffect(() => {
     if (searchQuery || tagFilter) {
-      collectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const el = collectionRef.current;
+      if (el) {
+        const y = el.getBoundingClientRect().top + window.scrollY - 80;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
     }
   }, [searchQuery, tagFilter]);
 
@@ -95,7 +99,7 @@ export default function Home() {
 
         <FeaturedRow products={featured} />
 
-        <section ref={collectionRef} className="py-12 sm:py-8 lg:py-20 scroll-mt-20">
+        <section ref={collectionRef} className="py-10 lg:py-16 scroll-mt-20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between mb-6">
               <h2
@@ -110,14 +114,14 @@ export default function Home() {
               </h2>
               <div className="flex items-center gap-3">
                 {filtered && (
-                  <span className="text-[14px] text-[var(--text-secondary)]" aria-live="polite">
+                  <span className="text-sm text-[var(--text-secondary)]" aria-live="polite">
                     {filtered.length} design{filtered.length !== 1 ? 's' : ''}
                   </span>
                 )}
                 {filtered && filtered.length > SHOWN_ON_HOME && (
                   <Link
                     to={`/shop${searchQuery ? `?q=${encodeURIComponent(searchQuery)}` : tagFilter ? `?tag=${encodeURIComponent(tagFilter)}` : ''}`}
-                    className="text-[13px] text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors inline-flex items-center gap-1"
+                    className="text-sm font-medium text-[var(--accent-hover)] hover:text-[var(--accent)] transition-colors inline-flex items-center gap-1"
                   >
                     View all
                     <ArrowRight size={13} aria-hidden="true" />
