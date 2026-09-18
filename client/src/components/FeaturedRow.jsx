@@ -7,30 +7,29 @@ export default function FeaturedRow({ products }) {
   const trackRef = useRef(null);
   const cardSizeRef = useRef(0);
   const rafRef = useRef(null);
-  const [canPrev, setCanPrev] = useState(false);
-  const [canNext, setCanNext] = useState(true);
+  const [nav, setNav] = useState({ canPrev: false, canNext: true, progress: 0, canScroll: false });
   const [paused, setPaused] = useState(false);
 
   const count = products?.length || 0;
 
   const step = () => (cardSizeRef.current > 0 ? cardSizeRef.current : trackRef.current?.clientWidth / 2 || 0);
 
-  const measure = () => {
-    const el = trackRef.current;
-    if (!el) return;
-    const card = el.querySelector(':scope > *');
-    const gap = parseInt(getComputedStyle(el).columnGap) || 16;
-    cardSizeRef.current = card ? card.getBoundingClientRect().width + gap : el.clientWidth / 2;
-  };
-
-  const updateArrows = () => {
+  const refresh = () => {
     if (rafRef.current) return;
     rafRef.current = requestAnimationFrame(() => {
       rafRef.current = null;
       const el = trackRef.current;
       if (!el) return;
-      setCanPrev(el.scrollLeft > 2);
-      setCanNext(el.scrollLeft < el.scrollWidth - el.clientWidth - 2);
+      const card = el.querySelector(':scope > *');
+      const gap = parseInt(getComputedStyle(el).columnGap) || 16;
+      cardSizeRef.current = card ? card.getBoundingClientRect().width + gap : el.clientWidth / 2;
+      const max = el.scrollWidth - el.clientWidth;
+      setNav({
+        canPrev: el.scrollLeft > 2,
+        canNext: el.scrollLeft < max - 2,
+        canScroll: max > 0,
+        progress: max > 0 ? Math.min(1, Math.max(0, el.scrollLeft / max)) : 0,
+      });
     });
   };
 
@@ -43,16 +42,12 @@ export default function FeaturedRow({ products }) {
   useEffect(() => {
     const el = trackRef.current;
     if (!el) return;
-    measure();
-    updateArrows();
-    el.addEventListener('scroll', updateArrows, { passive: true });
-    const ro = new ResizeObserver(() => {
-      measure();
-      updateArrows();
-    });
+    refresh();
+    el.addEventListener('scroll', refresh, { passive: true });
+    const ro = new ResizeObserver(refresh);
     ro.observe(el);
     return () => {
-      el.removeEventListener('scroll', updateArrows);
+      el.removeEventListener('scroll', refresh);
       ro.disconnect();
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
@@ -77,7 +72,7 @@ export default function FeaturedRow({ products }) {
   if (count === 0) return null;
 
   return (
-    <section className="py-12 sm:py-8 lg:py-20">
+    <section className="py-10 lg:py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between mb-6">
           <h2
@@ -101,7 +96,7 @@ export default function FeaturedRow({ products }) {
             ref={trackRef}
             onMouseEnter={() => setPaused(true)}
             onMouseLeave={() => setPaused(false)}
-            className="flex gap-4 sm:gap-6 overflow-x-auto scrollbar-thin scroll-smooth snap-x snap-mandatory pb-1 px-14"
+            className="flex gap-4 sm:gap-6 overflow-x-auto scrollbar-hidden scroll-smooth snap-x snap-mandatory pb-1 px-14"
             role="region"
             aria-roledescription="carousel"
             aria-label="Featured products"
@@ -119,7 +114,7 @@ export default function FeaturedRow({ products }) {
 
           <button
             onClick={() => scrollByStep(-1)}
-            disabled={!canPrev}
+            disabled={!nav.canPrev}
             className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-[42px] h-[42px] flex items-center justify-center bg-black/40 hover:bg-[var(--accent)] text-white rounded-full transition-colors disabled:opacity-40 disabled:hover:bg-black/40"
             aria-label="Previous featured"
           >
@@ -127,13 +122,39 @@ export default function FeaturedRow({ products }) {
           </button>
           <button
             onClick={() => scrollByStep(1)}
-            disabled={!canNext}
+            disabled={!nav.canNext}
             className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-[42px] h-[42px] flex items-center justify-center bg-black/40 hover:bg-[var(--accent)] text-white rounded-full transition-colors disabled:opacity-40 disabled:hover:bg-black/40"
             aria-label="Next featured"
           >
             <ChevronRight size={20} aria-hidden="true" />
           </button>
+          <div
+            className="pointer-events-none absolute inset-y-0 right-0 z-[5] w-14 sm:w-20 bg-gradient-to-l from-[var(--bg-primary)] to-transparent"
+            aria-hidden="true"
+          />
+          {nav.canPrev && (
+            <div
+              className="pointer-events-none absolute inset-y-0 left-0 z-[5] w-14 sm:w-20 bg-gradient-to-r from-[var(--bg-primary)] to-transparent"
+              aria-hidden="true"
+            />
+          )}
         </div>
+
+        {nav.canScroll && (
+          <div
+            className="mt-4 h-1 rounded-full bg-[var(--border)] overflow-hidden"
+            role="progressbar"
+            aria-label="Featured products scroll progress"
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-valuenow={Math.round(nav.progress * 100)}
+          >
+            <div
+              className="h-full bg-[var(--accent)] transition-[width] duration-150"
+              style={{ width: `${nav.progress * 100}%` }}
+            />
+          </div>
+        )}
       </div>
     </section>
   );
