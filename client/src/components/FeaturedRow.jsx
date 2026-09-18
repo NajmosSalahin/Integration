@@ -5,25 +5,33 @@ import ProductCard from './ProductCard';
 
 export default function FeaturedRow({ products }) {
   const trackRef = useRef(null);
+  const cardSizeRef = useRef(0);
+  const rafRef = useRef(null);
   const [canPrev, setCanPrev] = useState(false);
   const [canNext, setCanNext] = useState(true);
   const [paused, setPaused] = useState(false);
 
   const count = products?.length || 0;
 
-  const step = () => {
+  const step = () => (cardSizeRef.current > 0 ? cardSizeRef.current : trackRef.current?.clientWidth / 2 || 0);
+
+  const measure = () => {
     const el = trackRef.current;
-    if (!el) return 0;
+    if (!el) return;
     const card = el.querySelector(':scope > *');
     const gap = parseInt(getComputedStyle(el).columnGap) || 16;
-    return card ? card.getBoundingClientRect().width + gap : el.clientWidth / 2;
+    cardSizeRef.current = card ? card.getBoundingClientRect().width + gap : el.clientWidth / 2;
   };
 
   const updateArrows = () => {
-    const el = trackRef.current;
-    if (!el) return;
-    setCanPrev(el.scrollLeft > 2);
-    setCanNext(el.scrollLeft < el.scrollWidth - el.clientWidth - 2);
+    if (rafRef.current) return;
+    rafRef.current = requestAnimationFrame(() => {
+      rafRef.current = null;
+      const el = trackRef.current;
+      if (!el) return;
+      setCanPrev(el.scrollLeft > 2);
+      setCanNext(el.scrollLeft < el.scrollWidth - el.clientWidth - 2);
+    });
   };
 
   const scrollByStep = (dir) => {
@@ -35,9 +43,19 @@ export default function FeaturedRow({ products }) {
   useEffect(() => {
     const el = trackRef.current;
     if (!el) return;
+    measure();
     updateArrows();
     el.addEventListener('scroll', updateArrows, { passive: true });
-    return () => el.removeEventListener('scroll', updateArrows);
+    const ro = new ResizeObserver(() => {
+      measure();
+      updateArrows();
+    });
+    ro.observe(el);
+    return () => {
+      el.removeEventListener('scroll', updateArrows);
+      ro.disconnect();
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
   }, [count]);
 
   const dirRef = useRef(1);

@@ -87,6 +87,7 @@ export default function Hero() {
             width={1942}
             height={809}
             loading={i === 0 ? 'eager' : 'lazy'}
+            fetchPriority={i === 0 ? 'high' : 'auto'}
             onError={(e) => {
               e.currentTarget.onerror = null;
               e.currentTarget.src = FALLBACK_IMAGE;
