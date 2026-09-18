@@ -107,31 +107,36 @@ export default function Footer() {
         </div>
 
         <div className="pt-4 border-t border-[var(--border)] mb-6">
-          <div className="max-w-md">
-            <NewsletterForm />
+          <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+            <div className="max-w-md w-full">
+              <NewsletterForm />
+            </div>
+            <div className="flex items-center gap-3 shrink-0">
+              <span className="hand-drawn-underline text-xs tracking-[0.15em] uppercase text-[var(--text-secondary)] mb-1">
+                Follow us on
+              </span>
+              <div className="flex items-center gap-2">
+                {SOCIAL_LINKS.map(({ label, href, Icon }) => (
+                  <a
+                    key={label}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={label}
+                    className="w-9 h-9 rounded-full border border-[var(--border)] flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--accent)] hover:border-[var(--accent)] hover:-translate-y-0.5 transition-all"
+                  >
+                    <Icon size={16} aria-hidden="true" />
+                  </a>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
 
-        <div className="pt-4 border-t border-[var(--border)] flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
+        <div className="pt-4 border-t border-[var(--border)] text-center flex flex-col items-center gap-2 sm:flex-row sm:justify-center sm:gap-4">
           <p className="text-xs text-[var(--text-secondary)]">
             &copy; {new Date().getFullYear()} Integration. All rights reserved.
           </p>
-
-          <div className="flex items-center gap-2">
-            {SOCIAL_LINKS.map(({ label, href, Icon }) => (
-              <a
-                key={label}
-                href={href}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={label}
-                className="w-9 h-9 rounded-full border border-[var(--border)] flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--accent)] hover:border-[var(--accent)] hover:-translate-y-0.5 transition-all"
-              >
-                <Icon size={16} aria-hidden="true" />
-              </a>
-            ))}
-          </div>
-
           <button
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             className="inline-flex items-center gap-1 text-xs text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors"
