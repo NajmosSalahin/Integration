@@ -9,7 +9,7 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 **Status:** Pre-Release — v0.1.11 In Development
 
-Manual payment methods expanded from bKash-only to bKash, Nagad, Rocket, and Cash on Delivery. The `paymentMethod` field is now enum-constrained (Zod + Mongoose) and payment copy is un-hardcoded across the whole order flow.
+Manual payment methods expanded from bKash-only to bKash, Nagad, Rocket, and Cash on Delivery. The `paymentMethod` field is now enum-constrained (Zod + Mongoose) and payment copy is un-hardcoded across the whole order flow. Same release carries a performance pass:
 
 - New shared payment helpers: `client/src/lib/paymentMethods.js` (`PAYMENT_METHODS` + `paymentLabel()`) and `server/utils/paymentMethods.js` (`paymentMethodLabel()`, `isCod()`)
 - Checkout radio group renders 4 methods in a `grid grid-cols-2 gap-3` (was 2-up flex); helper text under the total is parameterized per method
@@ -17,6 +17,10 @@ Manual payment methods expanded from bKash-only to bKash, Nagad, Rocket, and Cas
 - Admin orders list shows tinted per-method badges (bKash blue, Nagad pink, Rocket purple, COD orange)
 - Legal pages updated: Payments, FAQ, Terms, Returns, Privacy; cart notice generalized
 - `paymentMethod` enum widened in `server/utils/validate.js` and `Order.js`; existing orders unaffected (no migration)
+- **Images:** banners moved to Cloudinary (`f_auto,q_auto` + 480/900/1600w `srcSet`), local 2.1–2.7 MB JPEGs deleted; product images transformed at render time via `client/src/lib/image.js` `cloudinaryUrl()` (cards 400w, gallery 128/1200/1600w, search 96w, admin 120/400w, cart 240w)
+- **Compression + caching:** `compression` middleware added; `/assets/*` served `immutable` (1y), `index.html` `no-cache`
+- **Bundle:** `manualChunks` vendor split — Home entry chunk 517.76 → 56.96 kB, sub-chunks cached forever
+- **CSP:** Plausible CSP allowed (`scriptSrc`/`connectSrc`), analytics now load
 
 **Detailed snapshot:** [versions/v0.1.11.md](versions/v0.1.11.md)
 
