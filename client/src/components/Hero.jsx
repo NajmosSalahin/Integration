@@ -104,7 +104,7 @@ export default function Hero() {
       <div className="absolute inset-0 z-10 flex items-end justify-center pb-5 sm:pb-10">
         <Link
           to={slides[current].cta}
-          className="inline-flex items-center gap-2 bg-transparent md:bg-[var(--accent)] hover:bg-white/10 md:hover:bg-[var(--accent)]/90 text-white border border-white/70 md:border-transparent px-7 py-[11px] text-sm font-medium transition-all hover:scale-[1.03] active:scale-[0.98]"
+          className="inline-flex items-center gap-2 bg-black/45 md:bg-[var(--accent)] hover:bg-white/10 md:hover:bg-[var(--accent)]/90 text-white border border-white/70 md:border-transparent px-7 py-[11px] text-sm font-medium transition-all hover:scale-[1.03] active:scale-[0.98]"
           style={{ fontFamily: 'var(--font-body)' }}
         >
           {slides[current].label}
@@ -132,12 +132,14 @@ export default function Hero() {
           <button
             key={i}
             onClick={() => { goTo(i); setPaused(true); }}
-            className={`w-2 h-2 rounded-full transition-colors ${
-              i === current ? 'bg-white' : 'bg-white/30 hover:bg-white/60'
+            className={`w-6 h-6 flex items-center justify-center transition-colors ${
+              i === current ? 'text-white' : 'text-white/30 hover:text-white/60'
             }`}
             aria-label={`Go to slide ${i + 1}`}
             aria-current={i === current}
-          />
+          >
+            <span className="w-2 h-2 rounded-full bg-current" />
+          </button>
         ))}
       </div>
     </section>

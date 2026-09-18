@@ -60,7 +60,7 @@ export default function NewsletterForm({ compact = false }) {
           <button
             type="submit"
             disabled={mutation.isPending}
-            className="px-4 py-2.5 bg-[var(--accent)] text-white text-xs tracking-[0.2em] uppercase rounded-lg hover:bg-[var(--accent-hover)] disabled:bg-[var(--border)] disabled:text-[var(--text-secondary)] transition-colors cursor-pointer disabled:cursor-not-allowed inline-flex items-center gap-1.5"
+            className="px-4 py-2.5 bg-[var(--accent)] text-[#0e1320] text-xs tracking-[0.2em] uppercase rounded-lg hover:bg-[var(--accent-hover)] disabled:bg-[var(--border)] disabled:text-[var(--text-secondary)] transition-colors cursor-pointer disabled:cursor-not-allowed inline-flex items-center gap-1.5"
             style={{ fontFamily: "var(--font-utility)" }}
           >
             {mutation.isPending && <Spinner size={12} />}
@@ -114,7 +114,7 @@ export default function NewsletterForm({ compact = false }) {
           <button
             type="submit"
             disabled={mutation.isPending}
-            className="px-4 py-2 bg-[var(--accent)] text-white text-xs tracking-[0.2em] uppercase rounded-lg hover:bg-[var(--accent-hover)] disabled:bg-[var(--border)] disabled:text-[var(--text-secondary)] transition-colors cursor-pointer disabled:cursor-not-allowed inline-flex items-center gap-1.5"
+            className="px-4 py-2 bg-[var(--accent)] text-[#0e1320] text-xs tracking-[0.2em] uppercase rounded-lg hover:bg-[var(--accent-hover)] disabled:bg-[var(--border)] disabled:text-[var(--text-secondary)] transition-colors cursor-pointer disabled:cursor-not-allowed inline-flex items-center gap-1.5"
             style={{ fontFamily: "var(--font-utility)" }}
           >
             {mutation.isPending && <Spinner size={12} />}

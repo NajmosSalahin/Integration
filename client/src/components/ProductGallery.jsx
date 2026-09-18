@@ -155,7 +155,7 @@ export default function ProductGallery({ images }) {
             >
               <img
                 src={cloudinaryUrl(img, 128)}
-                alt={`Thumbnail ${i + 1}`}
+                alt=""
                 width={64}
                 height={64}
                 className="h-full w-full object-cover"

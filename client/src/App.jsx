@@ -41,7 +41,8 @@ function App() {
           </div>
         }
       >
-        <Routes>
+        <main>
+          <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/shop" element={<Shop />} />
           <Route path="/product/:id" element={<ProductDetail />} />
@@ -101,7 +102,8 @@ function App() {
           <Route path="/cookies" element={<Cookies />} />
           <Route path="/terms" element={<Terms />} />
           <Route path="*" element={<NotFound />} />
-        </Routes>
+          </Routes>
+        </main>
       </Suspense>
     </>
   );
