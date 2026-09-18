@@ -6,6 +6,7 @@ import { useAuth } from '../context/AuthContext';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import MetaTags from '../components/MetaTags';
+import ConfirmDialog from '../components/ui/ConfirmDialog';
 
 const MAX_QTY = 10;
 const CONFIRM_MS = 2000;
@@ -15,7 +16,7 @@ export default function Cart() {
   const { user } = useAuth();
   const total = getTotal();
   const [confirmingRemove, setConfirmingRemove] = useState(null);
-  const [confirmingClear, setConfirmingClear] = useState(false);
+  const [clearOpen, setClearOpen] = useState(false);
   const timers = useRef({});
 
   const armConfirm = (key) => {
@@ -43,13 +44,8 @@ export default function Cart() {
   };
 
   const handleClear = () => {
-    if (confirmingClear) {
-      setConfirmingClear(false);
-      clearCart();
-    } else {
-      setConfirmingClear(true);
-      setTimeout(() => setConfirmingClear(false), CONFIRM_MS);
-    }
+    clearCart();
+    setClearOpen(false);
   };
 
   const removeButtonClass = (item) => {
@@ -59,10 +55,6 @@ export default function Cart() {
       isArmed ? 'text-red-400 bg-red-500/10' : 'text-[var(--text-secondary)] hover:text-red-400'
     }`;
   };
-
-  const clearClass = confirmingClear
-    ? 'w-full py-2.5 text-xs tracking-wider uppercase text-red-400'
-    : 'w-full py-2.5 text-xs tracking-wider uppercase text-[var(--text-secondary)] hover:text-red-400 transition-colors';
 
   const handleQtyChange = (item, value) => {
     const n = Number(value);
@@ -257,8 +249,11 @@ export default function Cart() {
                     </p>
                   )}
 
-                  <button onClick={handleClear} className={clearClass}>
-                    {confirmingClear ? 'Confirm Clear Cart?' : 'Clear Cart'}
+                  <button
+                    onClick={() => setClearOpen(true)}
+                    className="w-full py-2.5 text-xs tracking-wider uppercase text-[var(--text-secondary)] hover:text-red-400 transition-colors"
+                  >
+                    Clear Cart
                   </button>
                 </div>
               </>
@@ -267,6 +262,17 @@ export default function Cart() {
         </main>
         <Footer />
       </div>
+
+      <ConfirmDialog
+        open={clearOpen}
+        onClose={() => setClearOpen(false)}
+        onConfirm={handleClear}
+        title="Clear Cart"
+        message="Remove all items from your cart? This cannot be undone."
+        confirmLabel="Clear Cart"
+        cancelLabel="Cancel"
+        danger
+      />
     </>
   );
 }
