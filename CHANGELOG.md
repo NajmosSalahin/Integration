@@ -1,5 +1,26 @@
-# Changelog
+## [0.1.16] - 2026-09-19
 
+**Status:** Pre-Release - v0.1.16 In Development
+
+Coupons are live end-to-end. Admins manage them from the new Coupons admin page (route + sidebar/navbar links everywhere - desktop, user dropdown, and mobile menu): they can create, edit, and delete coupons with a code (auto-uppercased, checked for duplicates), discount type (Fixed vs Percent), value, minimum-order amount, maximum discount cap, expiry date, usage + per-user limits, and an active toggle dash of inventory. Shoppers apply a coupon code on the cart/checkout screen: the code is validated against the server (POST /api/coupons/validate) with the cart items, the server computes the discount (fixed or percent, honoring min-order, usage/per-user limits, and the max cap), the coupon's usage counts are incremented, and the discount is applied and stored on the order. The applied coupon code and discount amount show on the order confirmation and across all order views (account orders, order history, admin orders). First-time coupon usage respects the per-user limit.
+
+Also: coupon validation and admin coupon creation both run behind a per-IP rate limiter; the server now validates coupon codes client-side on checkout with a alidateCoupon API client; the checkout no longer trusts client-side discount math - it validates server-side. A film-grain-noise overlay plus a coupon-code entry field appear on checkout. Orders now store couponCode and discountAmount, and the order controller applies couponIssue + computeDiscount utilities and increments coupon usage per order.
+
+**Detailed snapshot:** [versions/v0.1.16.md](versions/v0.1.16.md)
+# Changelog
+All notable changes to the Integration storefront will be documented in this file.
+Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [0.1.16] - 2026-09-19
+
+**Status:** Pre-Release - v0.1.16 In Development
+
+Coupons are live end-to-end. Admins manage them from a new Coupons page under `/admin/coupons` (listed in the admin area of the navbar on desktop, in the user dropdown, and the mobile menu): create/edit/delete with code, type (fixed/percent), value, min-order amount, max discount cap, expiry date, usage + per-user limits, and an active toggle. Shoppers apply a code at checkout - the best applicable one is validated against the server (`POST /api/coupons/validate`), the discount is computed server-side (tipped by min-order and usage limits, capped at the coupon's max), the order is persisted with the coupon's discount and code, and the savings show on OrderConfirmation and everywhere orders are listed.
+
+**Detailed snapshot:** [versions/v0.1.16.md](versions/v0.1.16.md)
+
+------
 All notable changes to the Integration storefront will be documented in this file.
 
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
@@ -328,3 +349,4 @@ Features currently in development or planned for the next release.
 ---
 
 *New entries go at the top of this file.*
+
