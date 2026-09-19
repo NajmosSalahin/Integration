@@ -9,6 +9,7 @@ import ProductGallery from '../components/ProductGallery';
 import SizeSelector from '../components/SizeSelector';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import WishlistButton from '../components/WishlistButton';
 import MetaTags from '../components/MetaTags';
 import Skeleton from '../components/ui/Skeleton';
 import ErrorState from '../components/ui/ErrorState';
@@ -177,6 +178,7 @@ export default function ProductDetail() {
                         {tag}
                       </span>
                     ))}
+                    <WishlistButton productId={product._id} size={16} className="ml-auto" />
                   </div>
                   <h1
                     className="text-3xl sm:text-4xl tracking-[0.15em] uppercase"

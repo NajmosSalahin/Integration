@@ -5,6 +5,7 @@ import { ShoppingCart, Check, X } from 'lucide-react';
 import useCart from '../stores/cartStore';
 import { useToast } from './ui/Toast';
 import { cloudinaryUrl } from '../lib/image';
+import WishlistButton from './WishlistButton';
 
 export default function ShopProductCard({ product, index, onRemove }) {
   const addItem = useCart((s) => s.addItem);
@@ -100,6 +101,8 @@ export default function ShopProductCard({ product, index, onRemove }) {
             {added ? <Check size={14} aria-hidden="true" /> : <ShoppingCart size={14} aria-hidden="true" />}
           </button>
         </div>
+
+        <WishlistButton productId={product._id} className="absolute top-2 right-2 z-10" />
 
         {onRemove && (
           <button
