@@ -73,9 +73,13 @@ function App() {
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/verify-email" element={<VerifyEmail />} />
           <Route
+            path="/admin"
+            element={<Navigate to="/admin/orders" replace />}
+          />
+          <Route
             path="/admin/orders"
             element={
-              <AdminRoute>
+              <AdminRoute section="orders">
                 <AdminOrders />
               </AdminRoute>
             }
@@ -83,7 +87,7 @@ function App() {
           <Route
             path="/admin/products"
             element={
-              <AdminRoute>
+              <AdminRoute section="products">
                 <AdminProducts />
               </AdminRoute>
             }
@@ -91,7 +95,7 @@ function App() {
           <Route
             path="/admin/coupons"
             element={
-              <AdminRoute>
+              <AdminRoute section="coupons">
                 <AdminCoupons />
               </AdminRoute>
             }
@@ -99,7 +103,7 @@ function App() {
           <Route
             path="/admin/banners"
             element={
-              <AdminRoute>
+              <AdminRoute section="banners">
                 <AdminBanners />
               </AdminRoute>
             }
@@ -107,7 +111,7 @@ function App() {
           <Route
             path="/admin/categories"
             element={
-              <AdminRoute>
+              <AdminRoute section="categories">
                 <AdminCategories />
               </AdminRoute>
             }

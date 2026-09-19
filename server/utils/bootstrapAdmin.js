@@ -19,13 +19,19 @@ export default async function bootstrapAdmin() {
 
   const passwordHash = await User.hashPassword(password);
 
+  const permissions = (process.env.ADMIN_BOOTSTRAP_PERMISSIONS || '')
+    .split(',')
+    .map((p) => p.trim().toLowerCase())
+    .filter(Boolean);
+
   for (const email of emails) {
     const user = await User.findOne({ email });
     if (user) {
-      if (user.role !== 'admin') {
+      if (user.role !== 'admin' || (permissions.length > 0 && permissions.join() !== (user.permissions || []).join())) {
         user.role = 'admin';
+        if (permissions.length > 0) user.permissions = permissions;
         await user.save();
-        console.log(`Admin bootstrap: promoted ${email} to admin`);
+        console.log(`Admin bootstrap: updated ${email}${permissions.length > 0 ? ` with permissions: ${permissions.join(', ')}` : ''}`);
       }
       continue;
     }
@@ -35,8 +41,9 @@ export default async function bootstrapAdmin() {
       passwordHash,
       name: process.env.ADMIN_BOOTSTRAP_NAME || email.split('@')[0],
       role: 'admin',
+      permissions,
       emailVerified: true,
     });
-    console.log(`Admin bootstrap: created admin account for ${email}`);
+    console.log(`Admin bootstrap: created admin account for ${email}${permissions.length > 0 ? ` with permissions: ${permissions.join(', ')}` : ''}`);
   }
 }

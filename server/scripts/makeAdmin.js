@@ -9,12 +9,16 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const args = process.argv.slice(2);
 const passwordIndex = args.indexOf('--password');
 const password = passwordIndex >= 0 ? args[passwordIndex + 1] : '[redacted]';
+const permsIndex = args.indexOf('--permissions');
+const permissions = permsIndex >= 0
+  ? args[permsIndex + 1].split(',').map((s) => s.trim().toLowerCase()).filter(Boolean)
+  : [];
 const useProd = args.includes('--prod') || args.includes('--production');
 
 const emails = [];
 for (let i = 0; i < args.length; i++) {
   const a = args[i];
-  if (a === '--password') {
+  if (a === '--password' || a === '--permissions') {
     i += 1;
     continue;
   }
@@ -31,7 +35,14 @@ if (!MONGO_URI) {
   process.exit(1);
 }
 if (emails.length === 0) {
-  console.error('Usage: node scripts/makeAdmin.js <email> [<email> ...] [--password <password>] [--prod]');
+  console.error('Usage: node scripts/makeAdmin.js <email> [<email> ...] [--password <password>] [--permissions orders,products,coupons,banners,categories] [--prod]');
+  process.exit(1);
+}
+
+const VALID_PERMISSIONS = ['orders', 'products', 'coupons', 'banners', 'categories'];
+const invalidPerms = permissions.filter((p) => !VALID_PERMISSIONS.includes(p));
+if (invalidPerms.length > 0) {
+  console.error(`Invalid permissions: ${invalidPerms.join(', ')} (valid: ${VALID_PERMISSIONS.join(', ')})`);
   process.exit(1);
 }
 
@@ -41,7 +52,12 @@ async function run() {
   for (const email of emails) {
     const existing = await User.findOne({ email });
     if (existing) {
-      if (existing.role === 'admin') {
+      if (permissions.length > 0) {
+        existing.role = 'admin';
+        existing.permissions = permissions;
+        await existing.save();
+        console.log(`${email} set to admin with permissions: ${permissions.join(', ')}`);
+      } else if (existing.role === 'admin') {
         console.log(`${email} is already an admin`);
       } else {
         existing.role = 'admin';
@@ -55,14 +71,15 @@ async function run() {
         passwordHash,
         name: email.split('@')[0],
         role: 'admin',
+        permissions,
         emailVerified: true,
       });
-      console.log(`Created admin account for ${email}`);
+      console.log(`Created admin account for ${email}${permissions.length > 0 ? ` with permissions: ${permissions.join(', ')}` : ''}`);
     }
   }
 
   if (passwordIndex < 0) {
-    console.log('Temporary password for new accounts is [redacted] — log in and change it immediately.');
+    console.log('Temporary password for new accounts is [redacted] — log in and change it immediately. Existing accounts keep their current password.');
   }
 
   await mongoose.disconnect();

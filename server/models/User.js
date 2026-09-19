@@ -62,6 +62,11 @@ const userSchema = new mongoose.Schema({
     enum: ['customer', 'admin'],
     default: 'customer',
   },
+  permissions: {
+    type: [String],
+    enum: ['orders', 'products', 'coupons', 'banners', 'categories'],
+    default: [],
+  },
   verificationToken: String,
   verificationExpires: Date,
   resetPasswordToken: String,
@@ -73,6 +78,12 @@ userSchema.index({ resetPasswordToken: 1 });
 
 userSchema.methods.comparePassword = async function (candidatePassword) {
   return bcrypt.compare(candidatePassword, this.passwordHash);
+};
+
+userSchema.methods.canManage = function (section) {
+  if (this.role !== 'admin') return false;
+  const perms = this.permissions || [];
+  return perms.length === 0 || perms.includes(section);
 };
 
 userSchema.statics.hashPassword = async function (password) {

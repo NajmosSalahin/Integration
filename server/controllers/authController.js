@@ -18,6 +18,7 @@ function formatUser(user) {
     name: user.name,
     email: user.email,
     role: user.role,
+    permissions: user.permissions || [],
     emailVerified: user.emailVerified,
     phone: user.phone || '',
     avatar: user.avatar || '',
