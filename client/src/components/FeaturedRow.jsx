@@ -1,73 +1,74 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import ProductCard from './ProductCard';
 
 export default function FeaturedRow({ products }) {
   const trackRef = useRef(null);
-  const cardSizeRef = useRef(0);
-  const rafRef = useRef(null);
-  const [nav, setNav] = useState({ canPrev: false, canNext: true });
+  const [cardSize, setCardSize] = useState(0);
+  const [position, setPosition] = useState(0);
+  const [noAnim, setNoAnim] = useState(false);
   const [paused, setPaused] = useState(false);
+  const touchStartX = useRef(null);
 
   const count = products?.length || 0;
 
-  const step = () => (cardSizeRef.current > 0 ? cardSizeRef.current : trackRef.current?.clientWidth / 2 || 0);
-
-  const refresh = () => {
-    if (rafRef.current) return;
-    rafRef.current = requestAnimationFrame(() => {
-      rafRef.current = null;
-      const el = trackRef.current;
-      if (!el) return;
+  useEffect(() => {
+    const el = trackRef.current;
+    if (!el) return;
+    const measure = () => {
       const card = el.querySelector(':scope > *');
       const gap = parseInt(getComputedStyle(el).columnGap) || 16;
-      cardSizeRef.current = card ? card.getBoundingClientRect().width + gap : el.clientWidth / 2;
-      const max = el.scrollWidth - el.clientWidth;
-      setNav({
-        canPrev: el.scrollLeft > 2,
-        canNext: el.scrollLeft < max - 2,
-      });
-    });
-  };
-
-  const scrollByStep = (dir) => {
-    const el = trackRef.current;
-    if (!el) return;
-    el.scrollBy({ left: dir * step(), behavior: 'smooth' });
-  };
-
-  useEffect(() => {
-    const el = trackRef.current;
-    if (!el) return;
-    refresh();
-    el.addEventListener('scroll', refresh, { passive: true });
-    const ro = new ResizeObserver(refresh);
-    ro.observe(el);
-    return () => {
-      el.removeEventListener('scroll', refresh);
-      ro.disconnect();
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      setCardSize(card ? card.getBoundingClientRect().width + gap : el.clientWidth / 2);
     };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
   }, [count]);
 
-  const dirRef = useRef(1);
+  const go = useCallback((dir) => {
+    if (count < 2) return;
+    if (dir === -1 && ((position % count) + count) % count === 0) {
+      setNoAnim(true);
+      setPosition(position + count - 1);
+      return;
+    }
+    setPosition((p) => p + dir);
+  }, [position, count]);
 
   useEffect(() => {
-    if (count === 0 || paused) return;
-    const id = setInterval(() => {
-      const el = trackRef.current;
-      if (!el) return;
-      const atEnd = el.scrollLeft >= el.scrollWidth - el.clientWidth - 2;
-      const atStart = el.scrollLeft <= 2;
-      if (atEnd) dirRef.current = -1;
-      if (atStart) dirRef.current = 1;
-      el.scrollBy({ left: dirRef.current * step(), behavior: 'smooth' });
-    }, 5000);
+    if (position >= count) {
+      setNoAnim(true);
+      setPosition(0);
+    } else if (position < 0) {
+      setNoAnim(true);
+      setPosition(position + count);
+    } else {
+      setNoAnim(false);
+    }
+  }, [position, count]);
+
+  useEffect(() => {
+    if (count < 2 || paused) return;
+    const id = setInterval(() => go(1), 5000);
     return () => clearInterval(id);
-  }, [count, paused]);
+  }, [count, paused, go]);
+
+  const handleTouchStart = (e) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = (e) => {
+    if (touchStartX.current == null) return;
+    const delta = e.changedTouches[0].clientX - touchStartX.current;
+    if (Math.abs(delta) > 40) go(delta < 0 ? 1 : -1);
+    touchStartX.current = null;
+  };
 
   if (count === 0) return null;
+
+  const deck = [...products, ...products];
 
   return (
     <section className="py-10 lg:py-16">
@@ -89,39 +90,43 @@ export default function FeaturedRow({ products }) {
           </Link>
         </div>
 
-        <div className="relative">
+        <div className="relative overflow-hidden">
           <div
             ref={trackRef}
             onMouseEnter={() => setPaused(true)}
             onMouseLeave={() => setPaused(false)}
-            className="flex gap-4 sm:gap-6 overflow-x-auto scrollbar-hidden scroll-smooth snap-x snap-mandatory pb-1 px-14"
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+            className="flex gap-4 sm:gap-6 px-14 transition-transform duration-[400ms] ease-out motion-reduce:transition-none"
+            style={{
+              transform: `translateX(${-position * cardSize}px)`,
+              transition: noAnim ? 'none' : undefined,
+            }}
             role="region"
             aria-roledescription="carousel"
             aria-label="Featured products"
             aria-live="off"
           >
-            {products.map((product, i) => (
+            {deck.map((product, i) => (
               <div
-                key={product._id}
-                className="w-[220px] sm:w-[260px] shrink-0 snap-start"
+                key={`${product._id}-${i >= count ? 'b' : 'a'}`}
+                className="w-[220px] sm:w-[260px] shrink-0"
               >
-                <ProductCard product={product} index={i} />
+                <ProductCard product={product} index={i % count} />
               </div>
             ))}
           </div>
 
           <button
-            onClick={() => scrollByStep(-1)}
-            disabled={!nav.canPrev}
-            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-[42px] h-[42px] flex items-center justify-center bg-black/40 hover:bg-[var(--accent)] text-white rounded-full transition-colors disabled:opacity-40 disabled:hover:bg-black/40"
+            onClick={() => go(-1)}
+            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-[42px] h-[42px] flex items-center justify-center bg-black/40 hover:bg-[var(--accent)] text-white rounded-full transition-colors"
             aria-label="Previous featured"
           >
             <ChevronLeft size={20} aria-hidden="true" />
           </button>
           <button
-            onClick={() => scrollByStep(1)}
-            disabled={!nav.canNext}
-            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-[42px] h-[42px] flex items-center justify-center bg-black/40 hover:bg-[var(--accent)] text-white rounded-full transition-colors disabled:opacity-40 disabled:hover:bg-black/40"
+            onClick={() => go(1)}
+            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-[42px] h-[42px] flex items-center justify-center bg-black/40 hover:bg-[var(--accent)] text-white rounded-full transition-colors"
             aria-label="Next featured"
           >
             <ChevronRight size={20} aria-hidden="true" />
