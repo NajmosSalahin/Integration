@@ -53,7 +53,7 @@ export const validateCouponSchema = z.object({
   items: orderItemsSchema,
 });
 
-export const couponSchema = z.object({
+const couponFields = z.object({
   code: z.string().min(1, 'Code is required').max(30).transform((s) => s.trim().toUpperCase()),
   discountType: z.enum(['fixed', 'percent']),
   value: z.number().int().min(1, 'Value must be at least 1'),
@@ -63,12 +63,13 @@ export const couponSchema = z.object({
   usageLimit: z.number().int().min(0, 'Usage limit must be 0 or more').optional(),
   perUserLimit: z.number().int().min(0, 'Per-user limit must be 0 or more').optional(),
   active: z.boolean().optional(),
-}).refine((data) => data.discountType !== 'percent' || data.value <= 100, {
-  message: 'Percent value must be 100 or fewer',
-  path: ['value'],
 });
 
-export const updateCouponSchema = couponSchema.partial();
+const couponPercentRule = (data) => data.discountType !== 'percent' || data.value <= 100;
+const couponPercentRuleOpts = { message: 'Percent value must be 100 or fewer', path: ['value'] };
+
+export const couponSchema = couponFields.refine(couponPercentRule, couponPercentRuleOpts);
+export const updateCouponSchema = couponFields.partial().refine(couponPercentRule, couponPercentRuleOpts);
 
 export const updateStatusSchema = z.object({
   status: z.enum(['pending_payment', 'awaiting_confirmation', 'paid', 'shipped', 'fulfilled', 'cancelled']),
