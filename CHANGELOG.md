@@ -5,6 +5,18 @@ All notable changes to the Integration storefront will be documented in this fil
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.15] - 2026-09-19
+
+**Status:** Pre-Release — v0.1.15 In Development
+
+Wishlist hearts now live on every shop product card and the product detail page: click the heart to save/unsave a design (`PATCH /api/auth/wishlist`, optimistic update + toast); signed-out visitors bounce to `/login?redirect=<current page>` and land straight back after signing in. All wishlist backend already existed — this closes the frontend gap so the Saved Designs tab can be fed from the shop floor.
+
+Also: contact/social info is centralized into `client/src/lib/site.js` (WhatsApp number, Messenger page, email, social URLs), so the OrderConfirmation WhatsApp/Messenger/Email buttons and the footer social links read from one place instead of hardcoded values. A subtle film-grain overlay (inline SVG turbulence, ~5% opacity, `pointer-events-none`, below toasts/modals) adds the analog texture tracked since v0.1.0 across every route. Instagram keeps its placeholder pending a URL.
+
+**Detailed snapshot:** [versions/v0.1.15.md](versions/v0.1.15.md)
+
+------
+
 ## [0.1.14] - 2026-09-18
 
 **Status:** Pre-Release — v0.1.14 In Development
