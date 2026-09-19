@@ -1,3 +1,12 @@
+## [0.1.17] - 2026-09-19
+
+**Status:** Pre-Release - v0.1.17 In Development
+
+Storefront motion pass. The hero carousel changes how it moves and no longer dies on touch: manual navigation (arrows, dots, or a swipe) now pauses autoplay for only ~8 seconds before it resumes on its own, instead of permanently stalling on devices with no mouse; hover and a hidden tab still pause. The slide swap is a staggered film-style dissolve - the outgoing frame leads the fade and the incoming one follows ~150ms later over 1.1s, so the two opaque photos never muddy through a 50/50 blend - with a restrained push-in (scale 1 -> 1.035) on the incoming frame during the transition only. The CTA label crossfades in on each slide change, and the active dot is now a thin hairline track that visibly fills across the 6s autoplay interval, so you can see the carousel will advance. All motion honors prefers-reduced-motion (no push-in, a short clean fade, no label animation).
+
+Also removed from the FeaturedRow carousel: the accent progress bar and the left/right edge-fade shadows (peek gradients) that masked the row edges. The row keeps its prev/next arrows and native scroll.
+
+**Detailed snapshot:** [versions/v0.1.17.md](versions/v0.1.17.md)
 ## [0.1.16] - 2026-09-19
 
 **Status:** Pre-Release - v0.1.16 In Development
