@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import MetaTags from '../../components/MetaTags';
 import { Plus, Pencil, Trash2, AlertCircle, CheckCircle, Star, Upload } from 'lucide-react';
-import { getAllProductsAdmin, createProduct, updateProduct, deleteProduct, toggleStock, setProductActive } from '../../api/products';
+import { getAllProductsAdmin, createProduct, updateProduct, deleteProduct, toggleStock, setProductActive, setProductFeatured } from '../../api/products';
 import { uploadImage } from '../../api/upload';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
@@ -94,6 +94,17 @@ export default function Products() {
     },
     onError: (err) => {
       setToast({ type: 'error', message: err.message || 'Failed to activate product.' });
+    },
+  });
+
+  const featuredMutation = useMutation({
+    mutationFn: ({ id, featured }) => setProductFeatured(id, featured),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['adminProducts'] });
+      setToast({ type: 'success', message: 'Featured updated.' });
+    },
+    onError: (err) => {
+      setToast({ type: 'error', message: err.message || 'Failed to update featured.' });
     },
   });
 
@@ -306,9 +317,25 @@ export default function Products() {
                         </td>
                         <td className="py-3 px-3">
                           <p className="text-[var(--text-primary)] truncate max-w-[150px] sm:max-w-[200px] inline-flex items-center gap-1.5">
-                            {product.featured && (
-                              <Star size={12} className="text-amber-400 fill-amber-400 shrink-0" aria-label="Featured" />
-                            )}
+                            <button
+                              type="button"
+                              onClick={() => featuredMutation.mutate({ id: product._id, featured: !product.featured })}
+                              disabled={featuredMutation.isPending}
+                              aria-pressed={product.featured === true}
+                              aria-label={product.featured ? `Remove ${product.title} from featured` : `Add ${product.title} to featured`}
+                              title={product.featured ? 'Remove from Featured' : 'Add to Featured'}
+                              className={`shrink-0 p-0.5 -m-0.5 rounded transition-colors disabled:opacity-50 ${
+                                product.featured
+                                  ? 'text-amber-400 hover:text-amber-300'
+                                  : 'text-[var(--text-secondary)] hover:text-amber-400'
+                              }`}
+                            >
+                              <Star
+                                size={14}
+                                className={product.featured ? 'fill-amber-400' : ''}
+                                aria-hidden="true"
+                              />
+                            </button>
                             {product.title}
                           </p>
                         </td>

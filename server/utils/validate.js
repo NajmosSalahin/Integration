@@ -136,6 +136,10 @@ export const setActiveSchema = z.object({
   active: z.boolean(),
 });
 
+export const setFeaturedSchema = z.object({
+  featured: z.boolean(),
+});
+
 export const bannerSchema = z.object({
   publicId: z.string().min(1, 'Banner image is required'),
   label: z.string().max(80).optional().default(''),

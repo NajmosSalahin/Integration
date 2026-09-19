@@ -182,3 +182,23 @@ export async function setActive(req, res) {
     res.status(500).json({ error: 'Failed to update product' });
   }
 }
+
+export async function setFeatured(req, res) {
+  try {
+    if (mongoose.connection.readyState !== 1) {
+      return res.status(503).json({ error: 'Database not connected' });
+    }
+
+    const product = await Product.findById(req.params.id);
+    if (!product) {
+      return res.status(404).json({ error: 'Product not found' });
+    }
+
+    product.featured = req.body.featured;
+    await product.save();
+    res.json(product);
+  } catch (err) {
+    console.error('setFeatured error:', err);
+    res.status(500).json({ error: 'Failed to update product' });
+  }
+}
