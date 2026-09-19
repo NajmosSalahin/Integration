@@ -1,16 +1,12 @@
-import { getAccessToken } from './token';
+import { authenticatedFetch } from './authFetch';
 
 export async function uploadImage(file, folder) {
   const formData = new FormData();
   formData.append('image', file);
   formData.append('folder', folder);
 
-  const res = await fetch('/api/upload/image', {
+  const res = await authenticatedFetch('/api/upload/image', {
     method: 'POST',
-    credentials: 'include',
-    headers: {
-      ...(getAccessToken() && { Authorization: `Bearer ${getAccessToken()}` }),
-    },
     body: formData,
   });
 

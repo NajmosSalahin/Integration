@@ -1,24 +1,4 @@
-import { getAccessToken } from './token';
-
-async function request(url, options = {}) {
-  const res = await fetch(url, {
-    ...options,
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
-      ...(getAccessToken() && { Authorization: `Bearer ${getAccessToken()}` }),
-      ...options.headers,
-    },
-  });
-
-  const data = await res.json();
-
-  if (!res.ok) {
-    throw new Error(data.error || 'Request failed');
-  }
-
-  return data;
-}
+import { authJson as request } from './authFetch';
 
 export async function fetchProducts() {
   const res = await fetch('/api/products');
@@ -67,5 +47,12 @@ export async function setProductActive(id, active) {
   return request(`/api/products/${id}/active`, {
     method: 'PATCH',
     body: JSON.stringify({ active }),
+  });
+}
+
+export async function setProductFeatured(id, featured) {
+  return request(`/api/products/${id}/featured`, {
+    method: 'PATCH',
+    body: JSON.stringify({ featured }),
   });
 }

@@ -1,75 +1,74 @@
-import { getAccessToken, setAccessToken } from './token';
-
-async function request(url, options = {}) {
-  const res = await fetch(url, {
-    ...options,
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
-      ...(getAccessToken() && { Authorization: `Bearer ${getAccessToken()}` }),
-      ...options.headers,
-    },
-  });
-
-  const data = await res.json();
-
-  if (!res.ok) {
-    throw new Error(data.error || 'Request failed');
-  }
-
-  return data;
-}
+import { setAccessToken } from './token';
+import { authJson, refreshAccessToken } from './authFetch';
 
 export async function signup(data) {
-  const result = await request('/api/auth/signup', {
-    method: 'POST',
-    body: JSON.stringify(data),
-  });
+  const result = await authJson(
+    '/api/auth/signup',
+    {
+      method: 'POST',
+      body: JSON.stringify(data),
+    },
+    false
+  );
   setAccessToken(result.accessToken);
   return result;
 }
 
 export async function login(data) {
-  const result = await request('/api/auth/login', {
-    method: 'POST',
-    body: JSON.stringify(data),
-  });
+  const result = await authJson(
+    '/api/auth/login',
+    {
+      method: 'POST',
+      body: JSON.stringify(data),
+    },
+    false
+  );
   setAccessToken(result.accessToken);
   return result;
 }
 
 export async function logout() {
-  await request('/api/auth/logout', { method: 'POST' });
+  await authJson('/api/auth/logout', { method: 'POST' });
   setAccessToken(null);
 }
 
 export async function refresh() {
-  const result = await request('/api/auth/refresh', { method: 'POST' });
-  setAccessToken(result.accessToken);
-  return result;
+  return refreshAccessToken();
 }
 
 export async function getMe() {
-  return request('/api/auth/me');
+  return authJson('/api/auth/me');
 }
 
 export async function verifyEmail(token) {
-  return request('/api/auth/verify-email', {
-    method: 'POST',
-    body: JSON.stringify({ token }),
-  });
+  return authJson(
+    '/api/auth/verify-email',
+    {
+      method: 'POST',
+      body: JSON.stringify({ token }),
+    },
+    false
+  );
 }
 
 export async function forgotPassword(email) {
-  return request('/api/auth/forgot-password', {
-    method: 'POST',
-    body: JSON.stringify({ email }),
-  });
+  return authJson(
+    '/api/auth/forgot-password',
+    {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    },
+    false
+  );
 }
 
 export async function resetPassword(data) {
-  return request('/api/auth/reset-password', {
-    method: 'POST',
-    body: JSON.stringify(data),
-  });
+  return authJson(
+    '/api/auth/reset-password',
+    {
+      method: 'POST',
+      body: JSON.stringify(data),
+    },
+    false
+  );
 }

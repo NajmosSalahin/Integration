@@ -1,24 +1,4 @@
-import { getAccessToken } from './token';
-
-async function request(url, options = {}) {
-  const res = await fetch(url, {
-    ...options,
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
-      ...(getAccessToken() && { Authorization: `Bearer ${getAccessToken()}` }),
-      ...options.headers,
-    },
-  });
-
-  const data = await res.json();
-
-  if (!res.ok) {
-    throw new Error(data.error || 'Request failed');
-  }
-
-  return data;
-}
+import { authJson as request, authenticatedFetch } from './authFetch';
 
 export async function updateMe(payload) {
   return request('/api/auth/me', {
@@ -31,10 +11,8 @@ export async function uploadAvatar(file) {
   const form = new FormData();
   form.append('avatar', file);
 
-  const res = await fetch('/api/auth/avatar', {
+  const res = await authenticatedFetch('/api/auth/avatar', {
     method: 'POST',
-    credentials: 'include',
-    headers: getAccessToken() ? { Authorization: `Bearer ${getAccessToken()}` } : {},
     body: form,
   });
 
