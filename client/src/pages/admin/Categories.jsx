@@ -23,6 +23,7 @@ const emptyForm = {
   tag: '',
   group: 'T-Shirts',
   icon: 'Shirt',
+  order: '0',
   home: false,
   active: true,
 };
@@ -102,6 +103,7 @@ export default function Categories() {
       tag: category.tag,
       group: category.group,
       icon: category.icon || 'Shirt',
+      order: String(category.order ?? 0),
       home: category.home,
       active: category.active,
     });
@@ -138,11 +140,18 @@ export default function Categories() {
       return;
     }
 
+    const order = form.order === '' ? 0 : parseInt(form.order, 10);
+    if (Number.isNaN(order) || order < 0) {
+      setError('Order must be 0 or more.');
+      return;
+    }
+
     const data = {
       name,
       tag,
       group: form.group.trim(),
       icon: ICON_NAMES.includes(form.icon) ? form.icon : 'Shirt',
+      order,
       home: form.home === true,
     };
 
@@ -185,9 +194,13 @@ export default function Categories() {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-[var(--border)]">
-                      {['Name', 'Tag', 'Group', 'Featured', 'Status', 'Actions'].map((h) => (
-                        <th key={h} className={`text-left py-3 px-3 text-xs tracking-wider uppercase text-[var(--text-secondary)] font-normal ${h === 'Tag' || h === 'Group' ? 'hidden sm:table-cell' : ''}`}>{h}</th>
-                      ))}
+                      <th className="text-left py-3 px-3 text-xs tracking-wider uppercase text-[var(--text-secondary)] font-normal">Name</th>
+                      <th className="text-left py-3 px-3 text-xs tracking-wider uppercase text-[var(--text-secondary)] font-normal hidden sm:table-cell">Tag</th>
+                      <th className="text-left py-3 px-3 text-xs tracking-wider uppercase text-[var(--text-secondary)] font-normal hidden md:table-cell">Group</th>
+                      <th className="text-center py-3 px-3 text-xs tracking-wider uppercase text-[var(--text-secondary)] font-normal">Order</th>
+                      <th className="text-center py-3 px-3 text-xs tracking-wider uppercase text-[var(--text-secondary)] font-normal">Home</th>
+                      <th className="text-center py-3 px-3 text-xs tracking-wider uppercase text-[var(--text-secondary)] font-normal">Status</th>
+                      <th className="text-right py-3 px-3 text-xs tracking-wider uppercase text-[var(--text-secondary)] font-normal">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -195,7 +208,8 @@ export default function Categories() {
                       <tr key={i} className="border-b border-[var(--border)]/50">
                         <td className="py-3 px-3"><Skeleton className="w-32 h-4" /></td>
                         <td className="py-3 px-3 hidden sm:table-cell"><Skeleton className="w-24 h-4" /></td>
-                        <td className="py-3 px-3 hidden sm:table-cell"><Skeleton className="w-24 h-4" /></td>
+                        <td className="py-3 px-3 hidden md:table-cell"><Skeleton className="w-24 h-4" /></td>
+                        <td className="py-3 px-3 text-center"><Skeleton className="w-6 h-4 inline-block" /></td>
                         <td className="py-3 px-3"><Skeleton className="w-8 h-4" /></td>
                         <td className="py-3 px-3"><Skeleton className="w-8 h-4" /></td>
                         <td className="py-3 px-3"><Skeleton className="w-16 h-4 ml-auto" /></td>
@@ -211,8 +225,7 @@ export default function Categories() {
             {categories && categories.length === 0 && (
               <EmptyState
                 icon={Star}
-                title="No categories yet"
-                description="Add categories so customers can browse the shop by tag."
+                message="No categories yet. Add categories so customers can browse the shop by tag."
                 action={
                   <button onClick={openAdd} className="text-sm text-[var(--accent)] hover:text-blue-400 transition-colors">
                     Add Category
@@ -229,6 +242,7 @@ export default function Categories() {
                       <th className="text-left py-3 px-3 text-xs tracking-wider uppercase text-[var(--text-secondary)] font-normal">Name</th>
                       <th className="text-left py-3 px-3 text-xs tracking-wider uppercase text-[var(--text-secondary)] font-normal hidden sm:table-cell">Tag</th>
                       <th className="text-left py-3 px-3 text-xs tracking-wider uppercase text-[var(--text-secondary)] font-normal hidden md:table-cell">Group</th>
+                      <th className="text-center py-3 px-3 text-xs tracking-wider uppercase text-[var(--text-secondary)] font-normal">Order</th>
                       <th className="text-center py-3 px-3 text-xs tracking-wider uppercase text-[var(--text-secondary)] font-normal">Home</th>
                       <th className="text-center py-3 px-3 text-xs tracking-wider uppercase text-[var(--text-secondary)] font-normal">Status</th>
                       <th className="text-right py-3 px-3 text-xs tracking-wider uppercase text-[var(--text-secondary)] font-normal">Actions</th>
@@ -253,6 +267,9 @@ export default function Categories() {
                           </td>
                           <td className="py-3 px-3 hidden md:table-cell">
                             <span className="text-[var(--text-secondary)] text-xs">{category.group}</span>
+                          </td>
+                          <td className="py-3 px-3 text-center">
+                            <span className="text-[var(--text-secondary)] text-xs">{category.order ?? 0}</span>
                           </td>
                           <td className="py-3 px-3 text-center">
                             {category.home ? (
@@ -378,6 +395,20 @@ export default function Categories() {
                       <option key={name} value={name}>{name}</option>
                     ))}
                   </select>
+                )}
+              </FormField>
+
+              <FormField label="Order (0 = first)">
+                {({ id }) => (
+                  <input
+                    id={id}
+                    type="number"
+                    min="0"
+                    step="1"
+                    value={form.order}
+                    onChange={(e) => setForm({ ...form, order: e.target.value })}
+                    className={fieldClass}
+                  />
                 )}
               </FormField>
             </div>

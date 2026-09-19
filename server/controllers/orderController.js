@@ -123,7 +123,9 @@ export async function getOrder(req, res) {
       return res.status(503).json({ error: 'Database not connected' });
     }
 
-    const order = await Order.findById(req.params.id).select('-__v');
+    const order = await Order.findById(req.params.id)
+      .populate('userId', 'name email')
+      .select('-__v');
     if (!order) {
       return res.status(404).json({ error: 'Order not found' });
     }
@@ -145,9 +147,49 @@ export async function getAllOrders(req, res) {
       return res.json({ orders: [], page: 1, totalOrders: 0, totalPages: 0 });
     }
 
-    const { status, page = 1, limit = 20 } = req.query;
+    const { status, page = 1, limit = 20, search, sort } = req.query;
     const filter = {};
     if (status) filter.status = status;
+
+    const trimmedSearch = (search || '').trim();
+    if (trimmedSearch) {
+      const escapeRegex = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const conditions = [];
+
+      if (/^[0-9a-f]{1,24}$/i.test(trimmedSearch)) {
+        conditions.push({
+          $expr: {
+            $regexMatch: {
+              input: { $toString: '$_id' },
+              regex: trimmedSearch,
+              options: 'i',
+            },
+          },
+        });
+      }
+
+      const textReg = new RegExp(escapeRegex(trimmedSearch), 'i');
+      const matchingUsers = await User.find({ $or: [{ name: textReg }, { email: textReg }] })
+        .select('_id')
+        .lean();
+      if (matchingUsers.length > 0) {
+        conditions.push({ userId: { $in: matchingUsers.map((u) => u._id) } });
+      }
+
+      if (conditions.length > 0) {
+        filter.$or = conditions;
+      } else {
+        return res.json({ orders: [], page: Number(page), totalOrders: 0, totalPages: 0 });
+      }
+    }
+
+    const SORTS = {
+      date_desc: { createdAt: -1 },
+      date_asc: { createdAt: 1 },
+      total_desc: { totalAmount: -1 },
+      total_asc: { totalAmount: 1 },
+    };
+    const orderBy = SORTS[sort] || SORTS.date_desc;
 
     const totalOrders = await Order.countDocuments(filter);
     const totalPages = Math.ceil(totalOrders / limit);
@@ -155,7 +197,7 @@ export async function getAllOrders(req, res) {
 
     const orders = await Order.find(filter)
       .populate('userId', 'name email')
-      .sort({ createdAt: -1 })
+      .sort(orderBy)
       .skip(skip)
       .limit(Number(limit))
       .select('-__v');

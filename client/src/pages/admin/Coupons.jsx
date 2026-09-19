@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import MetaTags from '../../components/MetaTags';
-import { Plus, Pencil, Trash2, AlertCircle, CheckCircle, Tag } from 'lucide-react';
+import { Plus, Pencil, Trash2, AlertCircle, CheckCircle, Tag, RefreshCw } from 'lucide-react';
 import { getCoupons, createCoupon, updateCoupon, deleteCoupon } from '../../api/coupons';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
@@ -72,6 +72,17 @@ export default function Coupons() {
     onError: (err) => {
       setDeleteTarget(null);
       setToast({ type: 'error', message: err.message || 'Failed to deactivate coupon.' });
+    },
+  });
+
+  const activateMutation = useMutation({
+    mutationFn: ({ id }) => updateCoupon(id, { active: true }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['adminCoupons'] });
+      setToast({ type: 'success', message: 'Coupon activated.' });
+    },
+    onError: (err) => {
+      setToast({ type: 'error', message: err.message || 'Failed to activate coupon.' });
     },
   });
 
@@ -290,6 +301,16 @@ export default function Coupons() {
                         </td>
                         <td className="py-3 px-3">
                           <div className="flex items-center justify-end gap-2">
+                            {!coupon.active && (
+                              <button
+                                onClick={() => activateMutation.mutate({ id: coupon._id })}
+                                className="p-1.5 text-[var(--text-secondary)] hover:text-emerald-400 transition-colors"
+                                title="Re-activate"
+                                aria-label={`Re-activate ${coupon.code}`}
+                              >
+                                <RefreshCw size={14} aria-hidden="true" />
+                              </button>
+                            )}
                             <button
                               onClick={() => openEdit(coupon)}
                               className="p-1.5 text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors"

@@ -11,7 +11,7 @@ import EmptyState from '../../components/ui/EmptyState';
 import ErrorState from '../../components/ui/ErrorState';
 import Modal from '../../components/ui/Modal';
 import ConfirmDialog from '../../components/ui/ConfirmDialog';
-import { cloudinaryUrl } from '../../lib/image';
+import { cloudinaryUrl, IMAGE_FALLBACK } from '../../lib/image';
 import FormField from '../../components/ui/FormField';
 import Spinner from '../../components/ui/Spinner';
 
@@ -261,8 +261,7 @@ export default function Products() {
             {products && products.length === 0 && (
               <EmptyState
                 icon={Plus}
-                title="No products yet"
-                description="Add your first product to get started."
+                message="No products yet. Add your first product to get started."
                 action={
                   <button onClick={openAdd} className="text-sm text-[var(--accent)] hover:text-blue-400 transition-colors">
                     Add Product
@@ -293,7 +292,16 @@ export default function Products() {
                       >
                         <td className="py-3 px-3">
                           <div className="w-10 h-10 bg-[var(--bg-secondary)] rounded-lg overflow-hidden">
-                            <img src={cloudinaryUrl(product.images[0], 120)} alt={product.title} className="w-full h-full object-cover" />
+                            <img
+                              src={cloudinaryUrl(product.images[0], 120)}
+                              alt={product.title}
+                              loading="lazy"
+                              onError={(e) => {
+                                e.currentTarget.onerror = null;
+                                e.currentTarget.src = IMAGE_FALLBACK;
+                              }}
+                              className="w-full h-full object-cover"
+                            />
                           </div>
                         </td>
                         <td className="py-3 px-3">
@@ -377,18 +385,19 @@ export default function Products() {
       </div>
 
       {showModal && (
-        <Modal onClose={closeModal} labelledBy="product-modal-title">
-          <h2
-            id="product-modal-title"
-            className="text-lg tracking-[0.15em] uppercase"
-            style={{ fontFamily: "'Bebas Neue', sans-serif" }}
-          >
-            {editing ? 'Edit Product' : 'Add Product'}
-          </h2>
+        <Modal open={showModal} onClose={closeModal} title={editing ? 'Edit Product' : 'Add Product'}>
 
           {editing?.images?.[0] && (
             <div className="w-full h-40 bg-[var(--bg-secondary)] rounded-lg overflow-hidden mt-3">
-              <img src={cloudinaryUrl(editing.images[0], 400)} alt={editing.title} className="w-full h-full object-cover" />
+              <img
+                src={cloudinaryUrl(editing.images[0], 400)}
+                alt={editing.title}
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = IMAGE_FALLBACK;
+                }}
+                className="w-full h-full object-cover"
+              />
             </div>
           )}
 
@@ -586,6 +595,8 @@ export default function Products() {
 
       {deleteTarget && (
         <ConfirmDialog
+          open={Boolean(deleteTarget)}
+          onClose={() => setDeleteTarget(null)}
           title="Deactivate Product"
           message={`Deactivate "${deleteTarget.title}"? It will no longer be visible to customers.`}
           onConfirm={() => deleteMutation.mutate(deleteTarget._id)}

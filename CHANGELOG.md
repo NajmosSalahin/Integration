@@ -1,4 +1,14 @@
-﻿## [0.1.17] - 2026-09-19
+﻿## [0.1.19] - 2026-09-19
+
+**Status:** Pre-Release — v0.1.19 In Development
+
+Restricted admin roles + admin control-suite hardening. Admins can now be scoped to specific sections via a `permissions` array on the User model — `orders`, `products`, `coupons`, `banners`, `categories`; an empty list keeps full access (backward compatible, existing admins unaffected). Every admin route is gated by the new `requireSections(...)` middleware; uploads require `banners` + `products`. On the frontend, `AdminRoute` + the navbar/user-dropdown/mobile menus honor the permissions and restricted admins are silently redirected to their first allowed section — hidden sections are never revealed. Created via `node scripts/makeAdmin.js <email> --permissions coupons,banners,categories` (or the `ADMIN_BOOTSTRAP_PERMISSIONS` env at boot).
+
+Also fixed a stack of broken/rough admin surfaces: `api/products.js` held its own never-set access token (so every admin product call 401'd) — it now imports the real token from `./token`; the Products add/edit modal and the deactivate ConfirmDialog passed no `open` prop and never showed — now wired; order list search (order-id fragment + customer name/email) and a validated sort whitelist (`date_*`, `total_*`) are implemented server-side; the admin orders list adds the `shipped` status and clicking any row opens a full order-detail modal (items, customer, delivery address, payment note, coupon/discount, totals); `getOrder` now populates customer name/email; the pagination component is wired correctly (`onChange`); empty-state messages render on Orders/Products/Banners/Categories; the category `order` field is editable and shown as a column; deactivated coupons can be re-activated inline; and broken images fall back to a neutral SVG via `IMAGE_FALLBACK` in `lib/image.js`.
+
+**Detailed snapshot:** [versions/v0.1.19.md](versions/v0.1.19.md)
+
+## [0.1.17] - 2026-09-19
 
 **Status:** Pre-Release - v0.1.17 In Development
 

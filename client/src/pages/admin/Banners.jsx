@@ -13,6 +13,7 @@ import Modal from '../../components/ui/Modal';
 import ConfirmDialog from '../../components/ui/ConfirmDialog';
 import FormField from '../../components/ui/FormField';
 import Spinner from '../../components/ui/Spinner';
+import { IMAGE_FALLBACK } from '../../lib/image';
 
 const CLOUD_BASE = 'https://res.cloudinary.com/zo1t9pye/image/upload';
 
@@ -211,8 +212,7 @@ export default function Banners() {
             {banners && banners.length === 0 && (
               <EmptyState
                 icon={ImageIcon}
-                title="No banners yet"
-                description="Add a banner image to feature it at the top of the homepage."
+                message="No banners yet. Add a banner image to feature it at the top of the homepage."
                 action={
                   <button onClick={openAdd} className="text-sm text-[var(--accent)] hover:text-blue-400 transition-colors">
                     Add Banner
@@ -242,7 +242,16 @@ export default function Banners() {
                       >
                         <td className="py-3 px-3">
                           <div className="w-28 h-14 bg-[var(--bg-secondary)] rounded-lg overflow-hidden">
-                            <img src={bannerImg(banner.publicId, 240)} alt={banner.alt || banner.label} className="w-full h-full object-cover" loading="lazy" />
+                            <img
+                              src={bannerImg(banner.publicId, 240)}
+                              alt={banner.alt || banner.label}
+                              className="w-full h-full object-cover"
+                              loading="lazy"
+                              onError={(e) => {
+                                e.currentTarget.onerror = null;
+                                e.currentTarget.src = IMAGE_FALLBACK;
+                              }}
+                            />
                           </div>
                         </td>
                         <td className="py-3 px-3">
@@ -298,7 +307,15 @@ export default function Banners() {
                 <div className="space-y-2">
                   {form.publicId && (
                     <div className="w-full aspect-[2.4/1] bg-[var(--bg-secondary)] rounded-lg overflow-hidden">
-                      <img src={bannerImg(form.publicId, 480)} alt="Banner preview" className="w-full h-full object-cover" />
+                      <img
+                          src={bannerImg(form.publicId, 480)}
+                          alt="Banner preview"
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            e.currentTarget.onerror = null;
+                            e.currentTarget.src = IMAGE_FALLBACK;
+                          }}
+                        />
                     </div>
                   )}
                   <div className="flex items-center gap-2">
