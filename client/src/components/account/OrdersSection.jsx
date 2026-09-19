@@ -126,9 +126,16 @@ export default function OrdersSection() {
                     <p className="text-sm text-[var(--text-secondary)] mt-1 truncate">
                       {order.items.map((i) => `${i.title} (${i.size}) x${i.quantity}`).join(', ')}
                     </p>
-                    <p className="mt-2 text-[var(--accent)]" style={{ fontFamily: '"Bebas Neue", sans-serif' }}>
-                      ৳{order.totalAmount.toLocaleString()}
-                    </p>
+                    <div className="mt-2 flex items-center justify-between">
+                      <p className="text-[var(--accent)]" style={{ fontFamily: '"Bebas Neue", sans-serif' }}>
+                        ৳{order.totalAmount.toLocaleString()}
+                      </p>
+                      {order.discountAmount > 0 && (
+                        <span className="text-[10px] tracking-[0.15em] uppercase px-2 py-0.5 rounded-lg bg-emerald-500/10 text-emerald-500">
+                          -৳{order.discountAmount.toLocaleString()} {order.couponCode}
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
               </button>

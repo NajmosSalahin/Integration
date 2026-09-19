@@ -153,6 +153,11 @@ export default function OrdersHistory() {
                       <span className="text-[var(--accent)]" style={{ fontFamily: "'Bebas Neue', sans-serif" }}>
                         ৳{order.totalAmount.toLocaleString()}
                       </span>
+                      {order.discountAmount > 0 && (
+                        <span className="text-[10px] tracking-[0.15em] uppercase px-2 py-0.5 rounded-lg bg-emerald-500/10 text-emerald-500">
+                          -৳{order.discountAmount.toLocaleString()} {order.couponCode}
+                        </span>
+                      )}
                     </div>
                   </button>
                 ))}

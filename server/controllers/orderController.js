@@ -1,10 +1,12 @@
 import mongoose from 'mongoose';
 import Order from '../models/Order.js';
-import Product from '../models/Product.js';
+import Coupon from '../models/Coupon.js';
 import User from '../models/User.js';
 import { generateOrderPdf } from '../utils/pdf.js';
 import { sendOrderNotificationEmail } from '../emails/orderNotification.js';
 import { sendOrderConfirmationEmail } from '../emails/orderConfirmation.js';
+import { resolveOrderItems } from '../utils/orderItems.js';
+import { computeDiscount, couponIssue, COUPON_REASON_MESSAGES } from '../utils/coupon.js';
 
 export async function createOrder(req, res) {
   try {
@@ -12,39 +14,32 @@ export async function createOrder(req, res) {
       return res.status(503).json({ error: 'Database not connected' });
     }
 
-    const { items, deliveryAddress, contactPhone, paymentMethod } = req.body;
+    const { items, deliveryAddress, contactPhone, paymentMethod, promoCode } = req.body;
 
-    const productIds = [...new Set(items.map((i) => i.productId))];
-    const products = await Product.find({ _id: { $in: productIds }, active: true });
-    const productMap = new Map(products.map((p) => [p._id.toString(), p]));
+    const { items: validatedItems, subtotal } = await resolveOrderItems(items);
 
-    let totalAmount = 0;
-    const validatedItems = [];
-
-    for (const item of items) {
-      const product = productMap.get(item.productId);
-      if (!product) {
-        return res.status(400).json({ error: `Product ${item.productId} not found or inactive` });
+    let discountAmount = 0;
+    let couponCode = '';
+    if (promoCode) {
+      const code = promoCode.trim().toUpperCase();
+      const coupon = await Coupon.findOne({ code });
+      if (!coupon) {
+        return res.status(400).json({ error: 'Invalid coupon code' });
       }
-
-      const sizeStock = product.stock.find((s) => s.size === item.size);
-      if (sizeStock && !sizeStock.inStock) {
-        return res.status(400).json({ error: `${product.title} size ${item.size} is out of stock` });
-      }
-
-      if (!product.sizes.includes(item.size)) {
-        return res.status(400).json({ error: `${product.title} does not have size ${item.size}` });
-      }
-
-      totalAmount += product.price * item.quantity;
-      validatedItems.push({
-        productId: product._id,
-        title: product.title,
-        size: item.size,
-        quantity: item.quantity,
-        priceAtOrder: product.price,
+      const userOrderCount = await Order.countDocuments({
+        userId: req.user._id,
+        couponCode: code,
+        discountAmount: { $gt: 0 },
       });
+      const issue = couponIssue({ coupon, subtotal, userOrderCount });
+      if (issue) {
+        return res.status(400).json({ error: COUPON_REASON_MESSAGES[issue.reason] });
+      }
+      discountAmount = computeDiscount({ coupon, subtotal });
+      couponCode = code;
     }
+
+    const totalAmount = subtotal - discountAmount;
 
     const user = await User.findById(req.user._id).select('name email');
 
@@ -52,11 +47,21 @@ export async function createOrder(req, res) {
       userId: req.user._id,
       items: validatedItems,
       totalAmount,
+      couponCode,
+      discountAmount,
       deliveryAddress,
       contactPhone,
       paymentMethod: paymentMethod || 'bkash',
       status: paymentMethod === 'cod' ? 'awaiting_confirmation' : 'pending_payment',
     });
+
+    if (couponCode) {
+      try {
+        await Coupon.updateOne({ code: couponCode }, { $inc: { timesUsed: 1 } });
+      } catch (usageErr) {
+        console.error('Failed to increment coupon usage:', usageErr);
+      }
+    }
 
     const pdfBuffer = await generateOrderPdf({
       order,
@@ -87,6 +92,9 @@ export async function createOrder(req, res) {
 
     res.status(201).json(order);
   } catch (err) {
+    if (err?.status) {
+      return res.status(err.status).json({ error: err.message });
+    }
     console.error('createOrder error:', err);
     res.status(500).json({ error: 'Failed to create order' });
   }

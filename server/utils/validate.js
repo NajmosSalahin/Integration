@@ -34,16 +34,41 @@ export const resetPasswordSchema = z.object({
   path: ['confirmPassword'],
 });
 
+export const orderItemsSchema = z.array(z.object({
+  productId: z.string().min(1),
+  size: z.string().min(1),
+  quantity: z.number().int().min(1),
+})).min(1, 'Cart must not be empty');
+
 export const createOrderSchema = z.object({
-  items: z.array(z.object({
-    productId: z.string().min(1),
-    size: z.string().min(1),
-    quantity: z.number().int().min(1),
-  })).min(1, 'Cart must not be empty'),
+  items: orderItemsSchema,
   deliveryAddress: z.string().min(5, 'Delivery address is required'),
   contactPhone: z.string().min(5, 'Phone number is required'),
   paymentMethod: z.enum(['bkash', 'nagad', 'rocket', 'cod']).optional().default('bkash'),
+  promoCode: z.string().trim().max(30).optional(),
 });
+
+export const validateCouponSchema = z.object({
+  code: z.string().min(1, 'Code is required').max(30).transform((s) => s.trim().toUpperCase()),
+  items: orderItemsSchema,
+});
+
+export const couponSchema = z.object({
+  code: z.string().min(1, 'Code is required').max(30).transform((s) => s.trim().toUpperCase()),
+  discountType: z.enum(['fixed', 'percent']),
+  value: z.number().int().min(1, 'Value must be at least 1'),
+  minOrderAmount: z.number().int().min(0, 'Minimum order must be 0 or more').optional(),
+  maxDiscount: z.number().int().min(0, 'Max discount must be 0 or more').optional(),
+  expiresAt: z.string().datetime({ offset: true }).nullable().optional(),
+  usageLimit: z.number().int().min(0, 'Usage limit must be 0 or more').optional(),
+  perUserLimit: z.number().int().min(0, 'Per-user limit must be 0 or more').optional(),
+  active: z.boolean().optional(),
+}).refine((data) => data.discountType !== 'percent' || data.value <= 100, {
+  message: 'Percent value must be 100 or fewer',
+  path: ['value'],
+});
+
+export const updateCouponSchema = couponSchema.partial();
 
 export const updateStatusSchema = z.object({
   status: z.enum(['pending_payment', 'awaiting_confirmation', 'paid', 'shipped', 'fulfilled', 'cancelled']),

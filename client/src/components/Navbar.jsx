@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { Link, useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, ShoppingCart, Menu, X, LogOut, Package, LogIn, User, Loader2 } from 'lucide-react';
+import { Search, ShoppingCart, Menu, X, LogOut, Package, LogIn, User, Loader2, BadgePercent } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { fetchProducts } from '../api/products';
 import useCart from '../stores/cartStore';
@@ -207,6 +207,13 @@ export default function Navbar() {
                     >
                       Products
                     </Link>
+                    <Link
+                      to="/admin/coupons"
+                      className={navLinkClass(isActive('/admin/coupons'))}
+                      aria-current={isActive('/admin/coupons') ? 'page' : undefined}
+                    >
+                      Coupons
+                    </Link>
                   </>
                 )}
               </nav>
@@ -322,6 +329,15 @@ export default function Navbar() {
                               <Package size={16} aria-hidden="true" />
                               Admin Products
                             </Link>
+                            <Link
+                              to="/admin/coupons"
+                              onClick={() => setUserMenuOpen(false)}
+                              className="flex items-center gap-3 px-4 py-2 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-primary)] transition-colors sm:hidden"
+                              role="menuitem"
+                            >
+                              <BadgePercent size={16} aria-hidden="true" />
+                              Admin Coupons
+                            </Link>
                           </>
                         )}
                         <div className="border-t border-[var(--border)] my-0.5" role="none" />
@@ -430,6 +446,7 @@ export default function Navbar() {
                     <div className="border-t border-[var(--border)] my-2" />
                     <Link to="/admin/orders" className={`block py-2 px-1 text-sm transition-colors ${isActive('/admin/orders') ? 'text-[var(--accent)]' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`} aria-current={isActive('/admin/orders') ? 'page' : undefined}>Admin Orders</Link>
                     <Link to="/admin/products" className={`block py-2 px-1 text-sm transition-colors ${isActive('/admin/products') ? 'text-[var(--accent)]' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`} aria-current={isActive('/admin/products') ? 'page' : undefined}>Admin Products</Link>
+                    <Link to="/admin/coupons" className={`block py-2 px-1 text-sm transition-colors ${isActive('/admin/coupons') ? 'text-[var(--accent)]' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`} aria-current={isActive('/admin/coupons') ? 'page' : undefined}>Admin Coupons</Link>
                   </>
                 )}
                 <div className="border-t border-[var(--border)] my-2" />

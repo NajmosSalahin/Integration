@@ -127,11 +127,25 @@ export default function OrderConfirmation() {
                     </div>
                   ))}
                 </div>
-                <div className="border-t border-[var(--border)] mt-3 pt-3 flex justify-between">
-                  <span className="text-sm font-bold">Total</span>
-                  <span className="text-lg text-[var(--accent)]" style={{ fontFamily: "'Bebas Neue', sans-serif" }}>
-                    ৳{order.totalAmount.toLocaleString()}
-                  </span>
+                <div className="border-t border-[var(--border)] mt-3 pt-3 space-y-1">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-xs text-[var(--text-secondary)]">Subtotal</span>
+                    <span className="text-sm text-[var(--text-primary)]">
+                      ৳{(order.totalAmount + order.discountAmount).toLocaleString()}
+                    </span>
+                  </div>
+                  {order.discountAmount > 0 && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-xs text-[var(--text-secondary)]">Coupon ({order.couponCode})</span>
+                      <span className="text-sm text-emerald-500">-৳{order.discountAmount.toLocaleString()}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between">
+                    <span className="text-sm font-bold">Total</span>
+                    <span className="text-lg text-[var(--accent)]" style={{ fontFamily: "'Bebas Neue', sans-serif" }}>
+                      ৳{order.totalAmount.toLocaleString()}
+                    </span>
+                  </div>
                 </div>
               </section>
 

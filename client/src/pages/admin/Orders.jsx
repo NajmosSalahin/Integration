@@ -234,6 +234,11 @@ export default function Orders() {
                           <td className="py-3 px-3 text-right">
                             <span className="text-[var(--text-primary)]">
                               ৳{order.totalAmount.toLocaleString()}
+                              {order.discountAmount > 0 && (
+                                <span className="block text-[10px] text-emerald-500 mt-0.5">
+                                  -৳{order.discountAmount.toLocaleString()} {order.couponCode}
+                                </span>
+                              )}
                             </span>
                           </td>
                           <td className="py-3 px-3 hidden md:table-cell">

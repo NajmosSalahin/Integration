@@ -13,6 +13,7 @@ import authRoutes from './routes/authRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
 import contactRoutes from './routes/contactRoutes.js';
 import newsletterRoutes from './routes/newsletterRoutes.js';
+import couponRoutes from './routes/couponRoutes.js';
 import Product from './models/Product.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -63,6 +64,7 @@ app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/newsletter', newsletterRoutes);
+app.use('/api/coupons', couponRoutes);
 
 const STATIC_SITEMAP_PAGES = [
   { path: '', priority: '1.0', changefreq: 'weekly' },
