@@ -14,6 +14,7 @@ import orderRoutes from './routes/orderRoutes.js';
 import contactRoutes from './routes/contactRoutes.js';
 import newsletterRoutes from './routes/newsletterRoutes.js';
 import couponRoutes from './routes/couponRoutes.js';
+import bootstrapAdmin from './utils/bootstrapAdmin.js';
 import Product from './models/Product.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -152,8 +153,13 @@ const MONGO_URI = process.env.MONGO_URI;
 
 if (MONGO_URI) {
   mongoose.connect(MONGO_URI)
-    .then(() => {
+    .then(async () => {
       console.log('Connected to MongoDB');
+      try {
+        await bootstrapAdmin();
+      } catch (err) {
+        console.error('Admin bootstrap error:', err);
+      }
       startServer();
     })
     .catch((err) => {

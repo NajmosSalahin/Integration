@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "node --watch server.js",
-    "start": "node server.js"
+    "start": "node server.js",
+    "make:admin": "node scripts/makeAdmin.js"
   },
   "dependencies": {
     "@getbrevo/brevo": "^6.0.0",
