@@ -7,7 +7,7 @@ export default function FeaturedRow({ products }) {
   const trackRef = useRef(null);
   const cardSizeRef = useRef(0);
   const rafRef = useRef(null);
-  const [nav, setNav] = useState({ canPrev: false, canNext: true, progress: 0, canScroll: false });
+  const [nav, setNav] = useState({ canPrev: false, canNext: true });
   const [paused, setPaused] = useState(false);
 
   const count = products?.length || 0;
@@ -27,8 +27,6 @@ export default function FeaturedRow({ products }) {
       setNav({
         canPrev: el.scrollLeft > 2,
         canNext: el.scrollLeft < max - 2,
-        canScroll: max > 0,
-        progress: max > 0 ? Math.min(1, Math.max(0, el.scrollLeft / max)) : 0,
       });
     });
   };
@@ -128,33 +126,7 @@ export default function FeaturedRow({ products }) {
           >
             <ChevronRight size={20} aria-hidden="true" />
           </button>
-          <div
-            className="pointer-events-none absolute inset-y-0 right-0 z-[5] w-14 sm:w-20 bg-gradient-to-l from-[var(--bg-primary)] to-transparent"
-            aria-hidden="true"
-          />
-          {nav.canPrev && (
-            <div
-              className="pointer-events-none absolute inset-y-0 left-0 z-[5] w-14 sm:w-20 bg-gradient-to-r from-[var(--bg-primary)] to-transparent"
-              aria-hidden="true"
-            />
-          )}
         </div>
-
-        {nav.canScroll && (
-          <div
-            className="mt-4 h-1 rounded-full bg-[var(--border)] overflow-hidden"
-            role="progressbar"
-            aria-label="Featured products scroll progress"
-            aria-valuemin={0}
-            aria-valuemax={100}
-            aria-valuenow={Math.round(nav.progress * 100)}
-          >
-            <div
-              className="h-full bg-[var(--accent)] transition-[width] duration-150"
-              style={{ width: `${nav.progress * 100}%` }}
-            />
-          </div>
-        )}
       </div>
     </section>
   );
