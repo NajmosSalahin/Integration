@@ -7,9 +7,10 @@ import {
   updateProduct,
   deleteProduct,
   toggleStock,
+  setActive,
 } from '../controllers/productController.js';
 import { protect, adminOnly } from '../middleware/auth.js';
-import { validate, createProductSchema, updateProductSchema } from '../utils/validate.js';
+import { validate, createProductSchema, updateProductSchema, setActiveSchema } from '../utils/validate.js';
 
 const router = Router();
 
@@ -19,6 +20,7 @@ router.post('/', protect, adminOnly, validate(createProductSchema), createProduc
 router.patch('/:id/stock', protect, adminOnly, toggleStock);
 router.put('/:id', protect, adminOnly, validate(updateProductSchema), updateProduct);
 router.delete('/:id', protect, adminOnly, deleteProduct);
+router.patch('/:id/active', protect, adminOnly, validate(setActiveSchema), setActive);
 router.get('/:id', getProduct);
 
 export default router;

@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { Link, useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, ShoppingCart, Menu, X, LogOut, Package, LogIn, User, Loader2, BadgePercent } from 'lucide-react';
+import { Search, ShoppingCart, Menu, X, LogOut, Package, LogIn, User, Loader2, BadgePercent, LayoutGrid, Tags } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { fetchProducts } from '../api/products';
 import useCart from '../stores/cartStore';
@@ -214,6 +214,20 @@ export default function Navbar() {
                     >
                       Coupons
                     </Link>
+                    <Link
+                      to="/admin/banners"
+                      className={navLinkClass(isActive('/admin/banners'))}
+                      aria-current={isActive('/admin/banners') ? 'page' : undefined}
+                    >
+                      Banners
+                    </Link>
+                    <Link
+                      to="/admin/categories"
+                      className={navLinkClass(isActive('/admin/categories'))}
+                      aria-current={isActive('/admin/categories') ? 'page' : undefined}
+                    >
+                      Categories
+                    </Link>
                   </>
                 )}
               </nav>
@@ -329,15 +343,33 @@ export default function Navbar() {
                               <Package size={16} aria-hidden="true" />
                               Admin Products
                             </Link>
-                            <Link
-                              to="/admin/coupons"
-                              onClick={() => setUserMenuOpen(false)}
-                              className="flex items-center gap-3 px-4 py-2 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-primary)] transition-colors sm:hidden"
-                              role="menuitem"
-                            >
-                              <BadgePercent size={16} aria-hidden="true" />
-                              Admin Coupons
-                            </Link>
+<Link
+                               to="/admin/coupons"
+                               onClick={() => setUserMenuOpen(false)}
+                               className="flex items-center gap-3 px-4 py-2 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-primary)] transition-colors sm:hidden"
+                               role="menuitem"
+                             >
+                               <BadgePercent size={16} aria-hidden="true" />
+                               Admin Coupons
+                             </Link>
+                             <Link
+                               to="/admin/banners"
+                               onClick={() => setUserMenuOpen(false)}
+                               className="flex items-center gap-3 px-4 py-2 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-primary)] transition-colors sm:hidden"
+                               role="menuitem"
+                             >
+                               <LayoutGrid size={16} aria-hidden="true" />
+                               Admin Banners
+                             </Link>
+                             <Link
+                               to="/admin/categories"
+                               onClick={() => setUserMenuOpen(false)}
+                               className="flex items-center gap-3 px-4 py-2 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-primary)] transition-colors sm:hidden"
+                               role="menuitem"
+                             >
+                               <Tags size={16} aria-hidden="true" />
+                               Admin Categories
+                             </Link>
                           </>
                         )}
                         <div className="border-t border-[var(--border)] my-0.5" role="none" />
@@ -447,6 +479,8 @@ export default function Navbar() {
                     <Link to="/admin/orders" className={`block py-2 px-1 text-sm transition-colors ${isActive('/admin/orders') ? 'text-[var(--accent)]' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`} aria-current={isActive('/admin/orders') ? 'page' : undefined}>Admin Orders</Link>
                     <Link to="/admin/products" className={`block py-2 px-1 text-sm transition-colors ${isActive('/admin/products') ? 'text-[var(--accent)]' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`} aria-current={isActive('/admin/products') ? 'page' : undefined}>Admin Products</Link>
                     <Link to="/admin/coupons" className={`block py-2 px-1 text-sm transition-colors ${isActive('/admin/coupons') ? 'text-[var(--accent)]' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`} aria-current={isActive('/admin/coupons') ? 'page' : undefined}>Admin Coupons</Link>
+                    <Link to="/admin/banners" className={`block py-2 px-1 text-sm transition-colors ${isActive('/admin/banners') ? 'text-[var(--accent)]' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`} aria-current={isActive('/admin/banners') ? 'page' : undefined}>Admin Banners</Link>
+                    <Link to="/admin/categories" className={`block py-2 px-1 text-sm transition-colors ${isActive('/admin/categories') ? 'text-[var(--accent)]' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`} aria-current={isActive('/admin/categories') ? 'page' : undefined}>Admin Categories</Link>
                   </>
                 )}
                 <div className="border-t border-[var(--border)] my-2" />

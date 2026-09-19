@@ -19,6 +19,8 @@ const VerifyEmail = lazy(() => import('./pages/VerifyEmail'));
 const AdminOrders = lazy(() => import('./pages/admin/Orders'));
 const AdminProducts = lazy(() => import('./pages/admin/Products'));
 const AdminCoupons = lazy(() => import('./pages/admin/Coupons'));
+const AdminBanners = lazy(() => import('./pages/admin/Banners'));
+const AdminCategories = lazy(() => import('./pages/admin/Categories'));
 const Account = lazy(() => import('./pages/Account'));
 const About = lazy(() => import('./pages/About'));
 const Contact = lazy(() => import('./pages/Contact'));
@@ -91,6 +93,22 @@ function App() {
             element={
               <AdminRoute>
                 <AdminCoupons />
+              </AdminRoute>
+            }
+          />
+          <Route
+            path="/admin/banners"
+            element={
+              <AdminRoute>
+                <AdminBanners />
+              </AdminRoute>
+            }
+          />
+          <Route
+            path="/admin/categories"
+            element={
+              <AdminRoute>
+                <AdminCategories />
               </AdminRoute>
             }
           />

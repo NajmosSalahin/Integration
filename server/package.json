@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "node --watch server.js",
     "start": "node server.js",
-    "make:admin": "node scripts/makeAdmin.js"
+    "make:admin": "node scripts/makeAdmin.js",
+    "seed:catalog": "node scripts/seedCatalog.js"
   },
   "dependencies": {
     "@getbrevo/brevo": "^6.0.0",

@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import MetaTags from '../../components/MetaTags';
-import { Plus, Pencil, Trash2, AlertCircle, CheckCircle } from 'lucide-react';
-import { getAllProductsAdmin, createProduct, updateProduct, deleteProduct, toggleStock } from '../../api/products';
+import { Plus, Pencil, Trash2, AlertCircle, CheckCircle, Star, Upload } from 'lucide-react';
+import { getAllProductsAdmin, createProduct, updateProduct, deleteProduct, toggleStock, setProductActive } from '../../api/products';
+import { uploadImage } from '../../api/upload';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import Skeleton from '../../components/ui/Skeleton';
@@ -24,6 +25,7 @@ const emptyForm = {
   sizes: [],
   sizeGuideNote: '',
   tags: '',
+  featured: false,
 };
 
 export default function Products() {
@@ -34,6 +36,7 @@ export default function Products() {
   const [error, setError] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [toast, setToast] = useState(null);
+  const [uploading, setUploading] = useState(false);
 
   const { data: products, isLoading, error: fetchError, refetch } = useQuery({
     queryKey: ['adminProducts'],
@@ -83,6 +86,36 @@ export default function Products() {
     },
   });
 
+  const activateMutation = useMutation({
+    mutationFn: ({ id, active }) => setProductActive(id, active),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['adminProducts'] });
+      setToast({ type: 'success', message: 'Product activated.' });
+    },
+    onError: (err) => {
+      setToast({ type: 'error', message: err.message || 'Failed to activate product.' });
+    },
+  });
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    setError(null);
+    try {
+      const { url } = await uploadImage(file, 'integration/products');
+      setForm((prev) => ({
+        ...prev,
+        images: prev.images ? `${prev.images.trim()}, ${url}` : url,
+      }));
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setUploading(false);
+      e.target.value = '';
+    }
+  };
+
   const openAdd = () => {
     setEditing(null);
     setForm(emptyForm);
@@ -100,6 +133,7 @@ export default function Products() {
       sizes: product.sizes,
       sizeGuideNote: product.sizeGuideNote || '',
       tags: product.tags.join(', '),
+      featured: product.featured === true,
     });
     setError(null);
     setShowModal(true);
@@ -158,6 +192,7 @@ export default function Products() {
       sizes: form.sizes,
       sizeGuideNote: form.sizeGuideNote.trim(),
       tags: form.tags.split(',').map((s) => s.trim()).filter(Boolean),
+      featured: form.featured === true,
     };
 
     if (editing) {
@@ -262,7 +297,12 @@ export default function Products() {
                           </div>
                         </td>
                         <td className="py-3 px-3">
-                          <p className="text-[var(--text-primary)] truncate max-w-[150px] sm:max-w-[200px]">{product.title}</p>
+                          <p className="text-[var(--text-primary)] truncate max-w-[150px] sm:max-w-[200px] inline-flex items-center gap-1.5">
+                            {product.featured && (
+                              <Star size={12} className="text-amber-400 fill-amber-400 shrink-0" aria-label="Featured" />
+                            )}
+                            {product.title}
+                          </p>
                         </td>
                         <td className="py-3 px-3 text-right">
                           <span className="text-[var(--text-primary)]">৳{product.price.toLocaleString()}</span>
@@ -296,6 +336,17 @@ export default function Products() {
                         </td>
                         <td className="py-3 px-3">
                           <div className="flex items-center justify-end gap-2">
+                            {!product.active && (
+                              <button
+                                onClick={() => activateMutation.mutate({ id: product._id, active: true })}
+                                disabled={activateMutation.isPending}
+                                className="p-1.5 text-[var(--text-secondary)] hover:text-emerald-400 transition-colors disabled:opacity-50"
+                                title="Activate"
+                                aria-label={`Activate ${product.title}`}
+                              >
+                                <CheckCircle size={14} aria-hidden="true" />
+                              </button>
+                            )}
                             <button
                               onClick={() => openEdit(product)}
                               className="p-1.5 text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors"
@@ -402,6 +453,31 @@ export default function Products() {
               )}
             </FormField>
 
+            <FormField label="Upload product image (optional)">
+              {({ id }) => (
+                <div className="flex items-center gap-2">
+                  <label
+                    htmlFor={id}
+                    className={`inline-flex items-center gap-2 px-4 py-2 text-sm rounded-lg border border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors cursor-pointer ${
+                      uploading ? 'opacity-50 pointer-events-none' : ''
+                    }`}
+                  >
+                    {uploading ? <Spinner size={14} /> : <Upload size={14} aria-hidden="true" />}
+                    {uploading ? 'Uploading...' : 'Choose file'}
+                  </label>
+                  <input
+                    id={id}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    disabled={uploading}
+                    className="sr-only"
+                  />
+                  <span className="text-xs text-[var(--text-secondary)]">Uploads to Cloudinary and appends the URL above.</span>
+                </div>
+              )}
+            </FormField>
+
             <FormField label="Sizes" required error={form.sizes.length === 0 ? 'Select at least one size.' : null}>
               {() => (
                 <div className="flex gap-2" role="group" aria-label="Available sizes">
@@ -447,6 +523,32 @@ export default function Products() {
                   placeholder="streetwear, japanese, graphic"
                   className="w-full px-3 py-2 bg-[var(--bg-secondary)] border border-[var(--border)] rounded-lg text-sm text-[var(--text-primary)] placeholder-[var(--text-secondary)] focus:border-[var(--accent)] focus:outline-none"
                 />
+              )}
+            </FormField>
+
+            <FormField label="Featured">
+              {({ id }) => (
+                <div className="flex items-center gap-2">
+                  <button
+                    id={id}
+                    type="button"
+                    onClick={() => setForm({ ...form, featured: !form.featured })}
+                    role="switch"
+                    aria-checked={form.featured}
+                    className={`relative w-11 h-6 rounded-full transition-colors ${
+                      form.featured ? 'bg-[var(--accent)]' : 'bg-[var(--border)]'
+                    }`}
+                  >
+                    <span
+                      className={`absolute top-0.5 w-5 h-5 rounded-full bg-white transition-all ${
+                        form.featured ? 'left-[22px]' : 'left-0.5'
+                      }`}
+                    />
+                  </button>
+                  <span className="text-sm text-[var(--text-secondary)]">
+                    {form.featured ? 'Featured on homepage' : 'Not featured'}
+                  </span>
+                </div>
               )}
             </FormField>
 

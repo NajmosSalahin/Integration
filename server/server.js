@@ -14,6 +14,9 @@ import orderRoutes from './routes/orderRoutes.js';
 import contactRoutes from './routes/contactRoutes.js';
 import newsletterRoutes from './routes/newsletterRoutes.js';
 import couponRoutes from './routes/couponRoutes.js';
+import bannerRoutes from './routes/bannerRoutes.js';
+import categoryRoutes from './routes/categoryRoutes.js';
+import uploadRoutes from './routes/uploadRoutes.js';
 import bootstrapAdmin from './utils/bootstrapAdmin.js';
 import Product from './models/Product.js';
 
@@ -66,6 +69,9 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/newsletter', newsletterRoutes);
 app.use('/api/coupons', couponRoutes);
+app.use('/api/banners', bannerRoutes);
+app.use('/api/categories', categoryRoutes);
+app.use('/api/upload', uploadRoutes);
 
 const STATIC_SITEMAP_PAGES = [
   { path: '', priority: '1.0', changefreq: 'weekly' },

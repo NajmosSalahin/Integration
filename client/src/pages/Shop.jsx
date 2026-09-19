@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useSearchParams } from 'react-router-dom';
 import { ArrowUpDown, Check } from 'lucide-react';
 import { fetchProducts } from '../api/products';
+import { fetchCategories } from '../api/categories';
 import { searchProducts } from '../lib/smartSearch';
 import { SITE_URL } from '../lib/seo';
 import ShopProductCard from '../components/ShopProductCard';
@@ -14,7 +15,7 @@ import Pagination from '../components/ui/Pagination';
 import ErrorState from '../components/ui/ErrorState';
 import EmptyState from '../components/ui/EmptyState';
 import Skeleton from '../components/ui/Skeleton';
-import { categories, CATEGORY_GROUPS } from '../data/categories';
+import { categories } from '../data/categories';
 import ShopFilters from '../components/ShopFilters';
 
 const PER_PAGE = 16;
@@ -42,6 +43,20 @@ export default function Shop() {
     queryKey: ['products'],
     queryFn: fetchProducts,
   });
+
+  const { data: liveCategories } = useQuery({
+    queryKey: ['categories'],
+    queryFn: fetchCategories,
+  });
+
+  const allCategories = liveCategories && liveCategories.length > 0 ? liveCategories : categories;
+  const allGroups = useMemo(() => {
+    const seen = [];
+    allCategories.forEach((c) => {
+      if (!seen.includes(c.group)) seen.push(c.group);
+    });
+    return seen;
+  }, [allCategories]);
 
   const filtered = useMemo(() => {
     if (!products) return undefined;
@@ -196,7 +211,7 @@ export default function Shop() {
                   >
                     All
                   </button>
-                  {categories.map((category) => (
+                  {allCategories.map((category) => (
                     <button
                       key={category.tag}
                       onClick={() => handleTagChange(category.tag)}
@@ -298,7 +313,7 @@ export default function Shop() {
                   >
                     All
                   </button>
-                  {CATEGORY_GROUPS.map((group) => (
+                  {allGroups.map((group) => (
                     <div key={group} className="pt-4">
                       <p
                         className="px-3 pb-1 text-[10px] tracking-[0.15em] uppercase text-[var(--text-secondary)]"
@@ -307,7 +322,7 @@ export default function Shop() {
                         {group}
                       </p>
                       <div className="space-y-0.5">
-                        {categories
+                        {allCategories
                           .filter((category) => category.group === group)
                           .map((category) => (
                             <button

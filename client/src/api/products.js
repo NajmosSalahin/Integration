@@ -70,3 +70,10 @@ export async function toggleStock(id, size, inStock) {
     body: JSON.stringify({ size, inStock }),
   });
 }
+
+export async function setProductActive(id, active) {
+  return request(`/api/products/${id}/active`, {
+    method: 'PATCH',
+    body: JSON.stringify({ active }),
+  });
+}

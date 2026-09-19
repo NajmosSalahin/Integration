@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { ArrowRight, Shirt, Shield, Crown, Footprints, ShoppingBag, Backpack, BaggageClaim, Briefcase, TvMinimal, BookOpenText } from 'lucide-react';
 import { fetchProducts } from '../api/products';
+import { fetchCategories } from '../api/categories';
 import { categories } from '../data/categories';
 import { cloudinaryUrl } from '../lib/image';
 
@@ -13,6 +14,11 @@ export default function CategoryGrid() {
     queryFn: fetchProducts,
   });
 
+  const { data: liveCategories } = useQuery({
+    queryKey: ['categories'],
+    queryFn: fetchCategories,
+  });
+
   const getCategoryImage = (tag) => {
     if (!products) return null;
     const match = products.find((p) =>
@@ -21,7 +27,8 @@ export default function CategoryGrid() {
     return cloudinaryUrl(match?.images?.[0], 240) || null;
   };
 
-  const homeCategories = categories.filter((c) => c.home);
+  const allCategories = liveCategories && liveCategories.length > 0 ? liveCategories : categories;
+  const homeCategories = allCategories.filter((c) => c.home);
 
   return (
     <section className="py-10 lg:py-16">

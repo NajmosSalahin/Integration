@@ -132,6 +132,35 @@ export const createProductSchema = z.object({
 
 export const updateProductSchema = createProductSchema.partial();
 
+export const setActiveSchema = z.object({
+  active: z.boolean(),
+});
+
+export const bannerSchema = z.object({
+  publicId: z.string().min(1, 'Banner image is required'),
+  label: z.string().max(80).optional().default(''),
+  alt: z.string().max(200).optional().default(''),
+  cta: z.string().max(200).optional().default('/shop'),
+  order: z.number().int().min(0).optional().default(0),
+  active: z.boolean().optional().default(true),
+});
+
+export const updateBannerSchema = bannerSchema.partial();
+
+export const categorySchema = z.object({
+  name: z.string().min(1, 'Name is required').max(50),
+  tag: z.string().min(1, 'Tag is required').max(50)
+    .transform((s) => s.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')),
+  group: z.string().min(1, 'Group is required').max(50),
+  icon: z.string().max(40).optional().default('Shirt'),
+  home: z.boolean().optional().default(false),
+  order: z.number().int().min(0).optional().default(0),
+});
+
+export const updateCategorySchema = categorySchema.partial().extend({
+  active: z.boolean().optional(),
+});
+
 export const contactSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters').max(50),
   email: z.string().email('Invalid email address'),

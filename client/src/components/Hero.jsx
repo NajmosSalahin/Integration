@@ -7,24 +7,51 @@ const BANNER_WIDTHS = [480, 900, 1600];
 const AUTOPLAY_MS = 6000;
 const RESUME_AFTER_INTERACTION_MS = 8000;
 
-const slides = [
-  { id: 'banner1', version: 'v1789713367', alt: 'New Collection', cta: '/shop', label: 'Shop New Collection' },
-  { id: 'banner2', version: 'v1789713379', alt: 'Street Essentials', cta: '/shop?tag=streetwear', label: 'Shop Street Essentials' },
-  { id: 'banner3', version: 'v1789713387', alt: 'Featured Designs', cta: '/shop', label: 'Shop Featured Designs' },
+const FALLBACK_SLIDES = [
+  { publicId: 'v1789713367/integration/banners/banner1', alt: 'New Collection', cta: '/shop', label: 'Shop New Collection' },
+  { publicId: 'v1789713379/integration/banners/banner2', alt: 'Street Essentials', cta: '/shop?tag=streetwear', label: 'Shop Street Essentials' },
+  { publicId: 'v1789713387/integration/banners/banner3', alt: 'Featured Designs', cta: '/shop', label: 'Shop Featured Designs' },
 ];
 
-const bannerUrl = (id, version, width) =>
-  `${CLOUD_BASE}/f_auto,q_auto,w_${width}/${version}/integration/banners/${id}`;
+const bannerUrl = (publicId, width) =>
+  `${CLOUD_BASE}/f_auto,q_auto,w_${width}/${publicId}`;
 
 const FALLBACK_IMAGE = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="500"><rect width="100%25" height="100%25" fill="%23111111"/></svg>';
 
 export default function Hero() {
+  const [slides, setSlides] = useState(FALLBACK_SLIDES);
   const [current, setCurrent] = useState(0);
   const [tick, setTick] = useState(0);
   const [paused, setPaused] = useState(false);
   const touchStartX = useRef(null);
   const resumeTimerRef = useRef(null);
   const hoveringRef = useRef(false);
+
+  useEffect(() => {
+    let active = true;
+    fetch('/api/banners')
+      .then((r) => (r.ok ? r.json() : []))
+      .then((list) => {
+        if (active && Array.isArray(list) && list.length > 0) {
+          setSlides(
+            list.map((b) => ({
+              publicId: b.publicId,
+              alt: b.alt || 'Featured',
+              cta: b.cta || '/shop',
+              label: b.label || 'Shop Now',
+            }))
+          );
+        }
+      })
+      .catch(() => {});
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (slides.length > 0 && current >= slides.length) setCurrent(0);
+  }, [slides.length, current]);
 
   const scheduleResume = useCallback(() => {
     clearTimeout(resumeTimerRef.current);
@@ -119,9 +146,9 @@ export default function Hero() {
           const active = i === current;
           return (
             <img
-              key={slide.id}
-              src={bannerUrl(slide.id, slide.version, 1600)}
-              srcSet={BANNER_WIDTHS.map((w) => `${bannerUrl(slide.id, slide.version, w)} ${w}w`).join(', ')}
+              key={slide.publicId}
+              src={bannerUrl(slide.publicId, 1600)}
+              srcSet={BANNER_WIDTHS.map((w) => `${bannerUrl(slide.publicId, w)} ${w}w`).join(', ')}
               sizes="100vw"
               alt={slide.alt}
               aria-hidden={!active}
