@@ -1,4 +1,4 @@
-## [0.1.17] - 2026-09-19
+﻿## [0.1.17] - 2026-09-19
 
 **Status:** Pre-Release - v0.1.17 In Development
 
@@ -7,15 +7,32 @@ Storefront motion pass. The hero carousel changes how it moves and no longer die
 Also removed from the FeaturedRow carousel: the accent progress bar and the left/right edge-fade shadows (peek gradients) that masked the row edges. The row is now a true infinite loop instead of a bounce - the track translates over a duplicated deck and resets at a pixel-identical seam, arrows are always enabled, touch swipe works, and autoplay advances smoothly forward. Also fixed a production boot crash: couponSchema.partial is not a function - the coupon refines are now applied after partial() (Zod v3 ZodEffects has no .partial()), so the coupons routes import cleanly at startup (server/utils/validate.js). Admins are now easy to create on any environment: optionally set ADMIN_BOOTSTRAP_EMAIL (comma-separated list) + ADMIN_BOOTSTRAP_PASSWORD to create/promote any number of accounts to admin on the next boot, or run node scripts/makeAdmin.js <email> [<email> ...] [--password <password>] [--prod] from the server folder.
 
 **Detailed snapshot:** [versions/v0.1.17.md](versions/v0.1.17.md)
+
+## [0.1.18] - 2026-09-19
+
+**Status:** Pre-Release - v0.1.18 In Development
+
+Admin control suite — full store management from the dashboard. Products: featured toggle, per-size stock on/off, direct Cloudinary image upload, re-activate. Categories: full DB-backed CRUD replacing hardcoded config; shop sidebar/mobile pills now live. Banners/ads: CRUD homepage hero banners with image upload; replaces the 3 hardcoded Cloudinary slides.
+
+- New models: Banner, Category (DB-backed, active soft-deactivate).
+- New endpoints: GET/POST/PUT/DELETE `/api/banners` (admin), GET/POST/PUT/DELETE `/api/categories` (admin), POST `/api/upload/image`, PATCH `/api/products/:id/active`.
+- Admin pages: Banners, Categories; Products upgraded (featured checkbox, activate, upload).
+- Seed script: `npm run seed:catalog` — 3 banners + 22 categories (idempotent).
+- Build verified (client `npm run build` clean).
+- Docs: `versions/v0.1.18.md`.
+
+**Detailed snapshot:** [versions/v0.1.18.md](versions/v0.1.18.md)
+
 ## [0.1.16] - 2026-09-19
 
 **Status:** Pre-Release - v0.1.16 In Development
 
 Coupons are live end-to-end. Admins manage them from the new Coupons admin page (route + sidebar/navbar links everywhere - desktop, user dropdown, and mobile menu): they can create, edit, and delete coupons with a code (auto-uppercased, checked for duplicates), discount type (Fixed vs Percent), value, minimum-order amount, maximum discount cap, expiry date, usage + per-user limits, and an active toggle dash of inventory. Shoppers apply a coupon code on the cart/checkout screen: the code is validated against the server (POST /api/coupons/validate) with the cart items, the server computes the discount (fixed or percent, honoring min-order, usage/per-user limits, and the max cap), the coupon's usage counts are incremented, and the discount is applied and stored on the order. The applied coupon code and discount amount show on the order confirmation and across all order views (account orders, order history, admin orders). First-time coupon usage respects the per-user limit.
 
-Also: coupon validation and admin coupon creation both run behind a per-IP rate limiter; the server now validates coupon codes client-side on checkout with a alidateCoupon API client; the checkout no longer trusts client-side discount math - it validates server-side. A film-grain-noise overlay plus a coupon-code entry field appear on checkout. Orders now store couponCode and discountAmount, and the order controller applies couponIssue + computeDiscount utilities and increments coupon usage per order.
+Also: coupon validation and admin coupon creation both run behind a per-IP rate limiter; the server now validates coupon codes client-side on checkout with a validateCoupon API client; the checkout no longer trusts client-side discount math - it validates server-side. A film-grain-noise overlay plus a coupon-code entry field appear on checkout. Orders now store couponCode and discountAmount, and the order controller applies couponIssue + computeDiscount utilities and increments coupon usage per order.
 
 **Detailed snapshot:** [versions/v0.1.16.md](versions/v0.1.16.md)
+
 # Changelog
 All notable changes to the Integration storefront will be documented in this file.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
@@ -275,7 +292,7 @@ Category system overhaul: 17-category taxonomy replaces the 3 hardcoded placehol
 **Features:**
 - Central category config (`client/src/data/categories.js`) — 17 categories with name, tag, icon, homepage flag
 - Homepage category grid shows only in-stock categories (real product images) + hand-picked future categories (icon placeholders)
-- Shop page gets a desktop left sidebar (all 17 categories) and mobile horizontal category pills
+- Shop page gets a desktop left sidebar (all 17 categories) and mobile horizontal pills
 - Product tags migrated to full taxonomy: `iu-tshirts`, `mens-tshirts`, `mens-shirts`, `hoodies`, `jerseys`, `mens-caps`, etc.
 
 **Infrastructure:**
@@ -358,4 +375,3 @@ Features currently in development or planned for the next release.
 ---
 
 *New entries go at the top of this file.*
-
