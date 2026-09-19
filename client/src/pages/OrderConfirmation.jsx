@@ -8,6 +8,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import Spinner from '../components/ui/Spinner';
 import { paymentLabel } from '../lib/paymentMethods';
+import { siteConfig, buildWhatsappUrl } from '../lib/site';
 
 export default function OrderConfirmation() {
   const { id } = useParams();
@@ -58,8 +59,6 @@ export default function OrderConfirmation() {
     );
   }
 
-  const whatsappNumber = '01604524084';
-  const messengerPage = '61594204353841';
   const orderShort = String(order._id).slice(-8).toUpperCase();
 
   return (
@@ -174,9 +173,10 @@ export default function OrderConfirmation() {
                 </h2>
                 <div className="flex flex-wrap gap-3">
                   <a
-                    href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
+                    href={buildWhatsappUrl(
+                      siteConfig.contact.whatsappNumber,
                       `Hi, I placed order #${orderShort} on Integration. Total: ৳${order.totalAmount.toLocaleString()}. Looking forward to hearing from you.`
-                    )}`}
+                    )}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-sm rounded-lg transition-colors inline-flex items-center gap-2"
@@ -185,7 +185,7 @@ export default function OrderConfirmation() {
                     WhatsApp
                   </a>
                   <a
-                    href={`https://m.me/${messengerPage}`}
+                    href={`https://m.me/${siteConfig.contact.messengerPage}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="px-4 py-2 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white text-sm rounded-lg transition-colors"
@@ -193,7 +193,7 @@ export default function OrderConfirmation() {
                     Messenger
                   </a>
                   <a
-                    href="mailto:najmussalahin.adib@gmail.com"
+                    href={`mailto:${siteConfig.contact.email}`}
                     className="px-4 py-2 bg-[var(--bg-secondary)] hover:bg-[var(--border)] text-[var(--text-primary)] text-sm rounded-lg transition-colors"
                   >
                     Email

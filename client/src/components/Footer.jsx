@@ -1,11 +1,12 @@
 import { Link } from 'react-router-dom';
 import { ChevronUp, Facebook, X, Instagram } from 'lucide-react';
 import NewsletterForm from './NewsletterForm';
+import { siteConfig } from '../lib/site';
 
 const SOCIAL_LINKS = [
-  { label: 'Facebook', href: 'https://www.facebook.com/profile.php?id=61594204353841', Icon: Facebook },
-  { label: 'X', href: 'https://x.com/integration09', Icon: X },
-  { label: 'Instagram', href: 'https://www.instagram.com/YOUR_HANDLE', Icon: Instagram },
+  { label: 'Facebook', href: siteConfig.social.facebook, Icon: Facebook },
+  { label: 'X', href: siteConfig.social.x, Icon: X },
+  { label: 'Instagram', href: siteConfig.social.instagram, Icon: Instagram },
 ];
 
 export default function Footer() {
