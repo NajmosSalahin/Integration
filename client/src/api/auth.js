@@ -28,7 +28,7 @@ export async function login(data) {
 }
 
 export async function logout() {
-  await authJson('/api/auth/logout', { method: 'POST' });
+  await authJson('/api/auth/logout', { method: 'POST' }).catch(() => {});
   setAccessToken(null);
 }
 
