@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import MetaTags from '../../components/MetaTags';
 import { Search, AlertCircle, CheckCircle } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -56,6 +56,13 @@ export default function Orders() {
   const [page, setPage] = useState(1);
   const [pendingStatus, setPendingStatus] = useState(null);
   const [detailId, setDetailId] = useState(null);
+  const [toast, setToast] = useState(null);
+
+  useEffect(() => {
+    if (!toast) return;
+    const t = setTimeout(() => setToast(null), 4000);
+    return () => clearTimeout(t);
+  }, [toast]);
 
   const { data: detail, isLoading: detailLoading, error: detailError, refetch: refetchDetail } = useQuery({
     queryKey: ['adminOrder', detailId],
@@ -71,12 +78,37 @@ export default function Orders() {
 
   const statusMutation = useMutation({
     mutationFn: ({ orderId, status }) => updateOrderStatus(orderId, status),
-    onMutate: ({ orderId }) => setPendingStatus(orderId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['adminOrders'] });
-      setPendingStatus(null);
+    onMutate: ({ orderId, status }) => {
+      setPendingStatus(orderId);
+      const previous = queryClient.getQueriesData({ queryKey: ['adminOrders'] });
+      queryClient.setQueriesData({ queryKey: ['adminOrders'] }, (old) => {
+        if (!old || !Array.isArray(old.orders)) return old;
+        return {
+          ...old,
+          orders: old.orders.map((o) => (o._id === orderId ? { ...o, status } : o)),
+        };
+      });
+      return { previous };
     },
-    onError: () => setPendingStatus(null),
+    onSuccess: (updated, { orderId }) => {
+      queryClient.setQueriesData({ queryKey: ['adminOrders'] }, (old) => {
+        if (!old || !Array.isArray(old.orders)) return old;
+        return {
+          ...old,
+          orders: old.orders.map((o) => (o._id === orderId ? updated : o)),
+        };
+      });
+      queryClient.invalidateQueries({ queryKey: ['adminOrders'] });
+      const label = STATUS_OPTIONS.find((s) => s.value === updated.status)?.label || updated.status;
+      setToast({ type: 'success', message: `Status updated — ${label}` });
+    },
+    onError: (err, _vars, context) => {
+      if (context?.previous) {
+        context.previous.forEach(([key, data]) => queryClient.setQueryData(key, data));
+      }
+      setToast({ type: 'error', message: err.message || 'Failed to update order status.' });
+    },
+    onSettled: () => setPendingStatus(null),
   });
 
   const handleStatusChange = (orderId, newStatus) => {
@@ -412,6 +444,21 @@ export default function Orders() {
             </div>
           )}
         </Modal>
+      )}
+
+      {toast && (
+        <div
+          className={`fixed bottom-6 right-6 z-50 px-4 py-3 rounded-lg text-sm flex items-center gap-2 shadow-lg animate-[fade-in_0.2s_ease] ${
+            toast.type === 'success'
+              ? 'bg-emerald-900/90 border border-emerald-700 text-emerald-300'
+              : 'bg-red-900/90 border border-red-700 text-red-300'
+          }`}
+          role="status"
+          aria-live="polite"
+        >
+          {toast.type === 'success' ? <CheckCircle size={16} /> : <AlertCircle size={16} />}
+          {toast.message}
+        </div>
       )}
     </>
   );

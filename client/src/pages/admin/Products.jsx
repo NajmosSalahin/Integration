@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import MetaTags from '../../components/MetaTags';
 import { Plus, Pencil, Trash2, AlertCircle, CheckCircle, Star, Upload } from 'lucide-react';
@@ -38,6 +38,12 @@ export default function Products() {
   const [toast, setToast] = useState(null);
   const [uploading, setUploading] = useState(false);
 
+  useEffect(() => {
+    if (!toast) return;
+    const t = setTimeout(() => setToast(null), 4000);
+    return () => clearTimeout(t);
+  }, [toast]);
+
   const { data: products, isLoading, error: fetchError, refetch } = useQuery({
     queryKey: ['adminProducts'],
     queryFn: getAllProductsAdmin,
@@ -50,7 +56,10 @@ export default function Products() {
       closeModal();
       setToast({ type: 'success', message: 'Product created successfully.' });
     },
-    onError: (err) => setError(err.message),
+    onError: (err) => {
+      setError(err.message);
+      setToast({ type: 'error', message: err.message || 'Failed to create product.' });
+    },
   });
 
   const updateMutation = useMutation({
@@ -60,7 +69,10 @@ export default function Products() {
       closeModal();
       setToast({ type: 'success', message: 'Product updated successfully.' });
     },
-    onError: (err) => setError(err.message),
+    onError: (err) => {
+      setError(err.message);
+      setToast({ type: 'error', message: err.message || 'Failed to update product.' });
+    },
   });
 
   const deleteMutation = useMutation({
@@ -121,6 +133,7 @@ export default function Products() {
       }));
     } catch (err) {
       setError(err.message);
+      setToast({ type: 'error', message: err.message || 'Image upload failed.' });
     } finally {
       setUploading(false);
       e.target.value = '';

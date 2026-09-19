@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Shirt, Shield, Crown, Footprints, ShoppingBag, Backpack, BaggageClaim, Briefcase, TvMinimal, BookOpenText } from 'lucide-react';
 import MetaTags from '../../components/MetaTags';
@@ -40,6 +40,12 @@ export default function Categories() {
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [toast, setToast] = useState(null);
 
+  useEffect(() => {
+    if (!toast) return;
+    const t = setTimeout(() => setToast(null), 4000);
+    return () => clearTimeout(t);
+  }, [toast]);
+
   const { data: categories, isLoading, error: fetchError, refetch } = useQuery({
     queryKey: ['adminCategories'],
     queryFn: getAdminCategories,
@@ -52,7 +58,10 @@ export default function Categories() {
       closeModal();
       setToast({ type: 'success', message: 'Category created successfully.' });
     },
-    onError: (err) => setError(err.message),
+    onError: (err) => {
+      setError(err.message);
+      setToast({ type: 'error', message: err.message || 'Failed to create category.' });
+    },
   });
 
   const updateMutation = useMutation({
@@ -62,7 +71,10 @@ export default function Categories() {
       closeModal();
       setToast({ type: 'success', message: 'Category updated successfully.' });
     },
-    onError: (err) => setError(err.message),
+    onError: (err) => {
+      setError(err.message);
+      setToast({ type: 'error', message: err.message || 'Failed to update category.' });
+    },
   });
 
   const deleteMutation = useMutation({

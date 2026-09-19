@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import MetaTags from '../../components/MetaTags';
 import { Plus, Pencil, Trash2, AlertCircle, CheckCircle, Tag, RefreshCw } from 'lucide-react';
@@ -37,6 +37,12 @@ export default function Coupons() {
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [toast, setToast] = useState(null);
 
+  useEffect(() => {
+    if (!toast) return;
+    const t = setTimeout(() => setToast(null), 4000);
+    return () => clearTimeout(t);
+  }, [toast]);
+
   const { data: coupons, isLoading, error: fetchError, refetch } = useQuery({
     queryKey: ['adminCoupons'],
     queryFn: getCoupons,
@@ -49,7 +55,10 @@ export default function Coupons() {
       closeModal();
       setToast({ type: 'success', message: 'Coupon created successfully.' });
     },
-    onError: (err) => setError(err.message),
+    onError: (err) => {
+      setError(err.message);
+      setToast({ type: 'error', message: err.message || 'Failed to create coupon.' });
+    },
   });
 
   const updateMutation = useMutation({
@@ -59,7 +68,10 @@ export default function Coupons() {
       closeModal();
       setToast({ type: 'success', message: 'Coupon updated successfully.' });
     },
-    onError: (err) => setError(err.message),
+    onError: (err) => {
+      setError(err.message);
+      setToast({ type: 'error', message: err.message || 'Failed to update coupon.' });
+    },
   });
 
   const deleteMutation = useMutation({

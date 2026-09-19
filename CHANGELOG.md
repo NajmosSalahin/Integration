@@ -1,4 +1,14 @@
-﻿## [0.1.19] - 2026-09-19
+﻿## [0.1.20] - 2026-09-20
+
+**Status:** Pre-Release - v0.1.20 In Development
+
+Admin error-visibility pass. Status changes on the Orders page no longer "sometimes fail to stick": the select now applies an optimistic update immediately, rolls the row back if the server rejects it, merges the server response on success instead of waiting on a slow full-list refetch, and clears the spinner reliably. Every admin action that can fail (create/update/activate/deactivate/delete/featured-toggle/image-upload on Products, Coupons, Banners, Categories) now surfaces a clear error toast in addition to inline validation, and all admin success/error toasts auto-dismiss after 4s instead of lingering.
+
+---
+
+**Detailed snapshot:** [versions/v0.1.20.md](versions/v0.1.20.md)
+
+## [0.1.19] - 2026-09-19
 
 **Status:** Pre-Release — v0.1.19 In Development
 
