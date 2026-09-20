@@ -1,4 +1,30 @@
-﻿## [0.1.21] - 2026-09-20
+﻿## [1.0.0] - 2026-09-20
+
+**Status:** Stable — First Public Release
+
+Integration opens to customers. Everything built through the 0.1.x pre-release line is now formally released: a complete curated t‑shirt storefront with catalog, search, accounts, wishlists, couponed checkout, orders, and a full admin suite.
+
+**Features (cumulative)**
+
+- **Catalog & discovery:** 150+ curated t‑shirts across 17 categories; smart search (Fuse.js, debounced, weighted title/tags/description); numbered pagination + sort; category nav; featured-row carousel; product detail pages with sizes, stock status, and gallery
+- **Accounts:** signup/signup-verification, login, logout, refresh-token session recovery, password reset, profile + avatar, saved addresses, wishlists
+- **Cart & checkout:** Zustand cart (localStorage), coupon discounts, pre-filled checkout, order placement with rate-limited + Zod-validated endpoint, PDF receipt, owner notification email, customer confirmation email
+- **Orders:** `/orders` history, `/order/:id` details, admin order management (list, filter, search, status updates), honest ownership error handling
+- **Admin suite:** role/section-restricted access, bootstrap admin accounts, product CRUD + activate/feature/stock toggles, category + banner CRUD, coupon CRUD, image upload
+- **Reliability:** error toasts, top-level error boundary, stale-chunk auto-recovery, SPA asset 404s, rate limiting on all mutations
+- **Pages:** homepage (hero carousel, featured, category grid), shop, about/contact, 9 content+legal pages, 404, cookie-aware footers
+
+**Infrastructure**
+
+- React 19 + Vite + Tailwind 4 client; Express + MongoDB server; single-service Render deploy
+- Brevo transactional email + newsletter; Cloudinary image hosting; Plausible analytics
+- Multi-admin bootstrap via env vars (`ADMIN_*`) and `npm run make:admin`
+
+**Detailed snapshot:** [versions/v1.0.0.md](versions/v1.0.0.md)
+
+------
+
+## [0.1.21] - 2026-09-20
 
 **Status:** Pre-Release — v0.1.21 In Development
 
