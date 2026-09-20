@@ -9,7 +9,7 @@ Integration is a t-shirt design storefront built on the theme "Different Styles,
 - [Product detail](https://integration-06n2.onrender.com/product): Per-product page with image gallery, size selection, quantity, and add-to-cart. Loaded dynamically per product (no public list; products appear in Shop).
 - [Cart](https://integration-06n2.onrender.com/cart): Line items, quantity updates, total in BDT, clear-cart confirmation.
 - [Checkout](https://integration-06n2.onrender.com/checkout): Requires login. Shipping/address form, payment method selection (bKash, Nagad, Rocket, Cash on Delivery), order summary.
-- [Order confirmation](https://integration-06n2.onrender.com/order-confirmation): Post-checkout summary and next steps for the selected payment method.
+- [Order confirmation](https://integration-06n2.onrender.com/orders): Requires login. Order history with status; each order opens a detail page with post-checkout summary and next steps for the selected payment method.
 - [My Orders](https://integration-06n2.onrender.com/orders): Requires login. Order history with status.
 - [Log in](https://integration-06n2.onrender.com/login): Account sign in (email + password).
 - [Sign up](https://integration-06n2.onrender.com/signup): Account creation.

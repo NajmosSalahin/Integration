@@ -92,7 +92,7 @@ export default function OrdersSection() {
             return (
               <button
                 key={order._id}
-                onClick={() => navigate(`/order-confirmation/${order._id}`)}
+                onClick={() => navigate(`/order/${order._id}`)}
                 className="w-full text-left p-4 border border-[var(--border)] rounded-[10px] bg-[var(--bg-secondary)] hover:border-[var(--text-secondary)] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
               >
                 <div className="flex items-start gap-4">

@@ -1,14 +1,17 @@
 import { useLocation, useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import MetaTags from '../components/MetaTags';
-import { CheckCircle, Copy, MessageCircle } from 'lucide-react';
+import { CheckCircle, Copy } from 'lucide-react';
 import { useState } from 'react';
 import { getOrder } from '../api/orders';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import Spinner from '../components/ui/Spinner';
 import { paymentLabel } from '../lib/paymentMethods';
-import { siteConfig, buildWhatsappUrl } from '../lib/site';
+import { orderErrorMessage } from '../lib/orderErrors';
+import OrderItemsTotal from '../components/order/OrderItemsTotal';
+import OrderContactButtons from '../components/order/OrderContactButtons';
+import OrderStep from '../components/order/OrderStep';
 
 export default function OrderConfirmation() {
   const { id } = useParams();
@@ -46,13 +49,21 @@ export default function OrderConfirmation() {
       <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
         <Navbar />
         <div className="flex flex-col items-center justify-center py-32 gap-4" role="alert">
-          <p className="text-red-400">Order not found</p>
-          <Link
-            to="/"
-            className="text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
-          >
-            Back to collection
-          </Link>
+          <p className="text-red-400">{orderErrorMessage(error)}</p>
+          <div className="flex gap-4">
+            <Link
+              to="/orders"
+              className="text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
+            >
+              My Orders
+            </Link>
+            <Link
+              to="/"
+              className="text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
+            >
+              Back to collection
+            </Link>
+          </div>
         </div>
         <Footer />
       </div>
@@ -107,47 +118,7 @@ export default function OrderConfirmation() {
             </p>
 
             <div className="text-left border border-[var(--border)] rounded-lg p-6 space-y-6">
-              <section>
-                <h2
-                  className="text-sm tracking-[0.15em] uppercase text-[var(--text-secondary)] mb-3"
-                  style={{ fontFamily: "'Bebas Neue', sans-serif" }}
-                >
-                  Items
-                </h2>
-                <div className="space-y-2">
-                  {order.items.map((item, i) => (
-                    <div key={i} className="flex justify-between text-sm">
-                      <span>
-                        {item.title} <span className="text-[var(--text-secondary)]">({item.size})</span> &times;{' '}
-                        {item.quantity}
-                      </span>
-                      <span className="text-[var(--text-primary)]">
-                        ৳{(item.priceAtOrder * item.quantity).toLocaleString()}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-                <div className="border-t border-[var(--border)] mt-3 pt-3 space-y-1">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-xs text-[var(--text-secondary)]">Subtotal</span>
-                    <span className="text-sm text-[var(--text-primary)]">
-                      ৳{(order.totalAmount + order.discountAmount).toLocaleString()}
-                    </span>
-                  </div>
-                  {order.discountAmount > 0 && (
-                    <div className="flex justify-between text-sm">
-                      <span className="text-xs text-[var(--text-secondary)]">Coupon ({order.couponCode})</span>
-                      <span className="text-sm text-emerald-500">-৳{order.discountAmount.toLocaleString()}</span>
-                    </div>
-                  )}
-                  <div className="flex justify-between">
-                    <span className="text-sm font-bold">Total</span>
-                    <span className="text-lg text-[var(--accent)]" style={{ fontFamily: "'Bebas Neue', sans-serif" }}>
-                      ৳{order.totalAmount.toLocaleString()}
-                    </span>
-                  </div>
-                </div>
-              </section>
+              <OrderItemsTotal order={order} />
 
               <section>
                 <h2
@@ -159,20 +130,20 @@ export default function OrderConfirmation() {
                 <div className="space-y-3">
                   {order.paymentMethod === 'cod' ? (
                     <>
-                      <Step num="1">We'll contact you shortly to confirm your order details.</Step>
-                      <Step num="2">Your order ships within 2–3 business days after confirmation.</Step>
-                      <Step num="3">
+                      <OrderStep num="1">We'll contact you shortly to confirm your order details.</OrderStep>
+                      <OrderStep num="2">Your order ships within 2–3 business days after confirmation.</OrderStep>
+                      <OrderStep num="3">
                         Pay <strong>cash on delivery</strong> when your order arrives. No advance payment required.
-                      </Step>
+                      </OrderStep>
                     </>
                   ) : (
                     <>
-                      <Step num="1">We'll contact you shortly to confirm your order details.</Step>
-                      <Step num="2">
+                      <OrderStep num="1">We'll contact you shortly to confirm your order details.</OrderStep>
+                      <OrderStep num="2">
                         Send your payment via <strong>{paymentLabel(order.paymentMethod)}</strong> to the number we
                         provide.
-                      </Step>
-                      <Step num="3">Once payment is confirmed, your order ships within 2–3 business days.</Step>
+                      </OrderStep>
+                      <OrderStep num="3">Once payment is confirmed, your order ships within 2–3 business days.</OrderStep>
                     </>
                   )}
                 </div>
@@ -185,34 +156,7 @@ export default function OrderConfirmation() {
                 >
                   Contact Us
                 </h2>
-                <div className="flex flex-wrap gap-3">
-                  <a
-                    href={buildWhatsappUrl(
-                      siteConfig.contact.whatsappNumber,
-                      `Hi, I placed order #${orderShort} on Integration. Total: ৳${order.totalAmount.toLocaleString()}. Looking forward to hearing from you.`
-                    )}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-sm rounded-lg transition-colors inline-flex items-center gap-2"
-                  >
-                    <MessageCircle size={14} aria-hidden="true" />
-                    WhatsApp
-                  </a>
-                  <a
-                    href={`https://m.me/${siteConfig.contact.messengerPage}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="px-4 py-2 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white text-sm rounded-lg transition-colors"
-                  >
-                    Messenger
-                  </a>
-                  <a
-                    href={`mailto:${siteConfig.contact.email}`}
-                    className="px-4 py-2 bg-[var(--bg-secondary)] hover:bg-[var(--border)] text-[var(--text-primary)] text-sm rounded-lg transition-colors"
-                  >
-                    Email
-                  </a>
-                </div>
+                <OrderContactButtons order={order} />
               </section>
             </div>
 
@@ -227,14 +171,5 @@ export default function OrderConfirmation() {
         <Footer />
       </div>
     </>
-  );
-}
-
-function Step({ num, children }) {
-  return (
-    <div className="flex gap-3 items-start">
-      <span className="text-[var(--accent)] font-bold shrink-0">{num}.</span>
-      <p className="text-sm text-[var(--text-primary)]">{children}</p>
-    </div>
   );
 }

@@ -12,6 +12,8 @@ const ProductDetail = lazyWithRetry(() => import('./pages/ProductDetail'));
 const Cart = lazyWithRetry(() => import('./pages/Cart'));
 const Checkout = lazyWithRetry(() => import('./pages/Checkout'));
 const OrderConfirmation = lazyWithRetry(() => import('./pages/OrderConfirmation'));
+const OrderDetails = lazyWithRetry(() => import('./pages/OrderDetails'));
+const OrdersHistory = lazyWithRetry(() => import('./pages/OrdersHistory'));
 const Signup = lazyWithRetry(() => import('./pages/Signup'));
 const Login = lazyWithRetry(() => import('./pages/Login'));
 const ForgotPassword = lazyWithRetry(() => import('./pages/ForgotPassword'));
@@ -65,6 +67,46 @@ function App() {
             element={
               <ProtectedRoute>
                 <OrderConfirmation />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/order-confirmation"
+            element={
+              <ProtectedRoute>
+                <Navigate to="/orders" replace />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/order-confirmation/"
+            element={
+              <ProtectedRoute>
+                <Navigate to="/orders" replace />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/order/:id"
+            element={
+              <ProtectedRoute>
+                <OrderDetails />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/order"
+            element={
+              <ProtectedRoute>
+                <Navigate to="/orders" replace />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/orders"
+            element={
+              <ProtectedRoute>
+                <OrdersHistory />
               </ProtectedRoute>
             }
           />
@@ -125,7 +167,6 @@ function App() {
               </ProtectedRoute>
             }
           />
-          <Route path="/orders" element={<Navigate to="/account?tab=orders" replace />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/faq" element={<FAQ />} />
