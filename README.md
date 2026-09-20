@@ -30,13 +30,10 @@ Integration/
 ├── render.yaml          # Render deployment config
 ├── package.json         # root scripts (dev, build, start, seed)
 ├── AGENTS.md            # notes for AI coding agents working in this repo
-├── DESIGN.md            # design/architecture notes
-├── HANDOFF.md           # project handoff notes
 ├── CHANGELOG.md         # release history
-└── MEMORY.md            # project memory/context notes
 ```
 
-> This repo also includes `AGENTS.md`, `DESIGN.md`, `HANDOFF.md`, and `MEMORY.md` — worth a look for deeper context on architecture and conventions before making changes.
+> This repo also includes `AGENTS.md` — worth a look for architecture and conventions before making changes.
 
 ## Getting started
 
