@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Helmet } from 'react-helmet-async';
-import { Plus, Pencil, Trash2, AlertCircle } from 'lucide-react';
-import { getAllProductsAdmin, createProduct, updateProduct, deleteProduct, toggleStock } from '../../api/products';
+import MetaTags from '../../components/MetaTags';
+import { Plus, Pencil, Trash2, AlertCircle, CheckCircle, Star, Upload } from 'lucide-react';
+import { getAllProductsAdmin, createProduct, updateProduct, deleteProduct, toggleStock, setProductActive, setProductFeatured } from '../../api/products';
+import { uploadImage } from '../../api/upload';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import Skeleton from '../../components/ui/Skeleton';
@@ -10,6 +11,7 @@ import EmptyState from '../../components/ui/EmptyState';
 import ErrorState from '../../components/ui/ErrorState';
 import Modal from '../../components/ui/Modal';
 import ConfirmDialog from '../../components/ui/ConfirmDialog';
+import { cloudinaryUrl, IMAGE_FALLBACK } from '../../lib/image';
 import FormField from '../../components/ui/FormField';
 import Spinner from '../../components/ui/Spinner';
 
@@ -23,6 +25,7 @@ const emptyForm = {
   sizes: [],
   sizeGuideNote: '',
   tags: '',
+  featured: false,
 };
 
 export default function Products() {
@@ -33,6 +36,13 @@ export default function Products() {
   const [error, setError] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [toast, setToast] = useState(null);
+  const [uploading, setUploading] = useState(false);
+
+  useEffect(() => {
+    if (!toast) return;
+    const t = setTimeout(() => setToast(null), 4000);
+    return () => clearTimeout(t);
+  }, [toast]);
 
   const { data: products, isLoading, error: fetchError, refetch } = useQuery({
     queryKey: ['adminProducts'],
@@ -46,7 +56,10 @@ export default function Products() {
       closeModal();
       setToast({ type: 'success', message: 'Product created successfully.' });
     },
-    onError: (err) => setError(err.message),
+    onError: (err) => {
+      setError(err.message);
+      setToast({ type: 'error', message: err.message || 'Failed to create product.' });
+    },
   });
 
   const updateMutation = useMutation({
@@ -56,7 +69,10 @@ export default function Products() {
       closeModal();
       setToast({ type: 'success', message: 'Product updated successfully.' });
     },
-    onError: (err) => setError(err.message),
+    onError: (err) => {
+      setError(err.message);
+      setToast({ type: 'error', message: err.message || 'Failed to update product.' });
+    },
   });
 
   const deleteMutation = useMutation({
@@ -82,6 +98,48 @@ export default function Products() {
     },
   });
 
+  const activateMutation = useMutation({
+    mutationFn: ({ id, active }) => setProductActive(id, active),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['adminProducts'] });
+      setToast({ type: 'success', message: 'Product activated.' });
+    },
+    onError: (err) => {
+      setToast({ type: 'error', message: err.message || 'Failed to activate product.' });
+    },
+  });
+
+  const featuredMutation = useMutation({
+    mutationFn: ({ id, featured }) => setProductFeatured(id, featured),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['adminProducts'] });
+      setToast({ type: 'success', message: 'Featured updated.' });
+    },
+    onError: (err) => {
+      setToast({ type: 'error', message: err.message || 'Failed to update featured.' });
+    },
+  });
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    setError(null);
+    try {
+      const { url } = await uploadImage(file, 'integration/products');
+      setForm((prev) => ({
+        ...prev,
+        images: prev.images ? `${prev.images.trim()}, ${url}` : url,
+      }));
+    } catch (err) {
+      setError(err.message);
+      setToast({ type: 'error', message: err.message || 'Image upload failed.' });
+    } finally {
+      setUploading(false);
+      e.target.value = '';
+    }
+  };
+
   const openAdd = () => {
     setEditing(null);
     setForm(emptyForm);
@@ -99,6 +157,7 @@ export default function Products() {
       sizes: product.sizes,
       sizeGuideNote: product.sizeGuideNote || '',
       tags: product.tags.join(', '),
+      featured: product.featured === true,
     });
     setError(null);
     setShowModal(true);
@@ -157,6 +216,7 @@ export default function Products() {
       sizes: form.sizes,
       sizeGuideNote: form.sizeGuideNote.trim(),
       tags: form.tags.split(',').map((s) => s.trim()).filter(Boolean),
+      featured: form.featured === true,
     };
 
     if (editing) {
@@ -170,18 +230,16 @@ export default function Products() {
 
   return (
     <>
-      <Helmet>
-        <title>Admin Products — Integration</title>
-      </Helmet>
+      <MetaTags title="Admin Products" description="Admin dashboard — product management." path="/admin/products" noindex />
 
       <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
         <Navbar />
 
         <main className="px-4 sm:px-6 lg:px-8 py-10">
           <div className="max-w-7xl mx-auto">
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
               <h1
-                className="text-3xl sm:text-4xl tracking-[0.15em] uppercase"
+                className="text-2xl sm:text-4xl tracking-[0.15em] uppercase"
                 style={{ fontFamily: "'Bebas Neue', sans-serif" }}
               >
                 Admin — Products
@@ -227,8 +285,7 @@ export default function Products() {
             {products && products.length === 0 && (
               <EmptyState
                 icon={Plus}
-                title="No products yet"
-                description="Add your first product to get started."
+                message="No products yet. Add your first product to get started."
                 action={
                   <button onClick={openAdd} className="text-sm text-[var(--accent)] hover:text-blue-400 transition-colors">
                     Add Product
@@ -259,11 +316,41 @@ export default function Products() {
                       >
                         <td className="py-3 px-3">
                           <div className="w-10 h-10 bg-[var(--bg-secondary)] rounded-lg overflow-hidden">
-                            <img src={product.images[0]} alt={product.title} className="w-full h-full object-cover" />
+                            <img
+                              src={cloudinaryUrl(product.images[0], 120)}
+                              alt={product.title}
+                              loading="lazy"
+                              onError={(e) => {
+                                e.currentTarget.onerror = null;
+                                e.currentTarget.src = IMAGE_FALLBACK;
+                              }}
+                              className="w-full h-full object-cover"
+                            />
                           </div>
                         </td>
                         <td className="py-3 px-3">
-                          <p className="text-[var(--text-primary)] truncate max-w-[150px] sm:max-w-[200px]">{product.title}</p>
+                          <p className="text-[var(--text-primary)] truncate max-w-[150px] sm:max-w-[200px] inline-flex items-center gap-1.5">
+                            <button
+                              type="button"
+                              onClick={() => featuredMutation.mutate({ id: product._id, featured: !product.featured })}
+                              disabled={featuredMutation.isPending}
+                              aria-pressed={product.featured === true}
+                              aria-label={product.featured ? `Remove ${product.title} from featured` : `Add ${product.title} to featured`}
+                              title={product.featured ? 'Remove from Featured' : 'Add to Featured'}
+                              className={`shrink-0 p-0.5 -m-0.5 rounded transition-colors disabled:opacity-50 ${
+                                product.featured
+                                  ? 'text-amber-400 hover:text-amber-300'
+                                  : 'text-[var(--text-secondary)] hover:text-amber-400'
+                              }`}
+                            >
+                              <Star
+                                size={14}
+                                className={product.featured ? 'fill-amber-400' : ''}
+                                aria-hidden="true"
+                              />
+                            </button>
+                            {product.title}
+                          </p>
                         </td>
                         <td className="py-3 px-3 text-right">
                           <span className="text-[var(--text-primary)]">৳{product.price.toLocaleString()}</span>
@@ -297,6 +384,17 @@ export default function Products() {
                         </td>
                         <td className="py-3 px-3">
                           <div className="flex items-center justify-end gap-2">
+                            {!product.active && (
+                              <button
+                                onClick={() => activateMutation.mutate({ id: product._id, active: true })}
+                                disabled={activateMutation.isPending}
+                                className="p-1.5 text-[var(--text-secondary)] hover:text-emerald-400 transition-colors disabled:opacity-50"
+                                title="Activate"
+                                aria-label={`Activate ${product.title}`}
+                              >
+                                <CheckCircle size={14} aria-hidden="true" />
+                              </button>
+                            )}
                             <button
                               onClick={() => openEdit(product)}
                               className="p-1.5 text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors"
@@ -327,18 +425,19 @@ export default function Products() {
       </div>
 
       {showModal && (
-        <Modal onClose={closeModal} labelledBy="product-modal-title">
-          <h2
-            id="product-modal-title"
-            className="text-lg tracking-[0.15em] uppercase"
-            style={{ fontFamily: "'Bebas Neue', sans-serif" }}
-          >
-            {editing ? 'Edit Product' : 'Add Product'}
-          </h2>
+        <Modal open={showModal} onClose={closeModal} title={editing ? 'Edit Product' : 'Add Product'}>
 
           {editing?.images?.[0] && (
             <div className="w-full h-40 bg-[var(--bg-secondary)] rounded-lg overflow-hidden mt-3">
-              <img src={editing.images[0]} alt={editing.title} className="w-full h-full object-cover" />
+              <img
+                src={cloudinaryUrl(editing.images[0], 400)}
+                alt={editing.title}
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = IMAGE_FALLBACK;
+                }}
+                className="w-full h-full object-cover"
+              />
             </div>
           )}
 
@@ -403,6 +502,31 @@ export default function Products() {
               )}
             </FormField>
 
+            <FormField label="Upload product image (optional)">
+              {({ id }) => (
+                <div className="flex items-center gap-2">
+                  <label
+                    htmlFor={id}
+                    className={`inline-flex items-center gap-2 px-4 py-2 text-sm rounded-lg border border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors cursor-pointer ${
+                      uploading ? 'opacity-50 pointer-events-none' : ''
+                    }`}
+                  >
+                    {uploading ? <Spinner size={14} /> : <Upload size={14} aria-hidden="true" />}
+                    {uploading ? 'Uploading...' : 'Choose file'}
+                  </label>
+                  <input
+                    id={id}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    disabled={uploading}
+                    className="sr-only"
+                  />
+                  <span className="text-xs text-[var(--text-secondary)]">Uploads to Cloudinary and appends the URL above.</span>
+                </div>
+              )}
+            </FormField>
+
             <FormField label="Sizes" required error={form.sizes.length === 0 ? 'Select at least one size.' : null}>
               {() => (
                 <div className="flex gap-2" role="group" aria-label="Available sizes">
@@ -451,6 +575,32 @@ export default function Products() {
               )}
             </FormField>
 
+            <FormField label="Featured">
+              {({ id }) => (
+                <div className="flex items-center gap-2">
+                  <button
+                    id={id}
+                    type="button"
+                    onClick={() => setForm({ ...form, featured: !form.featured })}
+                    role="switch"
+                    aria-checked={form.featured}
+                    className={`relative w-11 h-6 rounded-full transition-colors ${
+                      form.featured ? 'bg-[var(--accent)]' : 'bg-[var(--border)]'
+                    }`}
+                  >
+                    <span
+                      className={`absolute top-0.5 w-5 h-5 rounded-full bg-white transition-all ${
+                        form.featured ? 'left-[22px]' : 'left-0.5'
+                      }`}
+                    />
+                  </button>
+                  <span className="text-sm text-[var(--text-secondary)]">
+                    {form.featured ? 'Featured on homepage' : 'Not featured'}
+                  </span>
+                </div>
+              )}
+            </FormField>
+
             {error && (
               <div className="p-3 bg-red-900/20 border border-red-800 rounded-lg text-sm text-red-400 flex items-start gap-2" role="alert">
                 <AlertCircle size={16} className="shrink-0 mt-0.5" aria-hidden="true" />
@@ -485,6 +635,8 @@ export default function Products() {
 
       {deleteTarget && (
         <ConfirmDialog
+          open={Boolean(deleteTarget)}
+          onClose={() => setDeleteTarget(null)}
           title="Deactivate Product"
           message={`Deactivate "${deleteTarget.title}"? It will no longer be visible to customers.`}
           onConfirm={() => deleteMutation.mutate(deleteTarget._id)}

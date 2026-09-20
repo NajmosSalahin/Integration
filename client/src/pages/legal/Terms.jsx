@@ -2,7 +2,7 @@ import ContentLayout from '../../components/ContentLayout';
 
 export default function Terms() {
   return (
-    <ContentLayout title="Terms of Service">
+    <ContentLayout title="Terms of Service" description="Terms and conditions governing use of the Integration storefront." path="/terms">
       <div className="space-y-6 text-[var(--text-secondary)] leading-relaxed text-sm">
         <p>
           Last updated: September 2026
@@ -60,9 +60,10 @@ export default function Terms() {
             Payment
           </h2>
           <p>
-            All payments are made via bKash. Orders not paid within 24 hours will be
-            automatically cancelled. We are not responsible for any issues arising from
-            incorrect payment amounts or wrong recipient numbers provided by the buyer.
+            Payments are made via bKash, Nagad, Rocket, or cash on delivery. For manual
+            digital payments, orders not paid within 24 hours will be automatically
+            cancelled. We are not responsible for any issues arising from incorrect
+            payment amounts or wrong recipient numbers provided by the buyer.
           </p>
         </div>
 

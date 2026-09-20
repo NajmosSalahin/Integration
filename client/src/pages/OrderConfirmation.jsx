@@ -1,12 +1,14 @@
 import { useLocation, useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { Helmet } from 'react-helmet-async';
+import MetaTags from '../components/MetaTags';
 import { CheckCircle, Copy, MessageCircle } from 'lucide-react';
 import { useState } from 'react';
 import { getOrder } from '../api/orders';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import Spinner from '../components/ui/Spinner';
+import { paymentLabel } from '../lib/paymentMethods';
+import { siteConfig, buildWhatsappUrl } from '../lib/site';
 
 export default function OrderConfirmation() {
   const { id } = useParams();
@@ -57,16 +59,16 @@ export default function OrderConfirmation() {
     );
   }
 
-  const whatsappNumber = '01604524084';
-  const messengerPage = '61594204353841';
   const orderShort = String(order._id).slice(-8).toUpperCase();
 
   return (
     <>
-      <Helmet>
-        <title>Order Confirmed — Integration</title>
-        <meta name="description" content="Your order has been placed successfully." />
-      </Helmet>
+      <MetaTags
+        title="Order Confirmed"
+        description="Your order has been placed successfully."
+        path={`/order-confirmation/${id}`}
+        noindex
+      />
 
       <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
         <Navbar />
@@ -125,11 +127,25 @@ export default function OrderConfirmation() {
                     </div>
                   ))}
                 </div>
-                <div className="border-t border-[var(--border)] mt-3 pt-3 flex justify-between">
-                  <span className="text-sm font-bold">Total</span>
-                  <span className="text-lg text-[var(--accent)]" style={{ fontFamily: "'Bebas Neue', sans-serif" }}>
-                    ৳{order.totalAmount.toLocaleString()}
-                  </span>
+                <div className="border-t border-[var(--border)] mt-3 pt-3 space-y-1">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-xs text-[var(--text-secondary)]">Subtotal</span>
+                    <span className="text-sm text-[var(--text-primary)]">
+                      ৳{(order.totalAmount + order.discountAmount).toLocaleString()}
+                    </span>
+                  </div>
+                  {order.discountAmount > 0 && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-xs text-[var(--text-secondary)]">Coupon ({order.couponCode})</span>
+                      <span className="text-sm text-emerald-500">-৳{order.discountAmount.toLocaleString()}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between">
+                    <span className="text-sm font-bold">Total</span>
+                    <span className="text-lg text-[var(--accent)]" style={{ fontFamily: "'Bebas Neue', sans-serif" }}>
+                      ৳{order.totalAmount.toLocaleString()}
+                    </span>
+                  </div>
                 </div>
               </section>
 
@@ -153,7 +169,8 @@ export default function OrderConfirmation() {
                     <>
                       <Step num="1">We'll contact you shortly to confirm your order details.</Step>
                       <Step num="2">
-                        Send your payment via <strong>bKash</strong> to the number we provide.
+                        Send your payment via <strong>{paymentLabel(order.paymentMethod)}</strong> to the number we
+                        provide.
                       </Step>
                       <Step num="3">Once payment is confirmed, your order ships within 2–3 business days.</Step>
                     </>
@@ -170,9 +187,10 @@ export default function OrderConfirmation() {
                 </h2>
                 <div className="flex flex-wrap gap-3">
                   <a
-                    href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
+                    href={buildWhatsappUrl(
+                      siteConfig.contact.whatsappNumber,
                       `Hi, I placed order #${orderShort} on Integration. Total: ৳${order.totalAmount.toLocaleString()}. Looking forward to hearing from you.`
-                    )}`}
+                    )}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-sm rounded-lg transition-colors inline-flex items-center gap-2"
@@ -181,7 +199,7 @@ export default function OrderConfirmation() {
                     WhatsApp
                   </a>
                   <a
-                    href={`https://m.me/${messengerPage}`}
+                    href={`https://m.me/${siteConfig.contact.messengerPage}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="px-4 py-2 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white text-sm rounded-lg transition-colors"
@@ -189,7 +207,7 @@ export default function OrderConfirmation() {
                     Messenger
                   </a>
                   <a
-                    href="mailto:najmussalahin.adib@gmail.com"
+                    href={`mailto:${siteConfig.contact.email}`}
                     className="px-4 py-2 bg-[var(--bg-secondary)] hover:bg-[var(--border)] text-[var(--text-primary)] text-sm rounded-lg transition-colors"
                   >
                     Email

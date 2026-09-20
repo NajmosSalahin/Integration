@@ -1,8 +1,8 @@
-import { useState } from 'react';
-import { Helmet } from 'react-helmet-async';
+import { useState, useEffect } from 'react';
+import MetaTags from '../../components/MetaTags';
 import { Search, AlertCircle, CheckCircle } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getAllOrders, updateOrderStatus } from '../../api/orders';
+import { getAllOrders, getOrder, updateOrderStatus } from '../../api/orders';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import Pagination from '../../components/ui/Pagination';
@@ -10,11 +10,14 @@ import Skeleton from '../../components/ui/Skeleton';
 import EmptyState from '../../components/ui/EmptyState';
 import ErrorState from '../../components/ui/ErrorState';
 import Spinner from '../../components/ui/Spinner';
+import Modal from '../../components/ui/Modal';
+import { paymentLabel } from '../../lib/paymentMethods';
 
 const STATUS_OPTIONS = [
   { value: 'pending_payment', label: 'Pending Payment' },
   { value: 'awaiting_confirmation', label: 'Awaiting Confirmation' },
   { value: 'paid', label: 'Paid' },
+  { value: 'shipped', label: 'Shipped' },
   { value: 'fulfilled', label: 'Fulfilled' },
   { value: 'cancelled', label: 'Cancelled' },
 ];
@@ -23,8 +26,16 @@ const STATUS_COLORS = {
   pending_payment: 'text-yellow-400',
   awaiting_confirmation: 'text-orange-400',
   paid: 'text-[var(--accent)]',
+  shipped: 'text-blue-400',
   fulfilled: 'text-emerald-400',
   cancelled: 'text-red-400',
+};
+
+const PAYMENT_BADGES = {
+  bkash: 'bg-[var(--accent)]/10 text-[var(--accent)]',
+  nagad: 'bg-pink-500/10 text-pink-400',
+  rocket: 'bg-purple-500/10 text-purple-400',
+  cod: 'bg-orange-500/10 text-orange-400',
 };
 
 const FILTER_TABS = [
@@ -32,6 +43,7 @@ const FILTER_TABS = [
   { value: 'pending_payment', label: 'Pending' },
   { value: 'awaiting_confirmation', label: 'Awaiting' },
   { value: 'paid', label: 'Paid' },
+  { value: 'shipped', label: 'Shipped' },
   { value: 'fulfilled', label: 'Fulfilled' },
   { value: 'cancelled', label: 'Cancelled' },
 ];
@@ -43,6 +55,21 @@ export default function Orders() {
   const [sort, setSort] = useState('date_desc');
   const [page, setPage] = useState(1);
   const [pendingStatus, setPendingStatus] = useState(null);
+  const [detailId, setDetailId] = useState(null);
+  const [toast, setToast] = useState(null);
+
+  useEffect(() => {
+    if (!toast) return;
+    const t = setTimeout(() => setToast(null), 4000);
+    return () => clearTimeout(t);
+  }, [toast]);
+
+  const { data: detail, isLoading: detailLoading, error: detailError, refetch: refetchDetail } = useQuery({
+    queryKey: ['adminOrder', detailId],
+    queryFn: () => getOrder(detailId),
+    enabled: Boolean(detailId),
+    retry: false,
+  });
 
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ['adminOrders', filter, search, sort, page],
@@ -51,12 +78,37 @@ export default function Orders() {
 
   const statusMutation = useMutation({
     mutationFn: ({ orderId, status }) => updateOrderStatus(orderId, status),
-    onMutate: ({ orderId }) => setPendingStatus(orderId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['adminOrders'] });
-      setPendingStatus(null);
+    onMutate: ({ orderId, status }) => {
+      setPendingStatus(orderId);
+      const previous = queryClient.getQueriesData({ queryKey: ['adminOrders'] });
+      queryClient.setQueriesData({ queryKey: ['adminOrders'] }, (old) => {
+        if (!old || !Array.isArray(old.orders)) return old;
+        return {
+          ...old,
+          orders: old.orders.map((o) => (o._id === orderId ? { ...o, status } : o)),
+        };
+      });
+      return { previous };
     },
-    onError: () => setPendingStatus(null),
+    onSuccess: (updated, { orderId }) => {
+      queryClient.setQueriesData({ queryKey: ['adminOrders'] }, (old) => {
+        if (!old || !Array.isArray(old.orders)) return old;
+        return {
+          ...old,
+          orders: old.orders.map((o) => (o._id === orderId ? updated : o)),
+        };
+      });
+      queryClient.invalidateQueries({ queryKey: ['adminOrders'] });
+      const label = STATUS_OPTIONS.find((s) => s.value === updated.status)?.label || updated.status;
+      setToast({ type: 'success', message: `Status updated — ${label}` });
+    },
+    onError: (err, _vars, context) => {
+      if (context?.previous) {
+        context.previous.forEach(([key, data]) => queryClient.setQueryData(key, data));
+      }
+      setToast({ type: 'error', message: err.message || 'Failed to update order status.' });
+    },
+    onSettled: () => setPendingStatus(null),
   });
 
   const handleStatusChange = (orderId, newStatus) => {
@@ -67,9 +119,7 @@ export default function Orders() {
 
   return (
     <>
-      <Helmet>
-        <title>Admin Orders — Integration</title>
-      </Helmet>
+      <MetaTags title="Admin Orders" description="Admin dashboard — order management." path="/admin/orders" noindex />
 
       <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
         <Navbar />
@@ -176,7 +226,7 @@ export default function Orders() {
 
             {data && data.orders.length === 0 && (
               <EmptyState
-                title={search ? 'No orders match your search' : 'No orders found'}
+                message={search ? 'No orders match your search' : 'No orders found'}
                 action={
                   search ? (
                     <button onClick={() => setSearch('')} className="text-sm text-[var(--accent)] hover:text-blue-400 transition-colors">
@@ -208,7 +258,12 @@ export default function Orders() {
                     </thead>
                     <tbody>
                       {data.orders.map((order) => (
-                        <tr key={order._id} className="border-b border-[var(--border)]/50 hover:bg-[var(--bg-secondary)]">
+                        <tr
+                          key={order._id}
+                          onClick={() => setDetailId(order._id)}
+                          title={`View order #${String(order._id).slice(-8).toUpperCase()}`}
+                          className="border-b border-[var(--border)]/50 hover:bg-[var(--bg-secondary)] cursor-pointer"
+                        >
                           <td className="py-3 px-3">
                             <span className="text-[var(--text-primary)] font-mono">
                               #{String(order._id).slice(-8).toUpperCase()}
@@ -228,15 +283,18 @@ export default function Orders() {
                           <td className="py-3 px-3 text-right">
                             <span className="text-[var(--text-primary)]">
                               ৳{order.totalAmount.toLocaleString()}
+                              {order.discountAmount > 0 && (
+                                <span className="block text-[10px] text-emerald-500 mt-0.5">
+                                  -৳{order.discountAmount.toLocaleString()} {order.couponCode}
+                                </span>
+                              )}
                             </span>
                           </td>
                           <td className="py-3 px-3 hidden md:table-cell">
                             <span className={`text-xs px-2 py-0.5 rounded-lg ${
-                              order.paymentMethod === 'cod'
-                                ? 'bg-orange-500/10 text-orange-400'
-                                : 'bg-[var(--accent)]/10 text-[var(--accent)]'
+                              PAYMENT_BADGES[order.paymentMethod] || 'bg-[var(--accent)]/10 text-[var(--accent)]'
                             }`}>
-                              {order.paymentMethod === 'cod' ? 'COD' : 'bKash'}
+                              {paymentLabel(order.paymentMethod)}
                             </span>
                           </td>
                           <td className="py-3 px-3 hidden md:table-cell">
@@ -255,6 +313,7 @@ export default function Orders() {
                               <select
                                 value={order.status}
                                 onChange={(e) => handleStatusChange(order._id, e.target.value)}
+                                onClick={(e) => e.stopPropagation()}
                                 disabled={pendingStatus === order._id}
                                 aria-label={`Status for order #${String(order._id).slice(-8).toUpperCase()}`}
                                 className={`bg-transparent border border-[var(--border)] rounded-lg px-2 py-1 text-xs cursor-pointer focus:border-[var(--accent)] focus:outline-none disabled:opacity-50 ${STATUS_COLORS[order.status] || 'text-[var(--text-secondary)]'}`}
@@ -275,7 +334,7 @@ export default function Orders() {
 
                 {totalPages > 1 && (
                   <div className="mt-6 flex justify-center">
-                    <Pagination current={page} total={totalPages} onPageChange={setPage} />
+                    <Pagination current={page} total={totalPages} onChange={setPage} />
                   </div>
                 )}
               </>
@@ -284,6 +343,123 @@ export default function Orders() {
         </main>
         <Footer />
       </div>
+
+      {detailId && (
+        <Modal
+          open={Boolean(detailId)}
+          onClose={() => setDetailId(null)}
+          maxWidth="max-w-2xl"
+          title={`Order #${String(detailId).slice(-8).toUpperCase()}`}
+        >
+          {detailLoading && (
+            <div className="space-y-3">
+              <Skeleton className="w-40 h-4" />
+              <Skeleton className="w-64 h-4" />
+              <Skeleton className="w-full h-24 rounded-lg" />
+              <Skeleton className="w-full h-24 rounded-lg" />
+            </div>
+          )}
+
+          {detailError && <ErrorState message={detailError.message} onRetry={refetchDetail} />}
+
+          {detail && (
+            <div className="space-y-4 text-sm">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className={`text-xs px-2 py-0.5 rounded-lg border border-[var(--border)] ${STATUS_COLORS[detail.status] || 'text-[var(--text-secondary)]'}`}>
+                  {(STATUS_OPTIONS.find((s) => s.value === detail.status) || {}).label || detail.status}
+                </span>
+                <span className={`text-xs px-2 py-0.5 rounded-lg ${PAYMENT_BADGES[detail.paymentMethod] || 'bg-[var(--accent)]/10 text-[var(--accent)]'}`}>
+                  {paymentLabel(detail.paymentMethod)}
+                </span>
+                <span className="text-xs text-[var(--text-secondary)]">
+                  {new Date(detail.createdAt).toLocaleString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                    hour: 'numeric',
+                    minute: '2-digit',
+                  })}
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="bg-[var(--bg-primary)] border border-[var(--border)] rounded-lg p-3 space-y-1">
+                  <p className="text-xs uppercase tracking-wider text-[var(--text-secondary)]">Customer</p>
+                  <p className="text-[var(--text-primary)]">{detail.userId?.name || 'Unknown'}</p>
+                  <p className="text-xs text-[var(--text-secondary)] break-all">{detail.userId?.email || ''}</p>
+                  <p className="text-xs text-[var(--text-secondary)]">{detail.contactPhone}</p>
+                </div>
+                <div className="bg-[var(--bg-primary)] border border-[var(--border)] rounded-lg p-3 space-y-1">
+                  <p className="text-xs uppercase tracking-wider text-[var(--text-secondary)]">Delivery Address</p>
+                  <p className="text-[var(--text-primary)] whitespace-pre-line leading-relaxed">{detail.deliveryAddress}</p>
+                </div>
+              </div>
+
+              {detail.paymentNote && (
+                <div className="bg-[var(--bg-primary)] border border-[var(--border)] rounded-lg p-3">
+                  <p className="text-xs uppercase tracking-wider text-[var(--text-secondary)] mb-1">Payment Note</p>
+                  <p className="text-[var(--text-primary)] whitespace-pre-line leading-relaxed">{detail.paymentNote}</p>
+                </div>
+              )}
+
+              <div className="bg-[var(--bg-primary)] border border-[var(--border)] rounded-lg overflow-hidden">
+                <table className="w-full text-sm" aria-label="Order items">
+                  <thead>
+                    <tr className="border-b border-[var(--border)]">
+                      <th className="text-left py-2 px-3 text-xs uppercase tracking-wider text-[var(--text-secondary)] font-normal">Item</th>
+                      <th className="text-center py-2 px-3 text-xs uppercase tracking-wider text-[var(--text-secondary)] font-normal">Size</th>
+                      <th className="text-center py-2 px-3 text-xs uppercase tracking-wider text-[var(--text-secondary)] font-normal">Qty</th>
+                      <th className="text-right py-2 px-3 text-xs uppercase tracking-wider text-[var(--text-secondary)] font-normal">Price</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {detail.items.map((item, i) => (
+                      <tr key={i} className="border-b border-[var(--border)]/50 last:border-0">
+                        <td className="py-2 px-3 text-[var(--text-primary)]">{item.title}</td>
+                        <td className="py-2 px-3 text-center text-[var(--text-secondary)]">{item.size}</td>
+                        <td className="py-2 px-3 text-center text-[var(--text-secondary)]">x{item.quantity}</td>
+                        <td className="py-2 px-3 text-right text-[var(--text-primary)]">৳{item.priceAtOrder.toLocaleString()}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              <div className="space-y-1 text-sm ml-auto w-full sm:w-64">
+                <div className="flex justify-between text-[var(--text-secondary)]">
+                  <span>Subtotal</span>
+                  <span>৳{detail.items.reduce((sum, it) => sum + it.priceAtOrder * it.quantity, 0).toLocaleString()}</span>
+                </div>
+                {detail.discountAmount > 0 && (
+                  <div className="flex justify-between text-emerald-400">
+                    <span>Coupon {detail.couponCode}</span>
+                    <span>-৳{detail.discountAmount.toLocaleString()}</span>
+                  </div>
+                )}
+                <div className="flex justify-between font-medium text-[var(--text-primary)] border-t border-[var(--border)] pt-1">
+                  <span>Total</span>
+                  <span>৳{detail.totalAmount.toLocaleString()}</span>
+                </div>
+              </div>
+            </div>
+          )}
+        </Modal>
+      )}
+
+      {toast && (
+        <div
+          className={`fixed bottom-6 right-6 z-50 px-4 py-3 rounded-lg text-sm flex items-center gap-2 shadow-lg animate-[fade-in_0.2s_ease] ${
+            toast.type === 'success'
+              ? 'bg-emerald-900/90 border border-emerald-700 text-emerald-300'
+              : 'bg-red-900/90 border border-red-700 text-red-300'
+          }`}
+          role="status"
+          aria-live="polite"
+        >
+          {toast.type === 'success' ? <CheckCircle size={16} /> : <AlertCircle size={16} />}
+          {toast.message}
+        </div>
+      )}
     </>
   );
 }

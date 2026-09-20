@@ -1,17 +1,18 @@
 import { useEffect, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { Helmet } from 'react-helmet-async';
 import { Link, useSearchParams } from 'react-router-dom';
 import { ArrowRight, PackageSearch } from 'lucide-react';
 import { fetchProducts } from '../api/products';
 import { searchProducts } from '../lib/smartSearch';
+import { SITE_URL } from '../lib/seo';
 import ProductCard from '../components/ProductCard';
 import Navbar from '../components/Navbar';
 import Hero from '../components/Hero';
 import CategoryGrid from '../components/CategoryGrid';
 import FeaturedRow from '../components/FeaturedRow';
 import Footer from '../components/Footer';
+import MetaTags from '../components/MetaTags';
 import ErrorState from '../components/ui/ErrorState';
 import EmptyState from '../components/ui/EmptyState';
 import Skeleton from '../components/ui/Skeleton';
@@ -45,16 +46,49 @@ export default function Home() {
 
   useEffect(() => {
     if (searchQuery || tagFilter) {
-      collectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const el = collectionRef.current;
+      if (el) {
+        const y = el.getBoundingClientRect().top + window.scrollY - 80;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
     }
   }, [searchQuery, tagFilter]);
 
   return (
     <>
-      <Helmet>
-        <title>Integration — Different Styles, One Identity</title>
-        <meta name="description" content="Curated t-shirt designs. Modern Japanese streetwear. Different styles, one identity." />
-      </Helmet>
+      <MetaTags
+        title="Integration — Custom T-Shirts & Streetwear Online"
+        description="Curated t-shirt designs. Modern Japanese streetwear. Different styles, one identity. Shop the collection now."
+        path="/"
+        jsonLd={[
+          {
+            '@context': 'https://schema.org',
+            '@type': 'Organization',
+            name: 'Integration',
+            url: SITE_URL,
+            logo: `${SITE_URL}/logo.png`,
+            contactPoint: {
+              '@type': 'ContactPoint',
+              contactType: 'customer service',
+              url: `${SITE_URL}/contact`,
+            },
+          },
+          {
+            '@context': 'https://schema.org',
+            '@type': 'WebSite',
+            name: 'Integration',
+            url: SITE_URL,
+            potentialAction: {
+              '@type': 'SearchAction',
+              target: {
+                '@type': 'EntryPoint',
+                urlTemplate: `${SITE_URL}/shop?q={search_term_string}`,
+              },
+              'query-input': 'required name=search_term_string',
+            },
+          },
+        ]}
+      />
 
       <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
         <Navbar />
@@ -65,7 +99,7 @@ export default function Home() {
 
         <FeaturedRow products={featured} />
 
-        <section ref={collectionRef} className="py-12 sm:py-8 lg:py-20 scroll-mt-20">
+        <section ref={collectionRef} className="py-10 lg:py-16 scroll-mt-20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between mb-6">
               <h2
@@ -80,14 +114,14 @@ export default function Home() {
               </h2>
               <div className="flex items-center gap-3">
                 {filtered && (
-                  <span className="text-[14px] text-[var(--text-secondary)]" aria-live="polite">
+                  <span className="text-sm text-[var(--text-secondary)]" aria-live="polite">
                     {filtered.length} design{filtered.length !== 1 ? 's' : ''}
                   </span>
                 )}
                 {filtered && filtered.length > SHOWN_ON_HOME && (
                   <Link
                     to={`/shop${searchQuery ? `?q=${encodeURIComponent(searchQuery)}` : tagFilter ? `?tag=${encodeURIComponent(tagFilter)}` : ''}`}
-                    className="text-[13px] text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors inline-flex items-center gap-1"
+                    className="text-sm font-medium text-[var(--accent-hover)] hover:text-[var(--accent)] transition-colors inline-flex items-center gap-1"
                   >
                     View all
                     <ArrowRight size={13} aria-hidden="true" />

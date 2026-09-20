@@ -63,3 +63,11 @@ export const newsletterLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
 });
+
+export const couponValidateLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 30,
+  message: { error: 'Too many coupon attempts. Please try again later.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});

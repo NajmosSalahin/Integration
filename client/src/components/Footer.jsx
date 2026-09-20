@@ -1,12 +1,19 @@
 import { Link } from 'react-router-dom';
-import { ChevronUp } from 'lucide-react';
+import { ChevronUp, Facebook, X, Instagram } from 'lucide-react';
 import NewsletterForm from './NewsletterForm';
+import { siteConfig } from '../lib/site';
+
+const SOCIAL_LINKS = [
+  { label: 'Facebook', href: siteConfig.social.facebook, Icon: Facebook },
+  { label: 'X', href: siteConfig.social.x, Icon: X },
+  { label: 'Instagram', href: siteConfig.social.instagram, Icon: Instagram },
+];
 
 export default function Footer() {
   return (
     <footer className="px-4 sm:px-6 lg:px-8 py-8 border-t border-[var(--border)]">
       <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 mb-6">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-8 mb-6">
           <div className="col-span-2 sm:col-span-1">
             <Link
               to="/"
@@ -71,7 +78,7 @@ export default function Footer() {
             </ul>
           </nav>
 
-          <nav aria-labelledby="footer-about-heading">
+          <nav aria-labelledby="footer-about-heading" className="col-span-2 sm:col-span-1">
             <h3 id="footer-about-heading" className="text-xs tracking-[0.15em] uppercase text-[var(--text-secondary)] mb-2">
               About
             </h3>
@@ -101,12 +108,33 @@ export default function Footer() {
         </div>
 
         <div className="pt-4 border-t border-[var(--border)] mb-6">
-          <div className="max-w-md">
-            <NewsletterForm />
+          <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
+            <div className="max-w-md w-full">
+              <NewsletterForm />
+            </div>
+            <div className="shrink-0 md:-translate-y-1">
+              <span className="hand-drawn-underline text-xs tracking-[0.15em] uppercase text-[var(--text-secondary)]">
+                Follow us on
+              </span>
+              <div className="flex items-center gap-3 mt-4">
+                {SOCIAL_LINKS.map(({ label, href, Icon }) => (
+                  <a
+                    key={label}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={label}
+                    className="w-9 h-9 rounded-full border border-[var(--border)] flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--accent)] hover:border-[var(--accent)] hover:-translate-y-0.5 transition-all"
+                  >
+                    <Icon size={16} aria-hidden="true" />
+                  </a>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
 
-        <div className="pt-4 border-t border-[var(--border)] text-center flex items-center justify-center gap-4">
+        <div className="pt-4 border-t border-[var(--border)] text-center flex flex-col items-center gap-2 sm:flex-row sm:justify-center sm:gap-4">
           <p className="text-xs text-[var(--text-secondary)]">
             &copy; {new Date().getFullYear()} Integration. All rights reserved.
           </p>

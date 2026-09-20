@@ -2,13 +2,15 @@ import { useState, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { Helmet } from 'react-helmet-async';
 import { ChevronLeft, ShoppingCart, Check } from 'lucide-react';
 import { fetchProduct } from '../api/products';
+import { SITE_URL } from '../lib/seo';
 import ProductGallery from '../components/ProductGallery';
 import SizeSelector from '../components/SizeSelector';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import WishlistButton from '../components/WishlistButton';
+import MetaTags from '../components/MetaTags';
 import Skeleton from '../components/ui/Skeleton';
 import ErrorState from '../components/ui/ErrorState';
 import useCart from '../stores/cartStore';
@@ -60,7 +62,7 @@ export default function ProductDetail() {
                 <Skeleton className="h-10 w-2/3" />
                 <Skeleton className="h-8 w-32" />
                 <Skeleton className="h-20 w-full" />
-                <div className="flex gap-2 pt-2">
+                <div className="flex gap-2 flex-wrap pt-2">
                   {[...Array(5)].map((_, i) => (
                     <Skeleton key={i} className="h-12 w-14" count={1} />
                   ))}
@@ -106,12 +108,37 @@ export default function ProductDetail() {
 
   const formatPrice = (price) => `৳${price.toLocaleString()}`;
 
+  const instock = product.stock?.some((s) => s.inStock);
+
+  const productLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.title,
+    image: product.images?.[0] ? [product.images[0]] : undefined,
+    description: product.description,
+    brand: { '@type': 'Brand', name: 'Integration' },
+    offers: {
+      '@type': 'Offer',
+      price: product.price,
+      priceCurrency: 'BDT',
+      availability: instock
+        ? 'https://schema.org/InStock'
+        : 'https://schema.org/OutOfStock',
+      url: `${SITE_URL}/product/${product._id}`,
+      seller: { '@type': 'Organization', name: 'Integration' },
+    },
+  };
+
   return (
     <>
-      <Helmet>
-        <title>{product.title} — Integration</title>
-        <meta name="description" content={product.description} />
-      </Helmet>
+      <MetaTags
+        title={product.title}
+        description={(product.description || '').slice(0, 160)}
+        path={`/product/${product._id}`}
+        image={product.images?.[0]}
+        type="product"
+        jsonLd={productLd}
+      />
 
       <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
         <Navbar />
@@ -151,6 +178,7 @@ export default function ProductDetail() {
                         {tag}
                       </span>
                     ))}
+                    <WishlistButton productId={product._id} size={16} className="ml-auto" />
                   </div>
                   <h1
                     className="text-3xl sm:text-4xl tracking-[0.15em] uppercase"

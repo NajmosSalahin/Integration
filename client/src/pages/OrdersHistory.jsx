@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { Helmet } from 'react-helmet-async';
+import MetaTags from '../components/MetaTags';
 import { Package } from 'lucide-react';
 import { getMyOrders } from '../api/orders';
 import Navbar from '../components/Navbar';
@@ -48,9 +48,7 @@ export default function OrdersHistory() {
 
   return (
     <>
-      <Helmet>
-        <title>My Orders — Integration</title>
-      </Helmet>
+      <MetaTags title="My Orders" description="View your past orders and order status." path="/orders" noindex />
 
       <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
         <Navbar />
@@ -155,6 +153,11 @@ export default function OrdersHistory() {
                       <span className="text-[var(--accent)]" style={{ fontFamily: "'Bebas Neue', sans-serif" }}>
                         ৳{order.totalAmount.toLocaleString()}
                       </span>
+                      {order.discountAmount > 0 && (
+                        <span className="text-[10px] tracking-[0.15em] uppercase px-2 py-0.5 rounded-lg bg-emerald-500/10 text-emerald-500">
+                          -৳{order.discountAmount.toLocaleString()} {order.couponCode}
+                        </span>
+                      )}
                     </div>
                   </button>
                 ))}

@@ -2,7 +2,7 @@ import ContentLayout from '../components/ContentLayout';
 
 export default function About() {
   return (
-    <ContentLayout title="About">
+    <ContentLayout title="About Us" description="Learn about Integration — our story, mission, and the vision behind our curated streetwear collection." path="/about">
       <div className="space-y-6 text-[var(--text-secondary)] leading-relaxed">
         <p>
           Integration was born from a simple idea: different styles can coexist under one identity.

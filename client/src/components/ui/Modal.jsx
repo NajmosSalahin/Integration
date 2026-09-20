@@ -79,9 +79,9 @@ export default function Modal({ open, onClose, title, children, maxWidth = 'max-
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 10 }}
             transition={{ duration: 0.2 }}
-            className={`relative w-full ${maxWidth} bg-[var(--bg-secondary)] border border-[var(--border)] rounded-xl p-6 shadow-2xl outline-none`}
+            className={`relative w-full ${maxWidth} bg-[var(--bg-secondary)] border border-[var(--border)] rounded-xl p-6 shadow-2xl outline-none flex flex-col max-h-[calc(100dvh-2rem)]`}
           >
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between mb-4 shrink-0">
               <h2
                 className="text-lg font-semibold text-[var(--text-primary)]"
                 style={{ fontFamily: 'var(--font-body)' }}
@@ -96,7 +96,7 @@ export default function Modal({ open, onClose, title, children, maxWidth = 'max-
                 <X size={18} />
               </button>
             </div>
-            {children}
+            <div className="min-h-0 overflow-y-auto overscroll-contain">{children}</div>
           </motion.div>
         </div>
       )}

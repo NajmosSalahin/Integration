@@ -55,12 +55,12 @@ export default function NewsletterForm({ compact = false }) {
             aria-label="Email address for newsletter"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="flex-1 px-3 py-2.5 border border-[var(--border)] rounded-lg bg-[var(--bg-secondary)] text-[var(--text-primary)] text-sm focus:outline-none focus:border-[var(--accent)] transition-colors placeholder-[var(--text-secondary)]"
+            className="flex-1 min-w-0 px-3 py-2.5 border border-[var(--border)] rounded-lg bg-[var(--bg-secondary)] text-[var(--text-primary)] text-sm focus:outline-none focus:border-[var(--accent)] transition-colors placeholder-[var(--text-secondary)]"
           />
           <button
             type="submit"
             disabled={mutation.isPending}
-            className="px-4 py-2.5 bg-[var(--accent)] text-white text-xs tracking-[0.2em] uppercase rounded-lg hover:bg-[var(--accent-hover)] disabled:bg-[var(--border)] disabled:text-[var(--text-secondary)] transition-colors cursor-pointer disabled:cursor-not-allowed inline-flex items-center gap-1.5"
+            className="px-4 py-2.5 bg-[var(--accent)] text-[#0e1320] text-xs tracking-[0.2em] uppercase rounded-lg hover:bg-[var(--accent-hover)] disabled:bg-[var(--border)] disabled:text-[var(--text-secondary)] transition-colors cursor-pointer disabled:cursor-not-allowed inline-flex items-center gap-1.5"
             style={{ fontFamily: "var(--font-utility)" }}
           >
             {mutation.isPending && <Spinner size={12} />}
@@ -109,12 +109,12 @@ export default function NewsletterForm({ compact = false }) {
             aria-label="Email address for newsletter"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="flex-1 px-4 py-2.5 border border-[var(--border)] rounded-lg bg-[var(--bg-primary)] text-[var(--text-primary)] text-sm focus:outline-none focus:border-[var(--accent)] transition-colors"
+            className="flex-1 min-w-0 px-4 py-2.5 border border-[var(--border)] rounded-lg bg-[var(--bg-primary)] text-[var(--text-primary)] text-sm focus:outline-none focus:border-[var(--accent)] transition-colors"
           />
           <button
             type="submit"
             disabled={mutation.isPending}
-            className="px-4 py-2 bg-[var(--accent)] text-white text-xs tracking-[0.2em] uppercase rounded-lg hover:bg-[var(--accent-hover)] disabled:bg-[var(--border)] disabled:text-[var(--text-secondary)] transition-colors cursor-pointer disabled:cursor-not-allowed inline-flex items-center gap-1.5"
+            className="px-4 py-2 bg-[var(--accent)] text-[#0e1320] text-xs tracking-[0.2em] uppercase rounded-lg hover:bg-[var(--accent-hover)] disabled:bg-[var(--border)] disabled:text-[var(--text-secondary)] transition-colors cursor-pointer disabled:cursor-not-allowed inline-flex items-center gap-1.5"
             style={{ fontFamily: "var(--font-utility)" }}
           >
             {mutation.isPending && <Spinner size={12} />}

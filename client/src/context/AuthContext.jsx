@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getMe, login as apiLogin, signup as apiSignup, logout as apiLogout, refresh } from '../api/auth';
+import { getMe, login as apiLogin, signup as apiSignup, logout as apiLogout } from '../api/auth';
 
 const AuthContext = createContext(null);
 
@@ -12,13 +12,12 @@ export function AuthProvider({ children }) {
     queryKey: ['user'],
     queryFn: async () => {
       try {
-        await refresh();
         return await getMe();
       } catch {
         return null;
       }
     },
-    retry: false,
+    retry: 1,
     staleTime: Infinity,
   });
 
@@ -44,11 +43,13 @@ export function AuthProvider({ children }) {
 
   const logoutMutation = useMutation({
     mutationFn: apiLogout,
-    onSuccess: () => {
+    onSettled: () => {
       queryClient.setQueryData(['user'], null);
       queryClient.clear();
     },
   });
+
+  const refreshUser = () => queryClient.invalidateQueries({ queryKey: ['user'] });
 
   return (
     <AuthContext.Provider
@@ -58,6 +59,7 @@ export function AuthProvider({ children }) {
         login: loginMutation.mutateAsync,
         signup: signupMutation.mutateAsync,
         logout: logoutMutation.mutateAsync,
+        refreshUser,
         loginError: loginMutation.error,
         signupError: signupMutation.error,
       }}

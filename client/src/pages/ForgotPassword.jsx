@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Helmet } from 'react-helmet-async';
+import MetaTags from '../components/MetaTags';
 import { AlertCircle, Mail } from 'lucide-react';
 import { forgotPassword } from '../api/auth';
 import FormField from '../components/ui/FormField';
@@ -58,9 +58,7 @@ export default function ForgotPassword() {
 
   return (
     <>
-      <Helmet>
-        <title>Forgot Password — Integration</title>
-      </Helmet>
+      <MetaTags title="Forgot Password" description="Reset your Integration password via email." path="/forgot-password" noindex />
       <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)] flex items-center justify-center px-4">
         <div className="max-w-md w-full space-y-6">
           <div className="text-center">

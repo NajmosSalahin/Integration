@@ -1,18 +1,22 @@
-import { useMemo, useEffect } from 'react';
+import { useMemo, useEffect, useState, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { motion } from 'framer-motion';
-import { Helmet } from 'react-helmet-async';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useSearchParams } from 'react-router-dom';
+import { ArrowUpDown, Check } from 'lucide-react';
 import { fetchProducts } from '../api/products';
+import { fetchCategories } from '../api/categories';
 import { searchProducts } from '../lib/smartSearch';
+import { SITE_URL } from '../lib/seo';
 import ShopProductCard from '../components/ShopProductCard';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import MetaTags from '../components/MetaTags';
 import Pagination from '../components/ui/Pagination';
 import ErrorState from '../components/ui/ErrorState';
 import EmptyState from '../components/ui/EmptyState';
 import Skeleton from '../components/ui/Skeleton';
 import { categories } from '../data/categories';
+import ShopFilters from '../components/ShopFilters';
 
 const PER_PAGE = 16;
 
@@ -25,9 +29,13 @@ const SORTS = [
 
 export default function Shop() {
   const [searchParams, setSearchParams] = useSearchParams();
+  const [sortOpen, setSortOpen] = useState(false);
+  const sortRef = useRef(null);
   const tagFilter = searchParams.get('tag') || '';
   const searchQuery = searchParams.get('q') || '';
   const sort = searchParams.get('sort') || 'newest';
+  const priceMin = searchParams.get('min') || '';
+  const priceMax = searchParams.get('max') || '';
   const pageParam = Number(searchParams.get('page')) || 1;
   const page = pageParam < 1 ? 1 : pageParam;
 
@@ -36,13 +44,30 @@ export default function Shop() {
     queryFn: fetchProducts,
   });
 
+  const { data: liveCategories } = useQuery({
+    queryKey: ['categories'],
+    queryFn: fetchCategories,
+  });
+
+  const allCategories = liveCategories && liveCategories.length > 0 ? liveCategories : categories;
+  const allGroups = useMemo(() => {
+    const seen = [];
+    allCategories.forEach((c) => {
+      if (!seen.includes(c.group)) seen.push(c.group);
+    });
+    return seen;
+  }, [allCategories]);
+
   const filtered = useMemo(() => {
     if (!products) return undefined;
     const base = searchQuery ? searchProducts(products, searchQuery) : products;
-    return tagFilter
+    const byTag = tagFilter
       ? base.filter((p) => p.tags?.some((t) => t.toLowerCase() === tagFilter.toLowerCase()))
       : base;
-  }, [products, searchQuery, tagFilter]);
+    if (priceMin !== '' && priceMax !== '' && Number(priceMin) > Number(priceMax)) return [];
+    const byMin = priceMin !== '' ? byTag.filter((p) => p.price >= Number(priceMin)) : byTag;
+    return priceMax !== '' ? byMin.filter((p) => p.price <= Number(priceMax)) : byMin;
+  }, [products, searchQuery, tagFilter, priceMin, priceMax]);
 
   const sorted = filtered ? [...filtered] : undefined;
   if (sorted && !searchQuery) {
@@ -86,6 +111,22 @@ export default function Shop() {
     setSearchParams(next);
   };
 
+  useEffect(() => {
+    if (!sortOpen) return;
+    const onKeyDown = (e) => {
+      if (e.key === 'Escape') setSortOpen(false);
+    };
+    const onMouseDown = (e) => {
+      if (sortRef.current && !sortRef.current.contains(e.target)) setSortOpen(false);
+    };
+    document.addEventListener('keydown', onKeyDown);
+    document.addEventListener('mousedown', onMouseDown);
+    return () => {
+      document.removeEventListener('keydown', onKeyDown);
+      document.removeEventListener('mousedown', onMouseDown);
+    };
+  }, [sortOpen]);
+
   const handleTagChange = (tag) => {
     if (tag) {
       setParams({ tag, page: '' });
@@ -94,9 +135,20 @@ export default function Shop() {
     }
   };
 
-  const handleSortChange = (e) => {
-    setParams({ sort: e.target.value, page: '' });
+  const handleSortChange = (value) => {
+    setParams({ sort: value, page: '' });
+    setSortOpen(false);
   };
+
+  const handlePriceChange = (key, value) => {
+    setParams({ [key]: value || '', page: '' });
+  };
+
+  const handleClearFilters = () => {
+    setParams({ min: '', max: '', tag: '', page: '' });
+  };
+
+  const activeFilterCount = [tagFilter, priceMin, priceMax].filter((value) => value !== '').length;
 
   const pillClass = (active) =>
     `px-4 py-2 text-sm rounded-full border transition-colors whitespace-nowrap ${
@@ -115,12 +167,27 @@ export default function Shop() {
   const rangeStart = sorted?.length ? start + 1 : 0;
   const rangeEnd = sorted ? Math.min(start + PER_PAGE, sorted.length) : 0;
 
+  const itemListLd = {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: tagFilter ? `${tagFilter} — Integration` : 'Shop — Integration',
+    itemListElement: (pageItems || []).map((p, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: p.title,
+      url: `${SITE_URL}/product/${p._id}`,
+      image: p.images?.[0],
+    })),
+  };
+
   return (
     <>
-      <Helmet>
-        <title>Shop — Integration</title>
-        <meta name="description" content="Browse all Integration t-shirt designs. Different styles, one identity." />
-      </Helmet>
+      <MetaTags
+        title="Shop"
+        description="Browse all Integration t-shirt designs. Filter by category, search by name. Different styles, one identity."
+        path="/shop"
+        jsonLd={itemListLd}
+      />
 
       <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
         <Navbar />
@@ -144,7 +211,7 @@ export default function Shop() {
                   >
                     All
                   </button>
-                  {categories.map((category) => (
+                  {allCategories.map((category) => (
                     <button
                       key={category.tag}
                       onClick={() => handleTagChange(category.tag)}
@@ -158,29 +225,87 @@ export default function Shop() {
                 <div className="pointer-events-none absolute right-0 top-0 bottom-1 w-10 bg-gradient-to-l from-[var(--bg-primary)] to-transparent" aria-hidden="true" />
               </div>
 
-              <div className="flex items-center gap-2 ml-auto">
-                <label htmlFor="shop-sort" className="sr-only">Sort products</label>
-                <select
-                  id="shop-sort"
-                  value={sort}
-                  onChange={handleSortChange}
+              <div className="relative ml-auto" ref={sortRef}>
+                <label id="shop-sort-label" className="sr-only">Sort products</label>
+                <button
+                  type="button"
+                  onClick={() => setSortOpen((open) => !open)}
                   disabled={Boolean(searchQuery)}
                   title={searchQuery ? 'Sorting is unavailable while searching — search results are relevance-ordered.' : undefined}
-                  className="px-3 py-2 text-sm rounded-lg border border-[var(--border)] bg-[var(--bg-primary)] text-[var(--text-primary)] focus:outline-none focus:border-[var(--accent)] disabled:opacity-40"
+                  aria-haspopup="listbox"
+                  aria-expanded={sortOpen}
+                  aria-labelledby="shop-sort-label"
+                  className="lg:hidden inline-flex items-center gap-1.5 px-3 py-2 text-sm rounded-lg border border-[var(--border)] bg-[var(--bg-primary)] text-[var(--text-primary)] cursor-pointer focus:outline-none focus:border-[var(--accent)] disabled:opacity-40"
                   style={{ fontFamily: 'var(--font-body)' }}
                 >
-                  {SORTS.map((s) => (
-                    <option key={s.value} value={s.value}>
-                      {s.label}
-                    </option>
-                  ))}
-                </select>
+                  Sort
+                  <ArrowUpDown className="w-4 h-4" />
+                </button>
+                <AnimatePresence>
+                  {sortOpen && (
+                    <motion.ul
+                      role="listbox"
+                      aria-labelledby="shop-sort-label"
+                      initial={{ opacity: 0, y: -4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -4 }}
+                      transition={{ duration: 0.15 }}
+                      className="absolute right-0 top-full mt-2 min-w-44 z-50 rounded-[8px] border border-[var(--border)] bg-[var(--bg-secondary)] shadow-xl overflow-hidden"
+                    >
+                      {SORTS.map((s) => (
+                        <li key={s.value}>
+                          <button
+                            type="button"
+                            role="option"
+                            aria-selected={sort === s.value}
+                            onClick={() => handleSortChange(s.value)}
+                            className={`w-full flex items-center justify-between gap-3 text-left px-4 py-2.5 text-sm transition-colors ${
+                              sort === s.value
+                                ? 'text-[var(--accent)]'
+                                : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-primary)]'
+                            }`}
+                            style={{ fontFamily: 'var(--font-body)' }}
+                          >
+                            {s.label}
+                            {sort === s.value && <Check className="w-4 h-4" />}
+                          </button>
+                        </li>
+                      ))}
+                    </motion.ul>
+                  )}
+                </AnimatePresence>
+                <div className="hidden lg:flex items-center gap-2">
+                  <label htmlFor="shop-sort" className="sr-only">Sort products</label>
+                  <select
+                    id="shop-sort"
+                    value={sort}
+                    onChange={(e) => handleSortChange(e.target.value)}
+                    disabled={Boolean(searchQuery)}
+                    title={searchQuery ? 'Sorting is unavailable while searching — search results are relevance-ordered.' : undefined}
+                    className="px-3 py-2 text-sm rounded-lg border border-[var(--border)] bg-[var(--bg-primary)] text-[var(--text-primary)] focus:outline-none focus:border-[var(--accent)] disabled:opacity-40"
+                    style={{ fontFamily: 'var(--font-body)' }}
+                  >
+                    {SORTS.map((s) => (
+                      <option key={s.value} value={s.value}>
+                        {s.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
             </div>
 
+            <ShopFilters
+              min={priceMin}
+              max={priceMax}
+              onChange={handlePriceChange}
+              activeCount={activeFilterCount}
+              onClear={handleClearFilters}
+            />
+
             <div className="lg:flex lg:gap-8">
               <aside className="hidden lg:block w-60 shrink-0">
-                <div className="sticky top-6 space-y-1">
+                <div className="sticky top-20 max-h-[calc(100vh-9rem)] overflow-y-auto scrollbar-thin pr-1">
                   <button
                     onClick={() => handleTagChange('')}
                     className={sidebarClass(!tagFilter)}
@@ -188,15 +313,29 @@ export default function Shop() {
                   >
                     All
                   </button>
-                  {categories.map((category) => (
-                    <button
-                      key={category.tag}
-                      onClick={() => handleTagChange(category.tag)}
-                      className={sidebarClass(tagFilter === category.tag)}
-                      style={{ fontFamily: 'var(--font-body)' }}
-                    >
-                      {category.name}
-                    </button>
+                  {allGroups.map((group) => (
+                    <div key={group} className="pt-4">
+                      <p
+                        className="px-3 pb-1 text-[10px] tracking-[0.15em] uppercase text-[var(--text-secondary)]"
+                        style={{ fontFamily: 'var(--font-body)' }}
+                      >
+                        {group}
+                      </p>
+                      <div className="space-y-0.5">
+                        {allCategories
+                          .filter((category) => category.group === group)
+                          .map((category) => (
+                            <button
+                              key={category.tag}
+                              onClick={() => handleTagChange(category.tag)}
+                              className={`${sidebarClass(tagFilter === category.tag)} pl-5`}
+                              style={{ fontFamily: 'var(--font-body)' }}
+                            >
+                              {category.name}
+                            </button>
+                          ))}
+                      </div>
+                    </div>
                   ))}
                 </div>
               </aside>
@@ -225,21 +364,21 @@ export default function Shop() {
                   <EmptyState
                     message={searchQuery || tagFilter ? `No designs match "${searchQuery || tagFilter}"` : 'No designs found yet'}
                     actionLabel="Clear filters"
-                    onAction={() => setParams({ q: '', tag: '', page: '' })}
+                    onAction={() => setParams({ q: '', tag: '', min: '', max: '', page: '' })}
                   />
                 )}
 
                 {sorted && sorted.length > 0 && (
                   <div className="flex items-center justify-between mb-5" aria-live="polite">
-                    <p className="text-sm text-[var(--text-secondary)]" style={{ fontFamily: 'var(--font-body)' }}>
+                    <p className="text-sm font-medium text-[var(--text-primary)]" style={{ fontFamily: 'var(--font-body)' }}>
                       {sorted.length} design{sorted.length !== 1 ? 's' : ''}
                     </p>
                     {searchQuery ? (
-                      <p className="text-sm text-[var(--text-secondary)]" style={{ fontFamily: 'var(--font-body)' }}>
+                      <p className="text-sm font-medium text-[var(--text-primary)]" style={{ fontFamily: 'var(--font-body)' }}>
                         Results for "{searchQuery}"
                       </p>
                     ) : totalPages > 1 ? (
-                      <p className="text-sm text-[var(--text-secondary)]" style={{ fontFamily: 'var(--font-body)' }}>
+                      <p className="text-sm font-medium text-[var(--text-primary)]" style={{ fontFamily: 'var(--font-body)' }}>
                         Showing {rangeStart}–{rangeEnd}
                       </p>
                     ) : null}

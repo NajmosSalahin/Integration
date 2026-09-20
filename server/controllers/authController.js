@@ -10,6 +10,26 @@ import {
 } from '../utils/token.js';
 import { sendVerificationEmail } from '../emails/verification.js';
 import { sendResetPasswordEmail } from '../emails/resetPassword.js';
+import cloudinary from '../utils/cloudinary.js';
+
+function formatUser(user) {
+  return {
+    id: user._id,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+    permissions: user.permissions || [],
+    emailVerified: user.emailVerified,
+    phone: user.phone || '',
+    avatar: user.avatar || '',
+    notificationPrefs: {
+      orderUpdates: user.notificationPrefs?.orderUpdates ?? true,
+      newDrops: user.notificationPrefs?.newDrops ?? true,
+    },
+    addresses: (user.addresses || []).map((a) => a.toObject()),
+    wishlist: (user.wishlist || []).map((id) => id.toString()),
+  };
+}
 
 export async function signup(req, res) {
   try {
@@ -44,13 +64,7 @@ export async function signup(req, res) {
 
     res.status(201).json({
       accessToken,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        emailVerified: user.emailVerified,
-      },
+      user: formatUser(user),
     });
   } catch (err) {
     console.error('Signup error:', err);
@@ -78,13 +92,7 @@ export async function login(req, res) {
 
     res.json({
       accessToken,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        emailVerified: user.emailVerified,
-      },
+      user: formatUser(user),
     });
   } catch (err) {
     console.error('Login error:', err);
@@ -127,13 +135,7 @@ export async function getMe(req, res) {
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
-    res.json({
-      id: user._id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-      emailVerified: user.emailVerified,
-    });
+    res.json(formatUser(user));
   } catch (err) {
     console.error('getMe error:', err);
     res.status(500).json({ error: 'Failed to get user' });
@@ -221,5 +223,210 @@ export async function resetPassword(req, res) {
   } catch (err) {
     console.error('Reset password error:', err);
     res.status(500).json({ error: 'Failed to reset password' });
+  }
+}
+
+export async function updateMe(req, res) {
+  try {
+    const { name, phone, notificationPrefs } = req.body;
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    if (name !== undefined) user.name = name;
+    if (phone !== undefined) user.phone = phone;
+    if (notificationPrefs) {
+      if (typeof notificationPrefs.orderUpdates === 'boolean') {
+        user.notificationPrefs.orderUpdates = notificationPrefs.orderUpdates;
+      }
+      if (typeof notificationPrefs.newDrops === 'boolean') {
+        user.notificationPrefs.newDrops = notificationPrefs.newDrops;
+      }
+    }
+    await user.save();
+
+    res.json(formatUser(user));
+  } catch (err) {
+    console.error('Update profile error:', err);
+    res.status(500).json({ error: 'Failed to update profile' });
+  }
+}
+
+export async function uploadAvatar(req, res) {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No image provided' });
+    }
+
+    const result = await new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        { folder: 'integration/avatars', width: 512, height: 512, crop: 'limit' },
+        (err, image) => (err ? reject(err) : resolve(image))
+      );
+      stream.end(req.file.buffer);
+    });
+
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    user.avatar = result.secure_url;
+    await user.save();
+
+    res.json({ avatar: user.avatar });
+  } catch (err) {
+    console.error('Avatar upload error:', err);
+    res.status(500).json({ error: 'Failed to upload avatar' });
+  }
+}
+
+export async function changePassword(req, res) {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const isMatch = await user.comparePassword(currentPassword);
+    if (!isMatch) {
+      return res.status(400).json({ error: 'Current password is incorrect' });
+    }
+
+    user.passwordHash = await User.hashPassword(newPassword);
+    await user.save();
+
+    res.json({ message: 'Password changed successfully' });
+  } catch (err) {
+    console.error('Change password error:', err);
+    res.status(500).json({ error: 'Failed to change password' });
+  }
+}
+
+export async function toggleWishlist(req, res) {
+  try {
+    const { productId } = req.body;
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const index = user.wishlist.findIndex((id) => id.toString() === productId);
+    if (index >= 0) {
+      user.wishlist.splice(index, 1);
+    } else {
+      user.wishlist.push(productId);
+    }
+    await user.save();
+
+    res.json({ wishlist: user.wishlist.map((id) => id.toString()) });
+  } catch (err) {
+    console.error('Toggle wishlist error:', err);
+    res.status(500).json({ error: 'Failed to update wishlist' });
+  }
+}
+
+export async function addAddress(req, res) {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const isDefault = user.addresses.length === 0 || req.body.isDefault;
+    if (isDefault) {
+      user.addresses.forEach((a) => { a.isDefault = false; });
+    }
+    user.addresses.push({ ...req.body, isDefault });
+
+    await user.save();
+    res.status(201).json({ addresses: user.addresses.map((a) => a.toObject()) });
+  } catch (err) {
+    console.error('Add address error:', err);
+    res.status(500).json({ error: 'Failed to add address' });
+  }
+}
+
+export async function updateAddress(req, res) {
+  try {
+    const { addressId } = req.params;
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const address = user.addresses.id(addressId);
+    if (!address) {
+      return res.status(404).json({ error: 'Address not found' });
+    }
+
+    if (req.body.isDefault) {
+      user.addresses.forEach((a) => { a.isDefault = false; });
+    } else if (req.body.isDefault === false && address.isDefault) {
+      return res.status(400).json({ error: 'Set another default address first' });
+    }
+
+    Object.entries(req.body).forEach(([key, value]) => {
+      if (key !== 'isDefault') address[key] = value;
+    });
+    if (req.body.isDefault !== undefined) address.isDefault = req.body.isDefault;
+
+    await user.save();
+    res.json({ addresses: user.addresses.map((a) => a.toObject()) });
+  } catch (err) {
+    console.error('Update address error:', err);
+    res.status(500).json({ error: 'Failed to update address' });
+  }
+}
+
+export async function deleteAddress(req, res) {
+  try {
+    const { addressId } = req.params;
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const address = user.addresses.id(addressId);
+    if (!address) {
+      return res.status(404).json({ error: 'Address not found' });
+    }
+
+    const wasDefault = address.isDefault;
+    address.deleteOne();
+    if (wasDefault && user.addresses.length > 0) {
+      user.addresses[0].isDefault = true;
+    }
+
+    await user.save();
+    res.json({ addresses: user.addresses.map((a) => a.toObject()) });
+  } catch (err) {
+    console.error('Delete address error:', err);
+    res.status(500).json({ error: 'Failed to delete address' });
+  }
+}
+
+export async function setDefaultAddress(req, res) {
+  try {
+    const { addressId } = req.params;
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const address = user.addresses.id(addressId);
+    if (!address) {
+      return res.status(404).json({ error: 'Address not found' });
+    }
+
+    user.addresses.forEach((a) => { a.isDefault = false; });
+    address.isDefault = true;
+
+    await user.save();
+    res.json({ addresses: user.addresses.map((a) => a.toObject()) });
+  } catch (err) {
+    console.error('Set default address error:', err);
+    res.status(500).json({ error: 'Failed to set default address' });
   }
 }

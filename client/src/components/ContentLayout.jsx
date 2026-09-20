@@ -1,13 +1,13 @@
-import { Helmet } from 'react-helmet-async';
+import MetaTags from './MetaTags';
 import Navbar from './Navbar';
 import Footer from './Footer';
 
-export default function ContentLayout({ title, children }) {
+export default function ContentLayout({ title, description = '', path, jsonLd, children }) {
+  const p = path || `/${title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
+
   return (
     <>
-      <Helmet>
-        <title>{title} — Integration</title>
-      </Helmet>
+      <MetaTags title={title} description={description} path={p} jsonLd={jsonLd} />
 
       <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)] flex flex-col">
         <Navbar />

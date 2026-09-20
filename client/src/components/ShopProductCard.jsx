@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { ShoppingCart, Check } from 'lucide-react';
+import { ShoppingCart, Check, X } from 'lucide-react';
 import useCart from '../stores/cartStore';
 import { useToast } from './ui/Toast';
+import { cloudinaryUrl } from '../lib/image';
+import WishlistButton from './WishlistButton';
 
-export default function ShopProductCard({ product, index }) {
+export default function ShopProductCard({ product, index, onRemove }) {
   const addItem = useCart((s) => s.addItem);
   const toast = useToast();
   const [added, setAdded] = useState(false);
@@ -37,8 +39,10 @@ export default function ShopProductCard({ product, index }) {
         >
           <div className="aspect-square overflow-hidden">
             <img
-              src={product.images[0]}
+              src={cloudinaryUrl(product.images[0], 400)}
               alt={product.title}
+              width={400}
+              height={400}
               className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
               loading="lazy"
             />
@@ -97,6 +101,23 @@ export default function ShopProductCard({ product, index }) {
             {added ? <Check size={14} aria-hidden="true" /> : <ShoppingCart size={14} aria-hidden="true" />}
           </button>
         </div>
+
+        <WishlistButton productId={product._id} className="absolute top-2 right-2 z-10" />
+
+        {onRemove && (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onRemove(product);
+            }}
+            aria-label={`Remove ${product.title} from saved designs`}
+            className="absolute top-2 left-2 z-10 w-8 h-8 flex items-center justify-center rounded-lg bg-black/70 border border-white/25 text-white hover:bg-red-500 hover:border-red-500 transition-colors"
+          >
+            <X size={14} aria-hidden="true" />
+          </button>
+        )}
       </div>
     </motion.div>
   );

@@ -1,13 +1,16 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, Tag } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { createOrder } from '../api/orders';
+import { validateCoupon } from '../api/coupons';
 import useCart from '../stores/cartStore';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import FormField from '../components/ui/FormField';
+import MetaTags from '../components/MetaTags';
+import { PAYMENT_METHODS, paymentLabel } from '../lib/paymentMethods';
+import { composeAddress, defaultAddress } from '../lib/address';
 
 const PHONE_RE = /^(\+?[\d\s()-]{8,16})$/;
 const MIN_ADDRESS_LEN = 10;
@@ -31,13 +34,81 @@ export default function Checkout() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
   const [fieldErrors, setFieldErrors] = useState({ phone: null, address: null });
+  const [promoCode, setPromoCode] = useState('');
+  const [promo, setPromo] = useState({
+    status: 'idle',
+    appliedCode: '',
+    discount: 0,
+    subtotal: 0,
+    totalAmount: 0,
+    message: '',
+  });
+  const touched = useRef(false);
+
+  const cartItems = items.map((item) => ({
+    productId: item.productId,
+    size: item.size,
+    quantity: item.quantity,
+  }));
+
+  useEffect(() => {
+    setPromo((p) => {
+      if (p.status !== 'applied' || total === p.subtotal) return p;
+      return { status: 'idle', appliedCode: '', discount: 0, subtotal: 0, totalAmount: 0, message: '' };
+    });
+  }, [total]);
+
+  const applyPromo = async () => {
+    const code = promoCode.trim().toUpperCase();
+    if (!code) return;
+    setPromo((p) => ({ ...p, status: 'checking', message: '' }));
+    try {
+      const result = await validateCoupon({ code, items: cartItems });
+      if (result.valid) {
+        setPromo({
+          status: 'applied',
+          appliedCode: result.code,
+          discount: result.discount,
+          subtotal: result.subtotal,
+          totalAmount: result.totalAmount,
+          message: '',
+        });
+      } else {
+        setPromo((p) => ({
+          ...p,
+          status: 'error',
+          appliedCode: '',
+          discount: 0,
+          message: result.message || 'Invalid coupon code.',
+        }));
+      }
+    } catch (err) {
+      setPromo((p) => ({
+        ...p,
+        status: 'error',
+        appliedCode: '',
+        discount: 0,
+        message: err.message || 'Could not validate coupon.',
+      }));
+    }
+  };
+
+  const clearPromo = () => {
+    setPromoCode('');
+    setPromo({ status: 'idle', appliedCode: '', discount: 0, subtotal: 0, totalAmount: 0, message: '' });
+  };
+
+  useEffect(() => {
+    if (!user || touched.current) return;
+    const saved = defaultAddress(user);
+    if (!phone && (user.phone || saved?.phone)) setPhone(user.phone || saved.phone);
+    if (!address && saved) setAddress(composeAddress(saved));
+  }, [user]);
 
   if (items.length === 0) {
     return (
       <>
-        <Helmet>
-          <title>Checkout — Integration</title>
-        </Helmet>
+        <MetaTags title="Checkout" description="Complete your order." path="/checkout" noindex />
         <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
           <Navbar />
           <div className="flex flex-col items-center justify-center py-16 gap-4">
@@ -66,19 +137,26 @@ export default function Checkout() {
     e.preventDefault();
     setError(null);
     if (!validate()) return;
+
+    const trimmedPromo = promoCode.trim().toUpperCase();
+    if (trimmedPromo) {
+      if (promo.status !== 'applied' || promo.appliedCode !== trimmedPromo) {
+        setError('Apply your coupon code before placing the order.');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+      }
+    }
+
     setSubmitting(true);
 
     try {
       const orderData = {
-        items: items.map((item) => ({
-          productId: item.productId,
-          size: item.size,
-          quantity: item.quantity,
-        })),
+        items: cartItems,
         deliveryAddress: address,
         contactPhone: phone,
         paymentMethod,
       };
+      if (trimmedPromo) orderData.promoCode = trimmedPromo;
 
       const order = await createOrder(orderData);
       clearCart();
@@ -100,10 +178,7 @@ export default function Checkout() {
 
   return (
     <>
-      <Helmet>
-        <title>Checkout — Integration</title>
-        <meta name="description" content="Complete your order." />
-      </Helmet>
+      <MetaTags title="Checkout" description="Complete your order." path="/checkout" noindex />
 
       <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
         <Navbar />
@@ -180,6 +255,7 @@ export default function Checkout() {
                         value={phone}
                         onChange={(e) => {
                           setPhone(e.target.value);
+                          touched.current = true;
                           setFieldErrors((f) => ({ ...f, phone: null }));
                         }}
                         disabled={submitting}
@@ -203,6 +279,7 @@ export default function Checkout() {
                         value={address}
                         onChange={(e) => {
                           setAddress(e.target.value);
+                          touched.current = true;
                           setFieldErrors((f) => ({ ...f, address: null }));
                         }}
                         disabled={submitting}
@@ -220,27 +297,20 @@ export default function Checkout() {
                     <legend className="block text-xs tracking-[0.15em] uppercase text-[var(--text-secondary)] mb-2">
                       Payment Method *
                     </legend>
-                    <div className="flex gap-3" role="radiogroup" aria-label="Payment method">
-                      <button
-                        type="button"
-                        onClick={() => setPaymentMethod('bkash')}
-                        disabled={submitting}
-                        role="radio"
-                        aria-checked={paymentMethod === 'bkash'}
-                        className={paymentButtonClass(paymentMethod === 'bkash')}
-                      >
-                        bKash
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setPaymentMethod('cod')}
-                        disabled={submitting}
-                        role="radio"
-                        aria-checked={paymentMethod === 'cod'}
-                        className={paymentButtonClass(paymentMethod === 'cod')}
-                      >
-                        Cash on Delivery
-                      </button>
+                    <div className="grid grid-cols-2 gap-3" role="radiogroup" aria-label="Payment method">
+                      {PAYMENT_METHODS.map((method) => (
+                        <button
+                          key={method.value}
+                          type="button"
+                          onClick={() => setPaymentMethod(method.value)}
+                          disabled={submitting}
+                          role="radio"
+                          aria-checked={paymentMethod === method.value}
+                          className={paymentButtonClass(paymentMethod === method.value)}
+                        >
+                          {method.label}
+                        </button>
+                      ))}
                     </div>
                   </fieldset>
                 </div>
@@ -296,14 +366,67 @@ export default function Checkout() {
                     ))}
                   </ul>
 
-                  <div className="border-t border-[var(--border)] pt-3">
+                  <div className="border-t border-[var(--border)] pt-3 space-y-2">
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={promoCode}
+                        onChange={(e) => {
+                          setPromoCode(e.target.value);
+                          setPromo((p) =>
+                            p.status === 'applied' || p.status === 'error'
+                              ? { status: 'idle', appliedCode: '', discount: 0, subtotal: 0, totalAmount: 0, message: '' }
+                              : p
+                          );
+                        }}
+                        disabled={promo.status === 'checking' || submitting}
+                        placeholder="Coupon code"
+                        aria-label="Coupon code"
+                        className={inputClass(false)}
+                      />
+                      <button
+                        type="button"
+                        onClick={applyPromo}
+                        disabled={promo.status === 'checking' || submitting || !promoCode.trim()}
+                        className="shrink-0 px-4 rounded-lg text-xs tracking-[0.15em] uppercase transition-colors bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {promo.status === 'checking' ? '...' : 'Apply'}
+                      </button>
+                    </div>
+
+                    {promo.status === 'error' && (
+                      <p className="text-xs text-red-400" role="alert">
+                        {promo.message}
+                      </p>
+                    )}
+
+                    {promo.status === 'applied' && (
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-[var(--text-secondary)] inline-flex items-center gap-1.5">
+                          <Tag size={13} aria-hidden="true" /> {promo.appliedCode}
+                        </span>
+                        <span className="inline-flex items-center gap-2">
+                          <span className="text-emerald-500">-৳{promo.discount.toLocaleString()}</span>
+                          <button
+                            type="button"
+                            onClick={clearPromo}
+                            disabled={submitting}
+                            className="text-xs text-[var(--text-secondary)] hover:text-red-400 transition-colors"
+                            aria-label="Remove coupon"
+                          >
+                            Remove
+                          </button>
+                        </span>
+                      </div>
+                    )}
+
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-[var(--text-secondary)]">Total</span>
                       <span
                         className="text-xl text-[var(--accent)]"
                         style={{ fontFamily: "'Bebas Neue', sans-serif" }}
                       >
-                        ৳{total.toLocaleString()}
+                        ৳{(promo.status === 'applied' ? promo.totalAmount : total).toLocaleString()}
                       </span>
                     </div>
                   </div>
@@ -311,7 +434,7 @@ export default function Checkout() {
                   <p className="text-xs text-[var(--text-secondary)]">
                     {paymentMethod === 'cod'
                       ? 'Pay when your order arrives. No advance payment required.'
-                      : 'Pay instantly via bKash for faster delivery. You will be contacted after placing your order.'}
+                      : `Pay instantly via ${paymentLabel(paymentMethod)} for faster delivery. You will be contacted after placing your order.`}
                   </p>
                 </div>
               </aside>

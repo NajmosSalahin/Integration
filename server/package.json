@@ -5,12 +5,15 @@
   "type": "module",
   "scripts": {
     "dev": "node --watch server.js",
-    "start": "node server.js"
+    "start": "node server.js",
+    "make:admin": "node scripts/makeAdmin.js",
+    "seed:catalog": "node scripts/seedCatalog.js"
   },
   "dependencies": {
     "@getbrevo/brevo": "^6.0.0",
     "bcrypt": "^5.1.0",
     "cloudinary": "^2.5.0",
+    "compression": "^1.8.2",
     "cookie-parser": "^1.4.0",
     "cors": "^2.8.0",
     "dotenv": "^16.4.0",

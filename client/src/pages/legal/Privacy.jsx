@@ -2,7 +2,7 @@ import ContentLayout from '../../components/ContentLayout';
 
 export default function Privacy() {
   return (
-    <ContentLayout title="Privacy Policy">
+    <ContentLayout title="Privacy Policy" description="How Integration handles your personal data and protects your privacy." path="/privacy">
       <div className="space-y-6 text-[var(--text-secondary)] leading-relaxed text-sm">
         <p>
           Last updated: September 2026
@@ -51,7 +51,8 @@ export default function Privacy() {
           <p>
             Your data is stored securely in our database, hosted on MongoDB Atlas with
             industry-standard encryption. We do not store any payment card details, as
-            all payments are made via bKash directly between you and us.
+            all payments are made via bKash, Nagad, or Rocket directly between you and us,
+            or as cash on delivery.
           </p>
         </div>
 

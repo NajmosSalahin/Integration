@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { ShoppingCart, Check } from 'lucide-react';
 import useCart from '../stores/cartStore';
 import { useToast } from './ui/Toast';
+import { cloudinaryUrl } from '../lib/image';
 
 export default function ProductCard({ product, index }) {
   const addItem = useCart((s) => s.addItem);
@@ -37,8 +38,10 @@ export default function ProductCard({ product, index }) {
         >
           <div className="aspect-square overflow-hidden">
             <img
-              src={product.images[0]}
+              src={cloudinaryUrl(product.images[0], 400)}
               alt={product.title}
+              width={400}
+              height={400}
               className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
               loading="lazy"
             />

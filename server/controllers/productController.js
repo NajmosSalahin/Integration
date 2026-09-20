@@ -105,6 +105,7 @@ export async function updateProduct(req, res) {
     if (sizeGuideNote !== undefined) product.sizeGuideNote = sizeGuideNote;
     if (tags !== undefined) product.tags = tags;
     if (stock !== undefined) product.stock = stock;
+    if (featured !== undefined) product.featured = featured;
 
     await product.save();
     res.json(product);
@@ -159,5 +160,45 @@ export async function toggleStock(req, res) {
   } catch (err) {
     console.error('toggleStock error:', err);
     res.status(500).json({ error: 'Failed to toggle stock' });
+  }
+}
+
+export async function setActive(req, res) {
+  try {
+    if (mongoose.connection.readyState !== 1) {
+      return res.status(503).json({ error: 'Database not connected' });
+    }
+
+    const product = await Product.findById(req.params.id);
+    if (!product) {
+      return res.status(404).json({ error: 'Product not found' });
+    }
+
+    product.active = req.body.active;
+    await product.save();
+    res.json(product);
+  } catch (err) {
+    console.error('setActive error:', err);
+    res.status(500).json({ error: 'Failed to update product' });
+  }
+}
+
+export async function setFeatured(req, res) {
+  try {
+    if (mongoose.connection.readyState !== 1) {
+      return res.status(503).json({ error: 'Database not connected' });
+    }
+
+    const product = await Product.findById(req.params.id);
+    if (!product) {
+      return res.status(404).json({ error: 'Product not found' });
+    }
+
+    product.featured = req.body.featured;
+    await product.save();
+    res.json(product);
+  } catch (err) {
+    console.error('setFeatured error:', err);
+    res.status(500).json({ error: 'Failed to update product' });
   }
 }

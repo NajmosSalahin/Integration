@@ -33,3 +33,12 @@ export function adminOnly(req, res, next) {
   }
   next();
 }
+
+export function requireSections(...sections) {
+  return (req, res, next) => {
+    if (req.user?.role !== 'admin' || !sections.some((s) => req.user.canManage(s))) {
+      return res.status(403).json({ error: 'Forbidden — admin access required' });
+    }
+    next();
+  };
+}

@@ -1,7 +1,8 @@
 import { Navigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { hasAdminSection, getAdminSections } from '../lib/permissions';
 
-export default function AdminRoute({ children }) {
+export default function AdminRoute({ section, children }) {
   const { user, loading } = useAuth();
 
   if (loading) {
@@ -25,6 +26,12 @@ export default function AdminRoute({ children }) {
         </Link>
       </div>
     );
+  }
+
+  const sections = getAdminSections(user);
+
+  if (section && !hasAdminSection(user, section)) {
+    return <Navigate to={sections[0] ? `/admin/${sections[0]}` : '/'} replace />;
   }
 
   return children;

@@ -1,0 +1,28 @@
+# Integration
+
+Curated t-shirt design storefront blending Japanese streetwear with modern aesthetics — "Different Styles, One Identity." Browse the catalog, view product details, and manage cart, checkout (bKash, Nagad, Rocket, Cash on Delivery), account, and orders online.
+
+## Key pages
+
+- [Home](https://integration-06n2.onrender.com/): Hero banners, featured products, seasonal collections
+- [Shop](https://integration-06n2.onrender.com/shop): Full catalog with search, filters, sort, and pagination
+- [Cart](https://integration-06n2.onrender.com/cart): Shopping cart management
+- [Checkout](https://integration-06n2.onrender.com/checkout): Address, shipping, and payment method selection (login required)
+- [My Orders](https://integration-06n2.onrender.com/orders): Order history
+- [Log in](https://integration-06n2.onrender.com/login): Account sign in
+- [Sign up](https://integration-06n2.onrender.com/signup): Create an account
+
+## Company
+
+- [About](https://integration-06n2.onrender.com/about): Brand story
+- [Contact](https://integration-06n2.onrender.com/contact): Contact information
+- [FAQ](https://integration-06n2.onrender.com/faq): Frequently asked questions
+
+## Policies
+
+- [Shipping policy](https://integration-06n2.onrender.com/shipping)
+- [Returns policy](https://integration-06n2.onrender.com/returns)
+- [Payment methods](https://integration-06n2.onrender.com/payments)
+- [Privacy policy](https://integration-06n2.onrender.com/privacy)
+- [Terms](https://integration-06n2.onrender.com/terms)
+- [Cookie policy](https://integration-06n2.onrender.com/cookies)

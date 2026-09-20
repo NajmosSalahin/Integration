@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { cloudinaryUrl } from '../lib/image';
 
 const useCart = create(
   persist(
@@ -28,7 +29,7 @@ const useCart = create(
                 productId: product._id,
                 title: product.title,
                 price: product.price,
-                image: product.images[0],
+                image: cloudinaryUrl(product.images[0], 240),
                 size,
                 quantity: 1,
               },

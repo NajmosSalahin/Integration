@@ -1,5 +1,6 @@
 import { BrevoClient } from '@getbrevo/brevo';
 import { wrap, heading, sectionLabel, detailRow, itemsTable, orderTotal, spacer, divider, button } from './template.js';
+import { isCod, paymentMethodLabel } from '../utils/paymentMethods.js';
 
 export async function sendOrderNotificationEmail({ order, customerName, customerEmail, pdfBuffer }) {
   const rawEmails = process.env.OWNER_EMAIL;
@@ -37,7 +38,7 @@ export async function sendOrderNotificationEmail({ order, customerName, customer
     ${detailRow('Order ID', `#${String(order._id).slice(-8).toUpperCase()}`)}
     ${detailRow('Date', new Date(order.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }))}
     ${detailRow('Status', order.status.replace(/_/g, ' ').toUpperCase())}
-    ${detailRow('Payment', order.paymentMethod === 'cod' ? 'Cash on Delivery' : 'bKash')}
+    ${detailRow('Payment', isCod(order.paymentMethod) ? 'Cash on Delivery' : paymentMethodLabel(order.paymentMethod))}
 
     ${divider()}
 

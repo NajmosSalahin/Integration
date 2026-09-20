@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Helmet } from 'react-helmet-async';
+import MetaTags from '../components/MetaTags';
 import { AlertCircle, CheckCircle } from 'lucide-react';
 import { verifyEmail } from '../api/auth';
 import Spinner from '../components/ui/Spinner';
@@ -28,9 +28,7 @@ export default function VerifyEmail() {
 
   return (
     <>
-      <Helmet>
-        <title>Verify Email — Integration</title>
-      </Helmet>
+      <MetaTags title="Verify Email" description="Confirm your email address to activate your account." path="/verify-email" noindex />
       <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)] flex items-center justify-center px-4">
         <div className="max-w-md w-full text-center space-y-4" role="status">
           {status === 'verifying' && (

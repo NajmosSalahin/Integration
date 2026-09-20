@@ -56,3 +56,5 @@ server/uploaded_urls.json
 # Local package-locks superseded by workspace resolution
 client/package-lock.json
 server/package-lock.json
+# scratch notes - never committed (see AGENTS.md scope rules)
+works.md

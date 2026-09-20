@@ -2,11 +2,11 @@ import ContentLayout from '../../components/ContentLayout';
 
 export default function Payments() {
   return (
-    <ContentLayout title="Payments">
+    <ContentLayout title="Payments" description="Accepted payment methods including bKash, Nagad, Rocket, and cash on delivery for orders placed on Integration." path="/payments">
       <div className="space-y-6 text-[var(--text-secondary)] leading-relaxed">
         <p>
-          We accept bKash as our only payment method. Our process is simple, transparent,
-          and designed to feel safe even for first-time buyers.
+          We accept bKash, Nagad, Rocket, and cash on delivery. Our process is simple,
+          transparent, and designed to feel safe even for first-time buyers.
         </p>
 
         <div>
@@ -22,7 +22,8 @@ export default function Payments() {
               <div>
                 <strong className="text-[#e8e8e8]">Place your order</strong>
                 <p className="mt-1">
-                  Add items to your cart, fill in your delivery details at checkout, and submit
+                  Add items to your cart and fill in your delivery details at checkout. Choose
+                  your payment method — bKash, Nagad, Rocket, or cash on delivery — and submit
                   your order. You will see an order confirmation right away.
                 </p>
               </div>
@@ -32,19 +33,20 @@ export default function Payments() {
               <div>
                 <strong className="text-[#e8e8e8]">Receive payment instructions</strong>
                 <p className="mt-1">
-                  You will receive an email with our bKash number and the exact amount to send.
-                  This email arrives within minutes of placing your order.
+                  For bKash, Nagad, or Rocket orders, you will receive an email with our number
+                  and the exact amount to send. This email arrives within minutes of placing
+                  your order. For cash on delivery, we will contact you to confirm your order.
                 </p>
               </div>
             </li>
             <li className="flex items-start gap-3">
               <span className="text-[var(--accent)] font-bold mt-0.5">3.</span>
               <div>
-                <strong className="text-[#e8e8e8]">Send payment via bKash</strong>
+                <strong className="text-[#e8e8e8]">Send your payment</strong>
                 <p className="mt-1">
-                  Open your bKash app, send the exact amount to the number provided, and
-                  keep the transaction ID. You can reply to the confirmation email with
-                  your transaction ID to speed things up.
+                  Open your preferred payment app (bKash, Nagad, or Rocket), send the exact
+                  amount to the number provided, and keep the transaction ID. You can reply to
+                  the confirmation email with your transaction ID to speed things up.
                 </p>
               </div>
             </li>
@@ -69,8 +71,9 @@ export default function Payments() {
             Payment Deadlines
           </h2>
           <p>
-            Please complete your payment within 24 hours of placing your order.
-            Orders not paid within this window will be automatically cancelled.
+            Please complete your manual digital payment within 24 hours of placing your order.
+            Orders not paid within this window will be automatically cancelled. For cash on
+            delivery orders, no advance payment is required.
           </p>
         </div>
 
@@ -82,8 +85,9 @@ export default function Payments() {
             Security
           </h2>
           <p>
-            We never ask for your bKash PIN or password. Our team will only ever provide
-            you with a number to send money to. If someone asks for your PIN, it is not us.
+            We never ask for your bKash, Nagad, or Rocket PIN or password. Our team will only
+            ever provide you with a number to send money to. If someone asks for your PIN, it
+            is not us.
           </p>
         </div>
       </div>

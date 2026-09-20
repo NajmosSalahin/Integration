@@ -1,0 +1,44 @@
+# Integration
+
+Integration is a t-shirt design storefront built on the theme "Different Styles, One Identity" — Japanese streetwear aesthetics brought together in a single curated catalog. Customers can browse products, view detailed pages, add items to a cart, and check out. Orders are processed manually: bKash, Nagad, Rocket, and Cash on Delivery are accepted; the team confirms payment out-of-band. Customer accounts, order history, and an admin panel (order + product management) are included.
+
+## All pages
+
+- [Home](https://integration-06n2.onrender.com/): Hero carousel with seasonal banners, featured products row, category grid, newsletter signup.
+- [Shop](https://integration-06n2.onrender.com/shop): Full product catalog. Search box, category filters, sorting, and pagination. Filterable by tag via query parameter, e.g. `?tag=streetwear`.
+- [Product detail](https://integration-06n2.onrender.com/product): Per-product page with image gallery, size selection, quantity, and add-to-cart. Loaded dynamically per product (no public list; products appear in Shop).
+- [Cart](https://integration-06n2.onrender.com/cart): Line items, quantity updates, total in BDT, clear-cart confirmation.
+- [Checkout](https://integration-06n2.onrender.com/checkout): Requires login. Shipping/address form, payment method selection (bKash, Nagad, Rocket, Cash on Delivery), order summary.
+- [Order confirmation](https://integration-06n2.onrender.com/order-confirmation): Post-checkout summary and next steps for the selected payment method.
+- [My Orders](https://integration-06n2.onrender.com/orders): Requires login. Order history with status.
+- [Log in](https://integration-06n2.onrender.com/login): Account sign in (email + password).
+- [Sign up](https://integration-06n2.onrender.com/signup): Account creation.
+- [Forgot password](https://integration-06n2.onrender.com/forgot-password): Password reset request.
+- [Reset password](https://integration-06n2.onrender.com/reset-password): Password reset via emailed link.
+- [Verify email](https://integration-06n2.onrender.com/verify-email): Email verification handling.
+
+## Admin
+
+- [Admin orders](https://integration-06n2.onrender.com/admin/orders): Admin-only. Manage order status and view payment method badges.
+- [Admin products](https://integration-06n2.onrender.com/admin/products): Admin-only. Create/edit products and images.
+
+## Company
+
+- [About](https://integration-06n2.onrender.com/about): Brand storytelling — the story behind Integration and the "one identity" philosophy.
+- [Contact](https://integration-06n2.onrender.com/contact): Contact channels and business details.
+- [FAQ](https://integration-06n2.onrender.com/faq): Frequently asked questions including ordering and payments.
+
+## Policies
+
+- [Shipping policy](https://integration-06n2.onrender.com/shipping)
+- [Returns policy](https://integration-06n2.onrender.com/returns)
+- [Payment methods](https://integration-06n2.onrender.com/payments): Details of bKash, Nagad, Rocket, and Cash on Delivery.
+- [Privacy policy](https://integration-06n2.onrender.com/privacy)
+- [Terms](https://integration-06n2.onrender.com/terms)
+- [Cookie policy](https://integration-06n2.onrender.com/cookies)
+
+## Technical summary
+
+- Frontend: React 19 + Vite, Tailwind CSS, Zustand (cart), TanStack Query, Framer Motion.
+- Backend: Express + Mongoose, Zod validation, Brevo transactional email, pdfkit order receipts.
+- Deployment: Single repository; client built and served statically by the Express server; assets served gzip-compressed and cached. Hosted at `https://integration-06n2.onrender.com`.
