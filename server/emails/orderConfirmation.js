@@ -11,7 +11,7 @@ export async function sendOrderConfirmationEmail({ order, customerEmail, custome
   const brevo = new BrevoClient({ apiKey: process.env.BREVO_API_KEY });
 
   const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
-  const orderUrl = `${clientUrl}/order-confirmation/${order._id}`;
+  const orderUrl = `${clientUrl}/order/${order._id}`;
 
   const rawNumbers = process.env.WHATSAPP_NUMBER || '00000000000';
   const waMessage = `Hi, I placed order #${String(order._id).slice(-8).toUpperCase()} on Integration. Total: ৳${order.totalAmount.toLocaleString()}. Looking forward to hearing from you.`;

@@ -130,7 +130,8 @@ export async function getOrder(req, res) {
       return res.status(404).json({ error: 'Order not found' });
     }
 
-    if (order.userId.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
+    const ownerId = order.userId?._id ?? order.userId;
+    if (req.user.role !== 'admin' && String(ownerId) !== String(req.user._id)) {
       return res.status(403).json({ error: 'Not authorized to view this order' });
     }
 
