@@ -138,9 +138,17 @@ if (process.env.NODE_ENV === 'production') {
     },
   }));
   app.get('*', (req, res) => {
-    if (!req.path.startsWith('/api')) {
-      res.sendFile(join(__dirname, '../client/dist/index.html'));
+    if (req.path.startsWith('/api')) return;
+    // A missing hashed asset (e.g. a stale chunk hash after a redeploy — the
+    // "blank screen until you refresh" bug) must return a real 404, not the
+    // SPA HTML. Serving index.html for `assets/*.js` makes the browser block
+    // the dynamic import as a disallowed MIME type, and lazyWithRetry then
+    // can't tell a stale chunk from a real crash. Paths that end in a file
+    // extension are assets; extensionless paths are SPA page routes.
+    if (/\.[A-Za-z0-9]{1,6}$/.test(req.path)) {
+      return res.status(404).end();
     }
+    res.sendFile(join(__dirname, '../client/dist/index.html'));
   });
 }
 

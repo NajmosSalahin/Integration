@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { HelmetProvider } from 'react-helmet-async';
 import { AuthProvider } from './context/AuthContext';
+import ErrorBoundary from './components/ErrorBoundary';
 import App from './App';
 import ToastContainer from './components/ui/Toast';
 import './index.css';
@@ -22,10 +23,12 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <HelmetProvider>
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
-          <AuthProvider>
-            <App />
-            <ToastContainer />
-          </AuthProvider>
+          <ErrorBoundary>
+            <AuthProvider>
+              <App />
+              <ToastContainer />
+            </AuthProvider>
+          </ErrorBoundary>
         </BrowserRouter>
       </QueryClientProvider>
     </HelmetProvider>
