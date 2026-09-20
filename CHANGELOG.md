@@ -18,7 +18,7 @@ Integration opens to customers. Everything built through the 0.1.x pre-release l
 
 - React 19 + Vite + Tailwind 4 client; Express + MongoDB server; single-service Render deploy
 - Brevo transactional email + newsletter; Cloudinary image hosting; Plausible analytics
-- Multi-admin bootstrap via env vars (`ADMIN_*`) and `npm run make:admin`
+- Multi-admin bootstrap via env vars (`ADMIN_BOOTSTRAP_*`) and `npm run make:admin`
 
 **Detailed snapshot:** [versions/v1.0.0.md](versions/v1.0.0.md)
 
