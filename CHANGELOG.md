@@ -1,4 +1,23 @@
-﻿## [1.0.0] - 2026-09-20
+﻿## [1.1.0] - 2026-09-21
+
+**Status:** Stable — Catalog Expansion
+
+The catalog grows by 37 products via the new `server/scripts/ingestNewProducts.js` one-off ingest: the **Lalon collection (29)**, **Raglan jerseys (4)**, and **IU tees (4)**, plus a new **Lalon T-Shirt** category. Every product was uploaded to Cloudinary 3× (gallery pattern) with template descriptions and category-led tags. Script is idempotent (skips existing titles), backs up `Product`/`Category` first, and is wired for `--prod`.
+
+**Highlights**
+
+- **Lalon T-Shirt** — 29 Baul/Fakir Lalon designs (portraits, lyrics, emblems, graffiti) under new category `lalon-tshirts`, placed after `aesthetic-tshirts`
+- **Raglan jerseys** — 4 colorways (Maroon, Navy Blue, Olive Green, Storm Grey) under existing `jerseys`
+- **IU tees** — 4 new campus designs under existing `iu-tshirts`
+- All new products: ৳450, sizes S/M/L/XL, in stock, `featured: false`
+- **Tooling:** `server/scripts/ingestNewProducts.js` (backup → idempotent upload → insert; dev/prod aware)
+- **Note:** `.env.development` and `.env.production` currently share the same `MONGO_URI` (`integration`), so the dev ingest wrote directly to the live DB; the `--prod` run was a verified no-op
+
+**Detailed snapshot:** [versions/v1.1.0.md](versions/v1.1.0.md)
+
+------
+
+## [1.0.0] - 2026-09-20
 
 **Status:** Stable — First Public Release
 
