@@ -1,4 +1,12 @@
-﻿## [1.1.1] - 2026-09-23
+﻿## [Unreleased]
+
+**Changes**
+
+- Removed Cultural / Landscape / Artisan T-Shirt categories (docs already inactive in Atlas). 16 products reassigned: cultural 4 + Murobbi Murobbi → `literature-tshirts`, landscape 8 + artisan 3 → `aesthetic-tshirts`. Static `categories.js` and `seed.js` updated; local `Product Images\IDK Category\` deleted (16 PNGs moved into Literature/Aesthetic source folders); dropped from `uploadImages.js`. Cloudinary assets untouched.
+
+------
+
+## [1.1.1] - 2026-09-23
 
 **Status:** Hotfix — Admin accounts & orders dedup
 
