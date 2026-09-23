@@ -1,12 +1,11 @@
 import { useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 import { User, Package, MapPin, Heart, CreditCard, SlidersHorizontal, LogOut, Loader2 } from 'lucide-react';
 import MetaTags from '../components/MetaTags';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { useAuth } from '../context/AuthContext';
 import ProfileSection from '../components/account/ProfileSection';
-import OrdersSection from '../components/account/OrdersSection';
 import AddressesSection from '../components/account/AddressesSection';
 import WishlistSection from '../components/account/WishlistSection';
 import PaymentsSection from '../components/account/PaymentsSection';
@@ -31,6 +30,10 @@ export default function Account() {
   const activeTab = TABS.some((t) => t.value === tabParam) ? tabParam : 'profile';
 
   const handleTab = (value) => {
+    if (value === 'orders') {
+      navigate('/orders');
+      return;
+    }
     const next = new URLSearchParams(searchParams);
     if (value === 'profile') {
       next.delete('tab');
@@ -39,6 +42,10 @@ export default function Account() {
     }
     setSearchParams(next);
   };
+
+  if (tabParam === 'orders') {
+    return <Navigate to="/orders" replace />;
+  }
 
   const handleLogout = async () => {
     setLoggingOut(true);
@@ -142,7 +149,6 @@ export default function Account() {
 
               <div className="flex-1 min-w-0">
                 {activeTab === 'profile' && <ProfileSection />}
-                {activeTab === 'orders' && <OrdersSection />}
                 {activeTab === 'addresses' && <AddressesSection />}
                 {activeTab === 'wishlist' && <WishlistSection />}
                 {activeTab === 'payments' && <PaymentsSection />}

@@ -1,4 +1,17 @@
-﻿## [1.1.0] - 2026-09-21
+﻿## [1.1.1] - 2026-09-23
+
+**Status:** Hotfix — Admin accounts & orders dedup
+
+**Fixes**
+
+- [x] Replaced placeholder admin accounts (`[redacted]`, `[redacted]`, `[redacted]`) with the real admins in bootstrap env, seed, and version docs — avoids confusion with non-existent accounts
+- [x] Deduplicated customer order history: `/orders` is now the single canonical page. `/account?tab=orders` redirects to `/orders`; the Account sidebar "My Orders" entry links there instead of rendering a second orders pane (`OrdersSection` removed). `OrdersHistory` gained product thumbnails, an order count, a Shipped status/filter (was missing), and the empty-state CTA now points to `/shop`.
+
+**Detailed snapshot:** [versions/v1.1.1.md](versions/v1.1.1.md)
+
+------
+
+## [1.1.0] - 2026-09-21
 
 **Status:** Stable — Catalog Expansion
 
