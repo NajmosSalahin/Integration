@@ -51,7 +51,7 @@ export default function FeaturedRow({ products }) {
 
   useEffect(() => {
     if (count < 2 || paused) return;
-    const id = setInterval(() => go(1), 5000);
+    const id = setInterval(() => go(1), 4000);
     return () => clearInterval(id);
   }, [count, paused, go]);
 
@@ -97,7 +97,7 @@ export default function FeaturedRow({ products }) {
             onMouseLeave={() => setPaused(false)}
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
-            className="flex gap-4 sm:gap-6 px-14 transition-transform duration-[400ms] ease-out motion-reduce:transition-none"
+            className="flex gap-4 sm:gap-6 px-14 transition-transform duration-[250ms] ease-out motion-reduce:transition-none"
             style={{
               transform: `translateX(${-position * cardSize}px)`,
               transition: noAnim ? 'none' : undefined,

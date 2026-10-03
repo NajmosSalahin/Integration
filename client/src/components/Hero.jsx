@@ -4,8 +4,8 @@ import { Link } from 'react-router-dom';
 
 const CLOUD_BASE = 'https://res.cloudinary.com/zo1t9pye/image/upload';
 const BANNER_WIDTHS = [480, 900, 1600];
-const AUTOPLAY_MS = 6000;
-const RESUME_AFTER_INTERACTION_MS = 8000;
+const AUTOPLAY_MS = 4500;
+const RESUME_AFTER_INTERACTION_MS = 5000;
 
 const FALLBACK_SLIDES = [
   { publicId: 'v1789713367/integration/banners/banner1', alt: 'New Collection', cta: '/shop', label: 'Shop New Collection' },
@@ -160,9 +160,9 @@ export default function Hero() {
                 e.currentTarget.onerror = null;
                 e.currentTarget.src = FALLBACK_IMAGE;
               }}
-              className={`absolute inset-0 w-full h-full object-cover transition-all duration-[1100ms] ease-out ${
+              className={`absolute inset-0 w-full h-full object-cover transition-all duration-[600ms] ease-out ${
                 active
-                  ? 'opacity-100 scale-[1.035] delay-[150ms]'
+                  ? 'opacity-100 scale-[1.035] delay-[100ms]'
                   : 'opacity-0 scale-100 delay-0'
               } motion-reduce:transition-opacity motion-reduce:duration-500 motion-reduce:delay-0 motion-reduce:scale-100`}
             />
