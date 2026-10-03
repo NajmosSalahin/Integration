@@ -4,6 +4,12 @@
 
 - Removed Cultural / Landscape / Artisan T-Shirt categories (docs already inactive in Atlas). 16 products reassigned: cultural 4 + Murobbi Murobbi → `literature-tshirts`, landscape 8 + artisan 3 → `aesthetic-tshirts`. Static `categories.js` and `seed.js` updated; local `Product Images\IDK Category\` deleted (16 PNGs moved into Literature/Aesthetic source folders); dropped from `uploadImages.js`. Cloudinary assets untouched.
 
+**Fixes**
+
+- Rate limiting behind Render/Cloudflare: `app.set('trust proxy', 1)` — previously every rate-limited request logged `ERR_ERL_UNEXPECTED_X_FORWARDED_FOR` and all visitors shared a single rate-limit bucket (keyed on the proxy IP instead of the client)
+- Server dependencies: `npm audit fix` (express/qs/body-parser/multer/brace-expansion) + `bcrypt` 5.1.1 → 6.0.0 (drops `@mapbox/node-pre-gyp`/`tar` chain — the critical/high advisories) — **0 vulnerabilities** (was 7)
+- Duplicate `code` index warning on Coupon model (`unique: true` on field + identical `schema.index()` removed)
+
 ------
 
 ## [1.1.2] - 2026-10-03

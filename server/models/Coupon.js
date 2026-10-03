@@ -13,7 +13,6 @@ const couponSchema = new mongoose.Schema({
   active: { type: Boolean, default: true },
 }, { timestamps: true });
 
-couponSchema.index({ code: 1 }, { unique: true });
 couponSchema.index({ active: 1 });
 couponSchema.index({ expiresAt: 1 });
 
