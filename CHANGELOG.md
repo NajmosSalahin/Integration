@@ -3,6 +3,8 @@
 **Changes**
 
 - Removed Cultural / Landscape / Artisan T-Shirt categories (docs already inactive in Atlas). 16 products reassigned: cultural 4 + Murobbi Murobbi → `literature-tshirts`, landscape 8 + artisan 3 → `aesthetic-tshirts`. Static `categories.js` and `seed.js` updated; local `Product Images\IDK Category\` deleted (16 PNGs moved into Literature/Aesthetic source folders); dropped from `uploadImages.js`. Cloudinary assets untouched.
+- Homepage Collection is now admin-curated: new `homeCollection` + `collectionOrder` fields on Product, quick toggle + order input in admin products, `PATCH /:id/home-collection` endpoint, migration `initHomeCollection.js` (existing 192 products pre-enabled with recency rank — homepage order unchanged). New products default to hidden; `?q=`/`?tag=` search views still search the full catalog.
+- Faster hero/featured carousels: hero autoplay 6s → 4.5s, crossfade 1100ms → 600ms; featured row step 5s → 4s, slide 400ms → 250ms
 
 **Fixes**
 
