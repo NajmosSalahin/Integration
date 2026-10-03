@@ -2,6 +2,8 @@
 
 **Changes**
 
+- Admin-controlled category images: new `image` field on Category (model, zod `categorySchema`, create/update controller, `categories` upload section). Admin Categories gets an upload/replace/remove control (Cloudinary `integration/categories`) plus a table thumbnail; the homepage grid now resolves `category.image` → product-derived image → icon. Category create/update/delete/deactivate now also invalidate the public `['categories']` cache so the homepage refreshes immediately.
+- New **Anime T-Shirts** category (`anime-tshirts`): the 11 anime designs moved out of `aesthetic-tshirts` (70 remaining) via `server/scripts/createAnimeCategory.js` (product/category backups in `server/scripts/backups/`); homepage tile `order: 8`, right after Literature (grid 8 → 9 tiles). Local source folder `Product Images/Anime_Tshirt_image/` (11 PNGs moved, gitignored) added to `uploadImages.js`; static `categories.js` and `seed.js` tagged accordingly. Ramen Neko / Tsuki / Maya World stay Aesthetic; `Lain Islamic University` keeps `iu-tshirts`.
 - Homepage Collection data reset: all products set to `homeCollection: false`, then 16 random active products enabled with `collectionOrder` 0–15 (was all-true from the v1.2.0 backfill, which made the curation feature look inert). New script `server/scripts/randomHomeCollection.js` — re-runnable to reshuffle.
 
 **Fixes**
