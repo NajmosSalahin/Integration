@@ -1,4 +1,40 @@
-﻿## [1.1.1] - 2026-09-23
+﻿## [Unreleased]
+
+**Changes**
+
+- Removed Cultural / Landscape / Artisan T-Shirt categories (docs already inactive in Atlas). 16 products reassigned: cultural 4 + Murobbi Murobbi → `literature-tshirts`, landscape 8 + artisan 3 → `aesthetic-tshirts`. Static `categories.js` and `seed.js` updated; local `Product Images\IDK Category\` deleted (16 PNGs moved into Literature/Aesthetic source folders); dropped from `uploadImages.js`. Cloudinary assets untouched.
+
+**Fixes**
+
+- Rate limiting behind Render/Cloudflare: `app.set('trust proxy', 1)` — previously every rate-limited request logged `ERR_ERL_UNEXPECTED_X_FORWARDED_FOR` and all visitors shared a single rate-limit bucket (keyed on the proxy IP instead of the client)
+- Server dependencies: `npm audit fix` (express/qs/body-parser/multer/brace-expansion) + `bcrypt` 5.1.1 → 6.0.0 (drops `@mapbox/node-pre-gyp`/`tar` chain — the critical/high advisories) — **0 vulnerabilities** (was 7)
+- Duplicate `code` index warning on Coupon model (`unique: true` on field + identical `schema.index()` removed)
+
+------
+
+## [1.1.2] - 2026-10-03
+
+**Status:** Stable — SEO: server-side meta injection (GSC 202 pages "Discovered – currently not indexed")
+
+Googlebot's first fetch of every URL got an identical static shell — unique `<title>`/description/canonical/JSON-LD only existed after client-side Helmet ran, all 203 sitemap URLs returned 200 (soft-404s included), and robots.txt blocked noindex pages from ever being seen. Now the Express catch-all injects per-route head metadata into the cached `index.html` before responding.
+
+**Highlights**
+
+- **Server-side head injection** — new `server/seo.js`: 11 static pages get their client-mirrored title/description (home also gets Organization + WebSite JSON-LD); `/product/:id` does an active-product DB lookup and injects product title, description, `og:image`, and Product JSON-LD
+- **Real status codes** — unknown paths and invalid/missing products → **404 + noindex** (browsers still render the SPA NotFound page); cart/checkout/auth/orders → 200 + `noindex, nofollow`
+- **301 canonicalization** — `/index.html` → `/`, trailing slashes stripped (query preserved), `/sitemap.xml/` → `/sitemap.xml`
+- **robots.txt** — Disallows removed except `/admin` (they made server noindex invisible to Google; `/order-confirmation/` pattern never matched anyway)
+- **Sitemap** — static `lastmod` = build mtime (was `new Date()` per request)
+- **Hydration dedupe** — injected tags marked `data-seo="ssr"`, removed by `MetaTags` after Helmet applies → exactly one canonical/description/robots/`og:` set post-hydration
+- **Fix:** `server/utils/cloudinary.js` loaded `.env.development` unconditionally at import time (hoisted), silently overriding prod config intent on local `NODE_ENV=production` runs
+
+**Post-deploy (manual):** GSC resubmit sitemap + Request indexing on `/`, `/shop`, 3–5 products
+
+**Detailed snapshot:** [versions/v1.1.2.md](versions/v1.1.2.md)
+
+------
+
+## [1.1.1] - 2026-09-23
 
 **Status:** Hotfix — Admin accounts & orders dedup
 

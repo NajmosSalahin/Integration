@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { buildSeo } from '../lib/seo';
 
@@ -12,6 +13,10 @@ export default function MetaTags({
   jsonLd,
 }) {
   const seo = buildSeo({ title, description, path, image, imageAlt, type, noindex, jsonLd });
+
+  useEffect(() => {
+    document.querySelectorAll('[data-seo="ssr"]').forEach((el) => el.remove());
+  }, []);
 
   return (
     <Helmet>
