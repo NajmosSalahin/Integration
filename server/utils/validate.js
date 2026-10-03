@@ -166,6 +166,7 @@ export const categorySchema = z.object({
     .transform((s) => s.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')),
   group: z.string().min(1, 'Group is required').max(50),
   icon: z.string().max(40).optional().default('Shirt'),
+  image: z.string().max(500).url('Invalid image URL').or(z.literal('')).optional().default(''),
   home: z.boolean().optional().default(false),
   order: z.number().int().min(0).optional().default(0),
 });

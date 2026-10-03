@@ -57,7 +57,9 @@ export default function CategoryGrid() {
                 </div>
               ))
             : homeCategories.map((category) => {
-                const image = getCategoryImage(category.tag);
+                const image = category.image
+                  ? cloudinaryUrl(category.image, 240) || getCategoryImage(category.tag)
+                  : getCategoryImage(category.tag);
                 const Icon = iconMap[category.icon];
                 return (
                   <Link

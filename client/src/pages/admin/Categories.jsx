@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Shirt, Shield, Crown, Footprints, ShoppingBag, Backpack, BaggageClaim, Briefcase, TvMinimal, BookOpenText } from 'lucide-react';
 import MetaTags from '../../components/MetaTags';
-import { Plus, Pencil, Trash2, AlertCircle, CheckCircle, Star } from 'lucide-react';
+import { Plus, Pencil, Trash2, AlertCircle, CheckCircle, Star, Upload } from 'lucide-react';
 import { getAdminCategories, createCategory, updateCategory, deleteCategory } from '../../api/categories';
+import { uploadImage } from '../../api/upload';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import Skeleton from '../../components/ui/Skeleton';
@@ -14,6 +15,7 @@ import ConfirmDialog from '../../components/ui/ConfirmDialog';
 import FormField from '../../components/ui/FormField';
 import Spinner from '../../components/ui/Spinner';
 import { CATEGORY_GROUPS } from '../../data/categories';
+import { cloudinaryUrl, IMAGE_FALLBACK } from '../../lib/image';
 
 const iconMap = { Shirt, Shield, Crown, Footprints, ShoppingBag, Backpack, BaggageClaim, Briefcase, TvMinimal, BookOpenText };
 const ICON_NAMES = Object.keys(iconMap);
@@ -23,6 +25,7 @@ const emptyForm = {
   tag: '',
   group: 'T-Shirts',
   icon: 'Shirt',
+  image: '',
   order: '0',
   home: false,
   active: true,
@@ -39,6 +42,7 @@ export default function Categories() {
   const [error, setError] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [toast, setToast] = useState(null);
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     if (!toast) return;
@@ -55,6 +59,7 @@ export default function Categories() {
     mutationFn: createCategory,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['adminCategories'] });
+      queryClient.invalidateQueries({ queryKey: ['categories'] });
       closeModal();
       setToast({ type: 'success', message: 'Category created successfully.' });
     },
@@ -68,6 +73,7 @@ export default function Categories() {
     mutationFn: ({ id, data }) => updateCategory(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['adminCategories'] });
+      queryClient.invalidateQueries({ queryKey: ['categories'] });
       closeModal();
       setToast({ type: 'success', message: 'Category updated successfully.' });
     },
@@ -81,6 +87,7 @@ export default function Categories() {
     mutationFn: deleteCategory,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['adminCategories'] });
+      queryClient.invalidateQueries({ queryKey: ['categories'] });
       setDeleteTarget(null);
       setToast({ type: 'success', message: 'Category deactivated.' });
     },
@@ -94,6 +101,7 @@ export default function Categories() {
     mutationFn: ({ id }) => updateCategory(id, { active: true }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['adminCategories'] });
+      queryClient.invalidateQueries({ queryKey: ['categories'] });
       setToast({ type: 'success', message: 'Category activated.' });
     },
     onError: (err) => {
@@ -115,6 +123,7 @@ export default function Categories() {
       tag: category.tag,
       group: category.group,
       icon: category.icon || 'Shirt',
+      image: category.image || '',
       order: String(category.order ?? 0),
       home: category.home,
       active: category.active,
@@ -132,6 +141,22 @@ export default function Categories() {
 
   const slugify = (s) =>
     s.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    setError(null);
+    try {
+      const { url } = await uploadImage(file, 'integration/categories');
+      setForm((prev) => ({ ...prev, image: url }));
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setUploading(false);
+      e.target.value = '';
+    }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -163,6 +188,7 @@ export default function Categories() {
       tag,
       group: form.group.trim(),
       icon: ICON_NAMES.includes(form.icon) ? form.icon : 'Shirt',
+      image: form.image.trim(),
       order,
       home: form.home === true,
     };
@@ -270,7 +296,19 @@ export default function Categories() {
                         >
                           <td className="py-3 px-3">
                             <div className="flex items-center gap-2.5">
-                              {Icon && <Icon size={16} className="text-[var(--accent)] shrink-0" aria-hidden="true" />}
+                              {category.image ? (
+                                <img
+                                  src={cloudinaryUrl(category.image, 80)}
+                                  alt=""
+                                  className="w-6 h-6 rounded object-cover shrink-0"
+                                  onError={(e) => {
+                                    e.currentTarget.onerror = null;
+                                    e.currentTarget.src = IMAGE_FALLBACK;
+                                  }}
+                                />
+                              ) : (
+                                Icon && <Icon size={16} className="text-[var(--accent)] shrink-0" aria-hidden="true" />
+                              )}
                               <span className="text-[var(--text-primary)] truncate max-w-[200px]">{category.name}</span>
                             </div>
                           </td>
@@ -424,6 +462,54 @@ export default function Categories() {
                 )}
               </FormField>
             </div>
+
+            <FormField label="Homepage image" helperText={form.image ? null : 'Optional — falls back to a product image, then the icon'}>
+              {({ id }) => (
+                <div className="space-y-2">
+                  {form.image && (
+                    <div className="w-full aspect-[2.4/1] bg-[var(--bg-secondary)] rounded-lg overflow-hidden">
+                      <img
+                        src={cloudinaryUrl(form.image, 480)}
+                        alt="Category preview"
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.currentTarget.onerror = null;
+                          e.currentTarget.src = IMAGE_FALLBACK;
+                        }}
+                      />
+                    </div>
+                  )}
+                  <div className="flex items-center gap-2">
+                    <label
+                      htmlFor={id}
+                      className={`inline-flex items-center gap-2 px-4 py-2 text-sm rounded-lg border border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors cursor-pointer ${
+                        uploading ? 'opacity-50 pointer-events-none' : ''
+                      }`}
+                    >
+                      {uploading ? <Spinner size={14} /> : <Upload size={14} aria-hidden="true" />}
+                      {uploading ? 'Uploading...' : form.image ? 'Replace image' : 'Choose file'}
+                    </label>
+                    <input
+                      id={id}
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      disabled={uploading}
+                      className="sr-only"
+                    />
+                    {form.image && (
+                      <button
+                        type="button"
+                        onClick={() => setForm({ ...form, image: '' })}
+                        className="px-3 py-2 text-sm rounded-lg border border-[var(--border)] text-[var(--text-secondary)] hover:border-red-500 hover:text-red-400 transition-colors"
+                      >
+                        Remove
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )}
+            </FormField>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <FormField label="Show on homepage">
