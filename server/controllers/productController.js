@@ -7,7 +7,7 @@ export async function getProducts(req, res) {
       return res.json([]);
     }
     const products = await Product.find({ active: true })
-      .select('title description price images tags stock sizes featured createdAt')
+      .select('title description price images tags stock sizes featured homeCollection collectionOrder createdAt')
       .sort({ createdAt: -1 });
     res.json(products);
   } catch (err) {
@@ -52,7 +52,7 @@ export async function createProduct(req, res) {
       return res.status(503).json({ error: 'Database not connected' });
     }
 
-    const { title, description, price, images, sizes, sizeGuideNote, tags, stock, featured } = req.body;
+    const { title, description, price, images, sizes, sizeGuideNote, tags, stock, featured, homeCollection, collectionOrder } = req.body;
 
     const productStock = stock || sizes.map((size) => ({ size, inStock: true }));
 
@@ -66,6 +66,8 @@ export async function createProduct(req, res) {
       tags: tags || [],
       stock: productStock,
       featured: featured ?? false,
+      homeCollection: homeCollection ?? false,
+      collectionOrder: collectionOrder ?? 0,
     });
 
     res.status(201).json(product);
@@ -86,7 +88,7 @@ export async function updateProduct(req, res) {
       return res.status(404).json({ error: 'Product not found' });
     }
 
-    const { title, description, price, images, sizes, sizeGuideNote, tags, stock, featured } = req.body;
+    const { title, description, price, images, sizes, sizeGuideNote, tags, stock, featured, homeCollection, collectionOrder } = req.body;
 
     if (sizes && sizes.length > 0) {
       const existingStockMap = new Map(product.stock.map((s) => [s.size, s.inStock]));
@@ -106,6 +108,8 @@ export async function updateProduct(req, res) {
     if (tags !== undefined) product.tags = tags;
     if (stock !== undefined) product.stock = stock;
     if (featured !== undefined) product.featured = featured;
+    if (homeCollection !== undefined) product.homeCollection = homeCollection;
+    if (collectionOrder !== undefined) product.collectionOrder = collectionOrder;
 
     await product.save();
     res.json(product);
@@ -199,6 +203,27 @@ export async function setFeatured(req, res) {
     res.json(product);
   } catch (err) {
     console.error('setFeatured error:', err);
+    res.status(500).json({ error: 'Failed to update product' });
+  }
+}
+
+export async function setHomeCollection(req, res) {
+  try {
+    if (mongoose.connection.readyState !== 1) {
+      return res.status(503).json({ error: 'Database not connected' });
+    }
+
+    const product = await Product.findById(req.params.id);
+    if (!product) {
+      return res.status(404).json({ error: 'Product not found' });
+    }
+
+    if (req.body.homeCollection !== undefined) product.homeCollection = req.body.homeCollection;
+    if (req.body.collectionOrder !== undefined) product.collectionOrder = req.body.collectionOrder;
+    await product.save();
+    res.json(product);
+  } catch (err) {
+    console.error('setHomeCollection error:', err);
     res.status(500).json({ error: 'Failed to update product' });
   }
 }

@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import MetaTags from '../../components/MetaTags';
-import { Plus, Pencil, Trash2, AlertCircle, CheckCircle, Star, Upload } from 'lucide-react';
-import { getAllProductsAdmin, createProduct, updateProduct, deleteProduct, toggleStock, setProductActive, setProductFeatured } from '../../api/products';
+import { Plus, Pencil, Trash2, AlertCircle, CheckCircle, Star, Upload, Home } from 'lucide-react';
+import { getAllProductsAdmin, createProduct, updateProduct, deleteProduct, toggleStock, setProductActive, setProductFeatured, setProductHomeCollection } from '../../api/products';
 import { uploadImage } from '../../api/upload';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
@@ -26,6 +26,8 @@ const emptyForm = {
   sizeGuideNote: '',
   tags: '',
   featured: false,
+  homeCollection: false,
+  collectionOrder: '',
 };
 
 export default function Products() {
@@ -113,10 +115,23 @@ export default function Products() {
     mutationFn: ({ id, featured }) => setProductFeatured(id, featured),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['adminProducts'] });
+      queryClient.invalidateQueries({ queryKey: ['products'] });
       setToast({ type: 'success', message: 'Featured updated.' });
     },
     onError: (err) => {
       setToast({ type: 'error', message: err.message || 'Failed to update featured.' });
+    },
+  });
+
+  const homeCollectionMutation = useMutation({
+    mutationFn: ({ id, ...payload }) => setProductHomeCollection(id, payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['adminProducts'] });
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+      setToast({ type: 'success', message: 'Homepage collection updated.' });
+    },
+    onError: (err) => {
+      setToast({ type: 'error', message: err.message || 'Failed to update homepage collection.' });
     },
   });
 
@@ -158,6 +173,8 @@ export default function Products() {
       sizeGuideNote: product.sizeGuideNote || '',
       tags: product.tags.join(', '),
       featured: product.featured === true,
+      homeCollection: product.homeCollection === true,
+      collectionOrder: String(product.collectionOrder ?? 0),
     });
     setError(null);
     setShowModal(true);
@@ -217,7 +234,14 @@ export default function Products() {
       sizeGuideNote: form.sizeGuideNote.trim(),
       tags: form.tags.split(',').map((s) => s.trim()).filter(Boolean),
       featured: form.featured === true,
+      homeCollection: form.homeCollection === true,
+      collectionOrder: form.collectionOrder === '' ? 0 : parseInt(form.collectionOrder, 10),
     };
+
+    if (Number.isNaN(data.collectionOrder) || data.collectionOrder < 0) {
+      setError('Collection order must be a number of 0 or more.');
+      return;
+    }
 
     if (editing) {
       updateMutation.mutate({ id: editing._id, data });
@@ -348,6 +372,23 @@ export default function Products() {
                                 className={product.featured ? 'fill-amber-400' : ''}
                                 aria-hidden="true"
                               />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() =>
+                                homeCollectionMutation.mutate({ id: product._id, homeCollection: product.homeCollection !== true })
+                              }
+                              disabled={homeCollectionMutation.isPending}
+                              aria-pressed={product.homeCollection === true}
+                              aria-label={product.homeCollection ? `Remove ${product.title} from homepage collection` : `Add ${product.title} to homepage collection`}
+                              title={product.homeCollection ? 'Remove from Homepage Collection' : 'Add to Homepage Collection'}
+                              className={`shrink-0 p-0.5 -m-0.5 rounded transition-colors disabled:opacity-50 ${
+                                product.homeCollection
+                                  ? 'text-emerald-400 hover:text-emerald-300'
+                                  : 'text-[var(--text-secondary)] hover:text-emerald-400'
+                              }`}
+                            >
+                              <Home size={14} aria-hidden="true" />
                             </button>
                             {product.title}
                           </p>
@@ -598,6 +639,46 @@ export default function Products() {
                     {form.featured ? 'Featured on homepage' : 'Not featured'}
                   </span>
                 </div>
+              )}
+            </FormField>
+
+            <FormField label="Homepage Collection">
+              {({ id }) => (
+                <div className="flex items-center gap-2">
+                  <button
+                    id={id}
+                    type="button"
+                    onClick={() => setForm({ ...form, homeCollection: !form.homeCollection })}
+                    role="switch"
+                    aria-checked={form.homeCollection}
+                    className={`relative w-11 h-6 rounded-full transition-colors ${
+                      form.homeCollection ? 'bg-[var(--accent)]' : 'bg-[var(--border)]'
+                    }`}
+                  >
+                    <span
+                      className={`absolute top-0.5 w-5 h-5 rounded-full bg-white transition-all ${
+                        form.homeCollection ? 'left-[22px]' : 'left-0.5'
+                      }`}
+                    />
+                  </button>
+                  <span className="text-sm text-[var(--text-secondary)]">
+                    {form.homeCollection ? 'Shown in homepage Collection' : 'Hidden from homepage Collection'}
+                  </span>
+                </div>
+              )}
+            </FormField>
+
+            <FormField label="Collection order (0 = first, lower shows first)">
+              {({ id }) => (
+                <input
+                  id={id}
+                  type="number"
+                  min="0"
+                  value={form.collectionOrder}
+                  onChange={(e) => setForm({ ...form, collectionOrder: e.target.value })}
+                  placeholder="0"
+                  className="w-full px-3 py-2 bg-[var(--bg-secondary)] border border-[var(--border)] rounded-lg text-sm text-[var(--text-primary)] placeholder-[var(--text-secondary)] focus:border-[var(--accent)] focus:outline-none"
+                />
               )}
             </FormField>
 

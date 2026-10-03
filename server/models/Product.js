@@ -15,11 +15,14 @@ const productSchema = new mongoose.Schema({
   stock: [stockItemSchema],
   tags: [{ type: String }],
   featured: { type: Boolean, default: false },
+  homeCollection: { type: Boolean, default: false },
+  collectionOrder: { type: Number, default: 0, min: 0 },
   active: { type: Boolean, default: true },
 }, { timestamps: true });
 
 productSchema.index({ active: 1 });
 productSchema.index({ tags: 1 });
+productSchema.index({ homeCollection: 1, collectionOrder: 1 });
 
 const Product = mongoose.model('Product', productSchema);
 

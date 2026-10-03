@@ -124,6 +124,8 @@ export const createProductSchema = z.object({
   sizeGuideNote: z.string().max(500).optional().default(''),
   tags: z.array(z.string()).optional().default([]),
   featured: z.boolean().optional().default(false),
+  homeCollection: z.boolean().optional().default(false),
+  collectionOrder: z.number().int().min(0).optional().default(0),
   stock: z.array(z.object({
     size: z.string(),
     inStock: z.boolean(),
@@ -138,6 +140,13 @@ export const setActiveSchema = z.object({
 
 export const setFeaturedSchema = z.object({
   featured: z.boolean(),
+});
+
+export const setHomeCollectionSchema = z.object({
+  homeCollection: z.boolean().optional(),
+  collectionOrder: z.number().int().min(0).optional(),
+}).refine((v) => v.homeCollection !== undefined || v.collectionOrder !== undefined, {
+  message: 'homeCollection or collectionOrder is required',
 });
 
 export const bannerSchema = z.object({
