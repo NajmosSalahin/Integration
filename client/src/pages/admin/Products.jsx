@@ -55,6 +55,7 @@ export default function Products() {
     mutationFn: createProduct,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['adminProducts'] });
+      queryClient.invalidateQueries({ queryKey: ['products'] });
       closeModal();
       setToast({ type: 'success', message: 'Product created successfully.' });
     },
@@ -68,6 +69,7 @@ export default function Products() {
     mutationFn: ({ id, data }) => updateProduct(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['adminProducts'] });
+      queryClient.invalidateQueries({ queryKey: ['products'] });
       closeModal();
       setToast({ type: 'success', message: 'Product updated successfully.' });
     },
@@ -81,6 +83,7 @@ export default function Products() {
     mutationFn: deleteProduct,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['adminProducts'] });
+      queryClient.invalidateQueries({ queryKey: ['products'] });
       setDeleteTarget(null);
       setToast({ type: 'success', message: 'Product deactivated.' });
     },
@@ -104,6 +107,7 @@ export default function Products() {
     mutationFn: ({ id, active }) => setProductActive(id, active),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['adminProducts'] });
+      queryClient.invalidateQueries({ queryKey: ['products'] });
       setToast({ type: 'success', message: 'Product activated.' });
     },
     onError: (err) => {

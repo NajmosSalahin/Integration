@@ -1,5 +1,13 @@
 ﻿## [Unreleased]
 
+**Changes**
+
+- Homepage Collection data reset: all products set to `homeCollection: false`, then 16 random active products enabled with `collectionOrder` 0–15 (was all-true from the v1.2.0 backfill, which made the curation feature look inert). New script `server/scripts/randomHomeCollection.js` — re-runnable to reshuffle.
+
+**Fixes**
+
+- Edit-modal Homepage Collection switch (and create/delete/deactivate) didn't refresh the live homepage: only `adminProducts` was invalidated, so the public `['products']` cache stayed stale up to 5 min (`staleTime`). All product mutations now invalidate both caches.
+
 ------
 
 ## [1.2.0] - 2026-10-03
