@@ -1,5 +1,11 @@
 ﻿## [Unreleased]
 
+------
+
+## [1.3.0] - 2026-10-03
+
+**Status:** Stable — admin category images, Anime T-Shirts category, homepage Collection reset
+
 **Changes**
 
 - Admin-controlled category images: new `image` field on Category (model, zod `categorySchema`, create/update controller, `categories` upload section). Admin Categories gets an upload/replace/remove control (Cloudinary `integration/categories`) plus a table thumbnail; the homepage grid now resolves `category.image` → product-derived image → icon. Category create/update/delete/deactivate now also invalidate the public `['categories']` cache so the homepage refreshes immediately.
@@ -9,6 +15,8 @@
 **Fixes**
 
 - Edit-modal Homepage Collection switch (and create/delete/deactivate) didn't refresh the live homepage: only `adminProducts` was invalidated, so the public `['products']` cache stayed stale up to 5 min (`staleTime`). All product mutations now invalidate both caches.
+
+**Detailed snapshot:** [versions/v1.3.0.md](versions/v1.3.0.md)
 
 ------
 
