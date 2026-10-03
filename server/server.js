@@ -7,6 +7,7 @@ import compression from 'compression';
 import multer from 'multer';
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
+import { readFileSync } from 'fs';
 import { dirname, join, sep } from 'path';
 import productRoutes from './routes/productRoutes.js';
 import authRoutes from './routes/authRoutes.js';
@@ -19,6 +20,14 @@ import categoryRoutes from './routes/categoryRoutes.js';
 import uploadRoutes from './routes/uploadRoutes.js';
 import bootstrapAdmin from './utils/bootstrapAdmin.js';
 import Product from './models/Product.js';
+import {
+  applySeo,
+  buildStaticRoutes,
+  isNoindexRoute,
+  isValidObjectId,
+  productJsonLd,
+  staticLastmod,
+} from './seo.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -73,6 +82,19 @@ app.use('/api/banners', bannerRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/upload', uploadRoutes);
 
+if (process.env.NODE_ENV === 'production') {
+  app.use((req, res, next) => {
+    if (req.path === '/index.html') {
+      return res.redirect(301, `/${req.search || ''}`);
+    }
+    if (req.path.length > 1 && req.path.endsWith('/')) {
+      const target = req.path.replace(/\/+$/, '');
+      return res.redirect(301, `${target === '' ? '/' : target}${req.search || ''}`);
+    }
+    next();
+  });
+}
+
 const STATIC_SITEMAP_PAGES = [
   { path: '', priority: '1.0', changefreq: 'weekly' },
   { path: 'shop', priority: '0.9', changefreq: 'daily' },
@@ -103,9 +125,10 @@ app.get('/sitemap.xml', async (req, res) => {
       .select('_id updatedAt')
       .lean();
 
+    const lastmod = staticLastmod(join(__dirname, '../client/dist/index.html'));
+
     const staticUrls = STATIC_SITEMAP_PAGES.map(
       ({ path, priority, changefreq }) => {
-        const lastmod = new Date().toISOString();
         return `  <url>\n    <loc>${CLIENT_URL}/${path}</loc>\n    <lastmod>${lastmod}</lastmod>\n    <changefreq>${changefreq}</changefreq>\n    <priority>${priority}</priority>\n  </url>`;
       }
     );
@@ -128,7 +151,17 @@ app.get('/sitemap.xml', async (req, res) => {
 });
 
 if (process.env.NODE_ENV === 'production') {
+  const distIndex = join(__dirname, '../client/dist/index.html');
+  let indexTemplate = '';
+  try {
+    indexTemplate = readFileSync(distIndex, 'utf8');
+  } catch {
+    indexTemplate = '';
+  }
+  const staticRoutes = buildStaticRoutes(CLIENT_URL);
+
   app.use(express.static(join(__dirname, '../client/dist'), {
+    index: false,
     setHeaders: (res, filePath) => {
       if (filePath.includes(`${sep}assets${sep}`)) {
         res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
@@ -137,18 +170,85 @@ if (process.env.NODE_ENV === 'production') {
       }
     },
   }));
-  app.get('*', (req, res) => {
-    if (req.path.startsWith('/api')) return;
-    // A missing hashed asset (e.g. a stale chunk hash after a redeploy — the
-    // "blank screen until you refresh" bug) must return a real 404, not the
-    // SPA HTML. Serving index.html for `assets/*.js` makes the browser block
-    // the dynamic import as a disallowed MIME type, and lazyWithRetry then
-    // can't tell a stale chunk from a real crash. Paths that end in a file
-    // extension are assets; extensionless paths are SPA page routes.
+
+  const serveSeoHtml = (res, status, seo) => {
+    res.status(status);
+    res.setHeader('Cache-Control', 'no-cache');
+    res.type('html');
+    res.send(indexTemplate ? applySeo(indexTemplate, seo) : '');
+  };
+
+  app.get('*', async (req, res) => {
+    if (req.path.startsWith('/api')) return res.status(404).end();
     if (/\.[A-Za-z0-9]{1,6}$/.test(req.path)) {
       return res.status(404).end();
     }
-    res.sendFile(join(__dirname, '../client/dist/index.html'));
+    if (!indexTemplate) return res.status(404).end();
+
+    const canonical = CLIENT_URL + req.path;
+    const notFoundSeo = {
+      title: '404 — Page Not Found',
+      description: 'The page you are looking for does not exist.',
+      canonical,
+      robots: 'noindex, nofollow',
+    };
+
+    const staticRoute = staticRoutes[req.path];
+    if (req.path === '/' || staticRoute) {
+      return serveSeoHtml(res, 200, {
+        title: staticRoute?.title ?? '',
+        description: staticRoute?.description ?? '',
+        canonical,
+        jsonLd: staticRoute?.jsonLd,
+      });
+    }
+
+    const productMatch = req.path.match(/^\/product\/([^/]+)$/);
+    if (productMatch) {
+      const id = productMatch[1];
+      if (!isValidObjectId(id)) {
+        return serveSeoHtml(res, 404, notFoundSeo);
+      }
+      if (mongoose.connection.readyState === 1) {
+        try {
+          const product = await Product.findOne({ _id: id, active: true })
+            .select('title description price images stock')
+            .lean();
+          if (!product) {
+            return serveSeoHtml(res, 404, notFoundSeo);
+          }
+          return serveSeoHtml(res, 200, {
+            title: product.title,
+            description: (product.description || '').slice(0, 160),
+            canonical,
+            image: product.images?.[0],
+            jsonLd: productJsonLd(product, CLIENT_URL),
+          });
+        } catch {
+          return serveSeoHtml(res, 200, {
+            title: '',
+            description: '',
+            canonical,
+          });
+        }
+      }
+      return serveSeoHtml(res, 200, {
+        title: '',
+        description: '',
+        canonical,
+      });
+    }
+
+    if (isNoindexRoute(req.path)) {
+      return serveSeoHtml(res, 200, {
+        title: '',
+        description: '',
+        canonical,
+        robots: 'noindex, nofollow',
+      });
+    }
+
+    return serveSeoHtml(res, 404, notFoundSeo);
   });
 }
 
