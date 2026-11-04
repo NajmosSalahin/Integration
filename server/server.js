@@ -1,3 +1,4 @@
+import './config.js';
 import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
@@ -5,7 +6,6 @@ import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import compression from 'compression';
 import multer from 'multer';
-import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import { readFileSync } from 'fs';
 import { dirname, join, sep } from 'path';
@@ -30,12 +30,6 @@ import {
 } from './seo.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-
-if (process.env.NODE_ENV === 'production') {
-  dotenv.config({ path: join(__dirname, '../.env.production') });
-} else {
-  dotenv.config({ path: join(__dirname, '../.env.development') });
-}
 
 const app = express();
 app.set('trust proxy', 1);

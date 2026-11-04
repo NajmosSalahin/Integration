@@ -1,8 +1,6 @@
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
-
-const JWT_SECRET = process.env.JWT_SECRET || 'dev-jwt-secret-change-me';
-const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'dev-refresh-secret-change-me';
+import { JWT_SECRET, JWT_REFRESH_SECRET } from '../config.js';
 
 export function generateAccessToken(user) {
   return jwt.sign(
