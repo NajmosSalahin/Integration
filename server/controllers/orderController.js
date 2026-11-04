@@ -7,6 +7,7 @@ import { sendOrderNotificationEmail } from '../emails/orderNotification.js';
 import { sendOrderConfirmationEmail } from '../emails/orderConfirmation.js';
 import { resolveOrderItems } from '../utils/orderItems.js';
 import { computeDiscount, couponIssue, COUPON_REASON_MESSAGES } from '../utils/coupon.js';
+import { couponReservationStore } from '../utils/couponReservation.js';
 
 export async function createOrder(req, res) {
   try {
@@ -17,50 +18,54 @@ export async function createOrder(req, res) {
     const { items, deliveryAddress, contactPhone, paymentMethod, promoCode } = req.body;
 
     const { items: validatedItems, subtotal } = await resolveOrderItems(items);
+    const user = await User.findById(req.user._id).select('name email');
 
     let discountAmount = 0;
     let couponCode = '';
+    let reservedCoupon = null;
     if (promoCode) {
       const code = promoCode.trim().toUpperCase();
       const coupon = await Coupon.findOne({ code });
       if (!coupon) {
         return res.status(400).json({ error: 'Invalid coupon code' });
       }
-      const userOrderCount = await Order.countDocuments({
-        userId: req.user._id,
-        couponCode: code,
-        discountAmount: { $gt: 0 },
-      });
-      const issue = couponIssue({ coupon, subtotal, userOrderCount });
+      const issue = couponIssue({ coupon, subtotal, userOrderCount: 0 });
       if (issue) {
         return res.status(400).json({ error: COUPON_REASON_MESSAGES[issue.reason] });
       }
+      const reservation = await couponReservationStore.reserve(coupon, req.user._id);
+      if (!reservation.ok) {
+        return res.status(400).json({ error: COUPON_REASON_MESSAGES[reservation.reason] });
+      }
+      reservedCoupon = coupon;
       discountAmount = computeDiscount({ coupon, subtotal });
       couponCode = code;
     }
 
     const totalAmount = subtotal - discountAmount;
 
-    const user = await User.findById(req.user._id).select('name email');
-
-    const order = await Order.create({
-      userId: req.user._id,
-      items: validatedItems,
-      totalAmount,
-      couponCode,
-      discountAmount,
-      deliveryAddress,
-      contactPhone,
-      paymentMethod: paymentMethod || 'bkash',
-      status: paymentMethod === 'cod' ? 'awaiting_confirmation' : 'pending_payment',
-    });
-
-    if (couponCode) {
-      try {
-        await Coupon.updateOne({ code: couponCode }, { $inc: { timesUsed: 1 } });
-      } catch (usageErr) {
-        console.error('Failed to increment coupon usage:', usageErr);
+    let order;
+    try {
+      order = await Order.create({
+        userId: req.user._id,
+        items: validatedItems,
+        totalAmount,
+        couponCode,
+        discountAmount,
+        deliveryAddress,
+        contactPhone,
+        paymentMethod: paymentMethod || 'bkash',
+        status: paymentMethod === 'cod' ? 'awaiting_confirmation' : 'pending_payment',
+      });
+    } catch (err) {
+      if (reservedCoupon) {
+        try {
+          await couponReservationStore.release(reservedCoupon, req.user._id);
+        } catch (releaseErr) {
+          console.error('Failed to release coupon reservation:', releaseErr);
+        }
       }
+      throw err;
     }
 
     const pdfBuffer = await generateOrderPdf({
