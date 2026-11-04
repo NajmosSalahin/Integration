@@ -2,6 +2,8 @@ import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import { JWT_SECRET, JWT_REFRESH_SECRET } from '../config.js';
 
+export const REFRESH_TOKEN_TTL_MS = 7 * 24 * 60 * 60 * 1000;
+
 export function generateAccessToken(user) {
   return jwt.sign(
     { id: user._id, email: user.email, role: user.role },
@@ -10,9 +12,9 @@ export function generateAccessToken(user) {
   );
 }
 
-export function generateRefreshToken(user) {
+export function generateRefreshToken(user, familyId) {
   return jwt.sign(
-    { id: user._id },
+    { id: user._id, fid: familyId, jti: crypto.randomUUID() },
     JWT_REFRESH_SECRET,
     { expiresIn: '7d' }
   );
@@ -31,7 +33,7 @@ export function setRefreshCookie(res, token) {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
-    maxAge: 7 * 24 * 60 * 60 * 1000,
+    maxAge: REFRESH_TOKEN_TTL_MS,
     path: '/',
   });
 }

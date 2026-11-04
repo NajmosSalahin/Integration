@@ -1,13 +1,13 @@
 import User from '../models/User.js';
 import {
   generateAccessToken,
-  generateRefreshToken,
   verifyRefreshToken,
   setRefreshCookie,
   clearRefreshCookie,
   generateEmailToken,
   hashToken,
 } from '../utils/token.js';
+import { sessionStore } from '../utils/session.js';
 import { sendVerificationEmail } from '../emails/verification.js';
 import { sendResetPasswordEmail } from '../emails/resetPassword.js';
 import cloudinary from '../utils/cloudinary.js';
@@ -59,7 +59,7 @@ export async function signup(req, res) {
     }
 
     const accessToken = generateAccessToken(user);
-    const refreshToken = generateRefreshToken(user);
+    const refreshToken = await sessionStore.createSession(user);
     setRefreshCookie(res, refreshToken);
 
     res.status(201).json({
@@ -87,7 +87,7 @@ export async function login(req, res) {
     }
 
     const accessToken = generateAccessToken(user);
-    const refreshToken = generateRefreshToken(user);
+    const refreshToken = await sessionStore.createSession(user);
     setRefreshCookie(res, refreshToken);
 
     res.json({
@@ -101,6 +101,11 @@ export async function login(req, res) {
 }
 
 export async function logout(req, res) {
+  try {
+    await sessionStore.revokeSession(req.cookies?.refreshToken);
+  } catch (err) {
+    console.error('Failed to revoke session:', err);
+  }
   clearRefreshCookie(res);
   res.json({ message: 'Logged out successfully' });
 }
@@ -118,8 +123,13 @@ export async function refresh(req, res) {
       return res.status(401).json({ error: 'User not found' });
     }
 
+    const newRefreshToken = await sessionStore.rotateSession(token, decoded, user);
+    if (!newRefreshToken) {
+      clearRefreshCookie(res);
+      return res.status(401).json({ error: 'Invalid refresh token' });
+    }
+
     const accessToken = generateAccessToken(user);
-    const newRefreshToken = generateRefreshToken(user);
     setRefreshCookie(res, newRefreshToken);
 
     res.json({ accessToken });
@@ -218,6 +228,7 @@ export async function resetPassword(req, res) {
     user.resetPasswordToken = undefined;
     user.resetPasswordExpires = undefined;
     await user.save();
+    await sessionStore.revokeAllSessions(user._id);
 
     res.json({ message: 'Password reset successfully' });
   } catch (err) {
@@ -296,6 +307,7 @@ export async function changePassword(req, res) {
 
     user.passwordHash = await User.hashPassword(newPassword);
     await user.save();
+    await sessionStore.revokeAllSessions(user._id);
 
     res.json({ message: 'Password changed successfully' });
   } catch (err) {
