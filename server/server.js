@@ -19,6 +19,7 @@ import bannerRoutes from './routes/bannerRoutes.js';
 import categoryRoutes from './routes/categoryRoutes.js';
 import uploadRoutes from './routes/uploadRoutes.js';
 import bootstrapAdmin from './utils/bootstrapAdmin.js';
+import { parseTrustProxy } from './utils/trustProxy.js';
 import Product from './models/Product.js';
 import {
   applySeo,
@@ -32,7 +33,7 @@ import {
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const app = express();
-app.set('trust proxy', 1);
+app.set('trust proxy', parseTrustProxy(process.env.TRUST_PROXY_HOPS));
 const PORT = process.env.PORT || 5000;
 const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
 

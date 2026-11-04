@@ -33,5 +33,7 @@ services:
         value: 6
       - key: CLIENT_URL
         value: https://integration-06n2.onrender.com
+      - key: TRUST_PROXY_HOPS
+        value: 1
       - key: NODE_ENV
         value: production
