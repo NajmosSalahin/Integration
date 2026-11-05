@@ -10,7 +10,7 @@
 - M-03: generic signup responses and constant-work login; signup no longer auto-creates a session.
 - M-04: dependency upgrades, including Zod 4, with 0 `npm audit` findings in server and client.
 - M-05: order limits (quantity 10, 20 line items, address 500, phone 20, total 1,000,000).
-- L-01/L-02/L-08: exact CORS allowlist, validated admin order queries, and no token/PII logging.
+- L-01/L-02/L-08: exact CORS allowlist, validated admin order queries, and no reset/verification tokens or recipient/order/contact PII in DEV logs.
 
 **Data and dependencies**
 
