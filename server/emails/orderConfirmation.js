@@ -4,7 +4,7 @@ import { isCod, paymentMethodLabel } from '../utils/paymentMethods.js';
 
 export async function sendOrderConfirmationEmail({ order, customerEmail, customerName }) {
   if (!process.env.BREVO_API_KEY || process.env.BREVO_API_KEY === 'your-brevo-api-key') {
-    console.log(`[DEV] Order confirmation to ${customerEmail} for order #${order._id}`);
+    console.log(`[DEV] Order confirmation queued for order #${order._id}`);
     return;
   }
 

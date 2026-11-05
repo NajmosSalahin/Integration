@@ -3,7 +3,8 @@ import { wrap, heading, button, spacer } from './template.js';
 
 export async function sendAccountExistsEmail(email) {
   if (!process.env.BREVO_API_KEY || process.env.BREVO_API_KEY === 'your-brevo-api-key') {
-    console.log(`[DEV] Account already exists email to ${email}`);
+    const domain = email.split('@')[1] || 'unknown';
+    console.log(`[DEV] Account already exists email queued for recipient domain ${domain}`);
     return;
   }
 

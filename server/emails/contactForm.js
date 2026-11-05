@@ -8,15 +8,12 @@ export async function sendContactEmail({ name, email, message }) {
     : [];
 
   if (ownerEmails.length === 0 || (ownerEmails.length === 1 && ownerEmails[0] === 'your-email@example.com')) {
-    console.log(`[DEV] Contact form submission`);
-    console.log(`  Name: ${name}`);
-    console.log(`  Email: ${email}`);
-    console.log(`  Message: ${message}`);
+    console.log('[DEV] Contact form submission received');
     return;
   }
 
   if (!process.env.BREVO_API_KEY || process.env.BREVO_API_KEY === 'your-brevo-api-key') {
-    console.log(`[DEV] Would send contact email to ${ownerEmails.join(', ')} from ${name}`);
+    console.log('[DEV] Would send contact email to the configured owner address');
     return;
   }
 
