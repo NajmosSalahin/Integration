@@ -20,6 +20,7 @@ import categoryRoutes from './routes/categoryRoutes.js';
 import uploadRoutes from './routes/uploadRoutes.js';
 import bootstrapAdmin from './utils/bootstrapAdmin.js';
 import { parseTrustProxy } from './utils/trustProxy.js';
+import { parseAllowedOrigins, isAllowedOrigin } from './utils/origin.js';
 import Product from './models/Product.js';
 import {
   applySeo,
@@ -36,6 +37,7 @@ const app = express();
 app.set('trust proxy', parseTrustProxy(process.env.TRUST_PROXY_HOPS));
 const PORT = process.env.PORT || 5000;
 const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
+const ALLOWED_ORIGINS = parseAllowedOrigins(CLIENT_URL);
 
 app.use(helmet({
   contentSecurityPolicy: {
@@ -52,7 +54,7 @@ app.use(helmet({
 }));
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin || origin === CLIENT_URL || origin.endsWith('.onrender.com')) {
+    if (isAllowedOrigin(origin, ALLOWED_ORIGINS)) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
