@@ -1,5 +1,25 @@
 ﻿## [Unreleased]
 
+**Status:** Audit remediation on `audit-fixes` - not released
+
+**Security fixes**
+
+- H-01/H-02: env/JWT config now loads before auth modules with no fallback secrets, and proxy trust is opt-in via `TRUST_PROXY_HOPS` (Render sets one hop).
+- M-01: DB-backed refresh sessions (`Session`) with single-use rotation, reuse detection, per-device logout, and revocation on password change/reset.
+- M-02: atomic coupon reservations (`CouponRedemption`) with rollback when order creation fails.
+- M-03: generic signup responses and constant-work login; signup no longer auto-creates a session.
+- M-04: dependency upgrades, including Zod 4, with 0 `npm audit` findings in server and client.
+- M-05: order limits (quantity 10, 20 line items, address 500, phone 20, total 1,000,000).
+- L-01/L-02/L-08: exact CORS allowlist, validated admin order queries, and no token/PII logging.
+
+**Data and dependencies**
+
+- New models: `Session`, `CouponRedemption`.
+- Server: `zod@4.6.7`, `multer@2.5.0`, patched `body-parser`/`proxy-addr`/`qs`; client: `vite@6.4.5`, `source-map-js@1.2.2`.
+- Tests: `npm test` in `server/` (34 tests).
+
+Detailed audit status and manual re-tests: [AUDIT_REPORT.md](AUDIT_REPORT.md)
+
 ------
 
 ## [1.3.0] - 2026-10-03
