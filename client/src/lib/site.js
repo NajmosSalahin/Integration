@@ -1,6 +1,6 @@
 export const siteConfig = {
   contact: {
-    whatsappNumber: '01604524084',
+    whatsappNumber: '01326976206',
     messengerPage: '61594204353841',
     email: 'najmussalahin.adib@gmail.com',
   },

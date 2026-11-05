@@ -5,6 +5,6 @@ import { uploadAvatar } from '../middleware/upload.js';
 
 const router = Router();
 
-router.post('/image', protect, requireSections('banners', 'products'), uploadAvatar.single('image'), uploadImage);
+router.post('/image', protect, requireSections('banners', 'products', 'categories'), uploadAvatar.single('image'), uploadImage);
 
 export default router;

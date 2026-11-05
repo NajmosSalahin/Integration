@@ -5,6 +5,7 @@ const categorySchema = new mongoose.Schema({
   tag: { type: String, required: true, lowercase: true, trim: true },
   group: { type: String, required: true, trim: true },
   icon: { type: String, default: 'Shirt' },
+  image: { type: String, default: '' },
   home: { type: Boolean, default: false },
   order: { type: Number, default: 0, min: 0 },
   active: { type: Boolean, default: true },

@@ -9,13 +9,7 @@ export async function sendOrderNotificationEmail({ order, customerName, customer
     : [];
 
   if (ownerEmails.length === 0 || (ownerEmails.length === 1 && ownerEmails[0] === 'your-email@example.com')) {
-    console.log(`[DEV] Order notification — Order #${order._id}`);
-    console.log(`  Customer: ${customerName} (${customerEmail})`);
-    console.log(`  Phone: ${order.contactPhone}`);
-    console.log(`  Address: ${order.deliveryAddress}`);
-    console.log(`  Items: ${order.items.map((i) => `${i.title} (${i.size}) x${i.quantity}`).join(', ')}`);
-    console.log(`  Total: ৳${order.totalAmount.toLocaleString()}`);
-    console.log(`  PDF attached: ${pdfBuffer ? 'yes' : 'no'}`);
+    console.log(`[DEV] Order notification for order #${order._id} (${order.items.length} items, PDF attached: ${pdfBuffer ? 'yes' : 'no'})`);
     return;
   }
 

@@ -56,3 +56,10 @@ export async function setProductFeatured(id, featured) {
     body: JSON.stringify({ featured }),
   });
 }
+
+export async function setProductHomeCollection(id, payload) {
+  return request(`/api/products/${id}/home-collection`, {
+    method: 'PATCH',
+    body: JSON.stringify(payload),
+  });
+}

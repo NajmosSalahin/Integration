@@ -7,6 +7,10 @@ import { sendOrderNotificationEmail } from '../emails/orderNotification.js';
 import { sendOrderConfirmationEmail } from '../emails/orderConfirmation.js';
 import { resolveOrderItems } from '../utils/orderItems.js';
 import { computeDiscount, couponIssue, COUPON_REASON_MESSAGES } from '../utils/coupon.js';
+import { couponReservationStore } from '../utils/couponReservation.js';
+import { parseOrderQuery } from '../utils/orderQuery.js';
+
+const MAX_ORDER_TOTAL = 1000000;
 
 export async function createOrder(req, res) {
   try {
@@ -17,50 +21,62 @@ export async function createOrder(req, res) {
     const { items, deliveryAddress, contactPhone, paymentMethod, promoCode } = req.body;
 
     const { items: validatedItems, subtotal } = await resolveOrderItems(items);
+    const user = await User.findById(req.user._id).select('name email');
 
     let discountAmount = 0;
     let couponCode = '';
+    let couponToReserve = null;
     if (promoCode) {
       const code = promoCode.trim().toUpperCase();
       const coupon = await Coupon.findOne({ code });
       if (!coupon) {
         return res.status(400).json({ error: 'Invalid coupon code' });
       }
-      const userOrderCount = await Order.countDocuments({
-        userId: req.user._id,
-        couponCode: code,
-        discountAmount: { $gt: 0 },
-      });
-      const issue = couponIssue({ coupon, subtotal, userOrderCount });
+      const issue = couponIssue({ coupon, subtotal, userOrderCount: 0 });
       if (issue) {
         return res.status(400).json({ error: COUPON_REASON_MESSAGES[issue.reason] });
       }
       discountAmount = computeDiscount({ coupon, subtotal });
       couponCode = code;
+      couponToReserve = coupon;
     }
 
     const totalAmount = subtotal - discountAmount;
+    if (totalAmount > MAX_ORDER_TOTAL) {
+      return res.status(400).json({ error: 'Order total exceeds the maximum allowed' });
+    }
 
-    const user = await User.findById(req.user._id).select('name email');
-
-    const order = await Order.create({
-      userId: req.user._id,
-      items: validatedItems,
-      totalAmount,
-      couponCode,
-      discountAmount,
-      deliveryAddress,
-      contactPhone,
-      paymentMethod: paymentMethod || 'bkash',
-      status: paymentMethod === 'cod' ? 'awaiting_confirmation' : 'pending_payment',
-    });
-
-    if (couponCode) {
-      try {
-        await Coupon.updateOne({ code: couponCode }, { $inc: { timesUsed: 1 } });
-      } catch (usageErr) {
-        console.error('Failed to increment coupon usage:', usageErr);
+    let reservedCoupon = null;
+    if (couponToReserve) {
+      const reservation = await couponReservationStore.reserve(couponToReserve, req.user._id);
+      if (!reservation.ok) {
+        return res.status(400).json({ error: COUPON_REASON_MESSAGES[reservation.reason] });
       }
+      reservedCoupon = couponToReserve;
+    }
+
+    let order;
+    try {
+      order = await Order.create({
+        userId: req.user._id,
+        items: validatedItems,
+        totalAmount,
+        couponCode,
+        discountAmount,
+        deliveryAddress,
+        contactPhone,
+        paymentMethod: paymentMethod || 'bkash',
+        status: paymentMethod === 'cod' ? 'awaiting_confirmation' : 'pending_payment',
+      });
+    } catch (err) {
+      if (reservedCoupon) {
+        try {
+          await couponReservationStore.release(reservedCoupon, req.user._id);
+        } catch (releaseErr) {
+          console.error('Failed to release coupon reservation:', releaseErr);
+        }
+      }
+      throw err;
     }
 
     const pdfBuffer = await generateOrderPdf({
@@ -148,7 +164,11 @@ export async function getAllOrders(req, res) {
       return res.json({ orders: [], page: 1, totalOrders: 0, totalPages: 0 });
     }
 
-    const { status, page = 1, limit = 20, search, sort } = req.query;
+    const parsed = parseOrderQuery(req.query);
+    if (parsed.error) {
+      return res.status(400).json({ error: parsed.error });
+    }
+    const { status, page, limit, search, sort } = parsed;
     const filter = {};
     if (status) filter.status = status;
 
@@ -180,7 +200,7 @@ export async function getAllOrders(req, res) {
       if (conditions.length > 0) {
         filter.$or = conditions;
       } else {
-        return res.json({ orders: [], page: Number(page), totalOrders: 0, totalPages: 0 });
+        return res.json({ orders: [], page, totalOrders: 0, totalPages: 0 });
       }
     }
 
@@ -194,18 +214,18 @@ export async function getAllOrders(req, res) {
 
     const totalOrders = await Order.countDocuments(filter);
     const totalPages = Math.ceil(totalOrders / limit);
-    const skip = (Number(page) - 1) * Number(limit);
+    const skip = (page - 1) * limit;
 
     const orders = await Order.find(filter)
       .populate('userId', 'name email')
       .sort(orderBy)
       .skip(skip)
-      .limit(Number(limit))
+      .limit(limit)
       .select('-__v');
 
     res.json({
       orders,
-      page: Number(page),
+      page,
       totalOrders,
       totalPages,
     });

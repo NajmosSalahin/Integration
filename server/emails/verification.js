@@ -3,7 +3,8 @@ import { wrap, heading, button, spacer, divider } from './template.js';
 
 export async function sendVerificationEmail(email, token) {
   if (!process.env.BREVO_API_KEY || process.env.BREVO_API_KEY === 'your-brevo-api-key') {
-    console.log(`[DEV] Verification email to ${email}: token=${token}`);
+    const domain = email.split('@')[1] || 'unknown';
+    console.log(`[DEV] Verification email queued for recipient domain ${domain}`);
     return;
   }
 

@@ -37,13 +37,14 @@ export const resetPasswordSchema = z.object({
 export const orderItemsSchema = z.array(z.object({
   productId: z.string().min(1),
   size: z.string().min(1),
-  quantity: z.number().int().min(1),
-})).min(1, 'Cart must not be empty');
+  quantity: z.number().int().min(1).max(10, 'Quantity cannot exceed 10'),
+})).min(1, 'Cart must not be empty').max(20, 'Cart cannot contain more than 20 items');
 
 export const createOrderSchema = z.object({
   items: orderItemsSchema,
-  deliveryAddress: z.string().min(5, 'Delivery address is required'),
-  contactPhone: z.string().min(5, 'Phone number is required'),
+  deliveryAddress: z.string().min(5, 'Delivery address is required').max(500, 'Delivery address is too long'),
+  contactPhone: z.string().min(5, 'Phone number is required').max(20, 'Phone number is too long')
+    .regex(/^[+\d\s()-]+$/, 'Invalid phone number'),
   paymentMethod: z.enum(['bkash', 'nagad', 'rocket', 'cod']).optional().default('bkash'),
   promoCode: z.string().trim().max(30).optional(),
 });
@@ -124,6 +125,8 @@ export const createProductSchema = z.object({
   sizeGuideNote: z.string().max(500).optional().default(''),
   tags: z.array(z.string()).optional().default([]),
   featured: z.boolean().optional().default(false),
+  homeCollection: z.boolean().optional().default(false),
+  collectionOrder: z.number().int().min(0).optional().default(0),
   stock: z.array(z.object({
     size: z.string(),
     inStock: z.boolean(),
@@ -138,6 +141,13 @@ export const setActiveSchema = z.object({
 
 export const setFeaturedSchema = z.object({
   featured: z.boolean(),
+});
+
+export const setHomeCollectionSchema = z.object({
+  homeCollection: z.boolean().optional(),
+  collectionOrder: z.number().int().min(0).optional(),
+}).refine((v) => v.homeCollection !== undefined || v.collectionOrder !== undefined, {
+  message: 'homeCollection or collectionOrder is required',
 });
 
 export const bannerSchema = z.object({
@@ -157,6 +167,7 @@ export const categorySchema = z.object({
     .transform((s) => s.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')),
   group: z.string().min(1, 'Group is required').max(50),
   icon: z.string().max(40).optional().default('Shirt'),
+  image: z.string().max(500).url('Invalid image URL').or(z.literal('')).optional().default(''),
   home: z.boolean().optional().default(false),
   order: z.number().int().min(0).optional().default(0),
 });

@@ -1,14 +1,65 @@
 ﻿## [Unreleased]
 
+------
+
+## [1.3.1] - 2026-11-05
+
+**Status:** Stable — security audit remediation
+
+**Security fixes**
+
+- H-01/H-02: env/JWT config now loads before auth modules with no fallback secrets, and proxy trust is opt-in via `TRUST_PROXY_HOPS` (Render sets one hop).
+- M-01: DB-backed refresh sessions (`Session`) with single-use rotation, reuse detection, per-device logout, and revocation on password change/reset.
+- M-02: atomic coupon reservations (`CouponRedemption`) with rollback when order creation fails.
+- M-03: generic signup responses and constant-work login; signup no longer auto-creates a session.
+- M-04: dependency upgrades, including Zod 4, with 0 `npm audit` findings in server and client.
+- M-05: order limits (quantity 10, 20 line items, address 500, phone 20, total 1,000,000).
+- L-01/L-02/L-08: exact CORS allowlist, validated admin order queries, and no reset/verification tokens or recipient/order/contact PII in DEV logs.
+
+**Data and dependencies**
+
+- New models: `Session`, `CouponRedemption`.
+- Server: `zod@4.6.7`, `multer@2.5.0`, patched `body-parser`/`proxy-addr`/`qs`; client: `vite@6.4.5`, `source-map-js@1.2.2`.
+- Tests: `npm test` in `server/` (34 tests).
+
+Detailed audit status and manual re-tests: [AUDIT_REPORT.md](AUDIT_REPORT.md)
+
+------
+
+## [1.3.0] - 2026-10-03
+
+**Status:** Stable — admin category images, Anime T-Shirts category, homepage Collection reset
+
+**Changes**
+
+- Admin-controlled category images: new `image` field on Category (model, zod `categorySchema`, create/update controller, `categories` upload section). Admin Categories gets an upload/replace/remove control (Cloudinary `integration/categories`) plus a table thumbnail; the homepage grid now resolves `category.image` → product-derived image → icon. Category create/update/delete/deactivate now also invalidate the public `['categories']` cache so the homepage refreshes immediately.
+- New **Anime T-Shirts** category (`anime-tshirts`): the 11 anime designs moved out of `aesthetic-tshirts` (70 remaining) via `server/scripts/createAnimeCategory.js` (product/category backups in `server/scripts/backups/`); homepage tile `order: 8`, right after Literature (grid 8 → 9 tiles). Local source folder `Product Images/Anime_Tshirt_image/` (11 PNGs moved, gitignored) added to `uploadImages.js`; static `categories.js` and `seed.js` tagged accordingly. Ramen Neko / Tsuki / Maya World stay Aesthetic; `Lain Islamic University` keeps `iu-tshirts`.
+- Homepage Collection data reset: all products set to `homeCollection: false`, then 16 random active products enabled with `collectionOrder` 0–15 (was all-true from the v1.2.0 backfill, which made the curation feature look inert). New script `server/scripts/randomHomeCollection.js` — re-runnable to reshuffle.
+
+**Fixes**
+
+- Edit-modal Homepage Collection switch (and create/delete/deactivate) didn't refresh the live homepage: only `adminProducts` was invalidated, so the public `['products']` cache stayed stale up to 5 min (`staleTime`). All product mutations now invalidate both caches.
+
+**Detailed snapshot:** [versions/v1.3.0.md](versions/v1.3.0.md)
+
+------
+
+## [1.2.0] - 2026-10-03
+
+**Status:** Stable — admin-curated homepage Collection, faster carousels, proxy/audit fixes
+
 **Changes**
 
 - Removed Cultural / Landscape / Artisan T-Shirt categories (docs already inactive in Atlas). 16 products reassigned: cultural 4 + Murobbi Murobbi → `literature-tshirts`, landscape 8 + artisan 3 → `aesthetic-tshirts`. Static `categories.js` and `seed.js` updated; local `Product Images\IDK Category\` deleted (16 PNGs moved into Literature/Aesthetic source folders); dropped from `uploadImages.js`. Cloudinary assets untouched.
+- Homepage Collection is now admin-curated: new `homeCollection` + `collectionOrder` fields on Product, quick toggle + order input in admin products, `PATCH /:id/home-collection` endpoint, migration `initHomeCollection.js` (existing 192 products pre-enabled with recency rank — homepage order unchanged). New products default to hidden; `?q=`/`?tag=` search views still search the full catalog.
+- Faster hero/featured carousels: hero autoplay 6s → 4.5s, crossfade 1100ms → 600ms; featured row step 5s → 4s, slide 400ms → 250ms
 
 **Fixes**
 
 - Rate limiting behind Render/Cloudflare: `app.set('trust proxy', 1)` — previously every rate-limited request logged `ERR_ERL_UNEXPECTED_X_FORWARDED_FOR` and all visitors shared a single rate-limit bucket (keyed on the proxy IP instead of the client)
 - Server dependencies: `npm audit fix` (express/qs/body-parser/multer/brace-expansion) + `bcrypt` 5.1.1 → 6.0.0 (drops `@mapbox/node-pre-gyp`/`tar` chain — the critical/high advisories) — **0 vulnerabilities** (was 7)
 - Duplicate `code` index warning on Coupon model (`unique: true` on field + identical `schema.index()` removed)
+- Featured star toggle now refreshes the live homepage cache (both featured and home-collection mutations invalidate `['products']`)
 
 ------
 

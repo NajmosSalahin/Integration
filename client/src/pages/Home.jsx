@@ -38,11 +38,26 @@ export default function Home() {
       )
     : undefined;
 
+  const isDefaultView = !searchQuery && !tagFilter;
+
+  const curated =
+    isDefaultView && filtered
+      ? filtered
+          .filter((p) => p.homeCollection === true)
+          .sort(
+            (a, b) =>
+              (a.collectionOrder ?? 0) - (b.collectionOrder ?? 0) ||
+              new Date(b.createdAt) - new Date(a.createdAt)
+          )
+      : filtered;
+
   const featured = products
     ?.filter((p) => p.featured === true)
     .slice(0, 8);
 
-  const shown = filtered?.slice(0, SHOWN_ON_HOME);
+  const shown = curated?.slice(0, SHOWN_ON_HOME);
+
+  const hideCollection = isDefaultView && !isLoading && !error && curated?.length === 0;
 
   useEffect(() => {
     if (searchQuery || tagFilter) {
@@ -99,6 +114,7 @@ export default function Home() {
 
         <FeaturedRow products={featured} />
 
+        {!hideCollection && (
         <section ref={collectionRef} className="py-10 lg:py-16 scroll-mt-20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between mb-6">
@@ -113,12 +129,12 @@ export default function Home() {
                     : 'Collection'}
               </h2>
               <div className="flex items-center gap-3">
-                {filtered && (
+                {curated && (
                   <span className="text-sm text-[var(--text-secondary)]" aria-live="polite">
-                    {filtered.length} design{filtered.length !== 1 ? 's' : ''}
+                    {curated.length} design{curated.length !== 1 ? 's' : ''}
                   </span>
                 )}
-                {filtered && filtered.length > SHOWN_ON_HOME && (
+                {curated && curated.length > SHOWN_ON_HOME && (
                   <Link
                     to={`/shop${searchQuery ? `?q=${encodeURIComponent(searchQuery)}` : tagFilter ? `?tag=${encodeURIComponent(tagFilter)}` : ''}`}
                     className="text-sm font-medium text-[var(--accent-hover)] hover:text-[var(--accent)] transition-colors inline-flex items-center gap-1"
@@ -149,7 +165,7 @@ export default function Home() {
               />
             )}
 
-            {filtered && filtered.length === 0 && !error && (
+            {curated && curated.length === 0 && !error && (
               <EmptyState
                 icon={PackageSearch}
                 message={searchQuery || tagFilter ? `No designs match "${searchQuery || tagFilter}"` : 'No designs found yet'}
@@ -164,7 +180,7 @@ export default function Home() {
               />
             )}
 
-            {filtered && filtered.length > 0 && (
+            {curated && curated.length > 0 && (
               <motion.div
                 className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6"
                 initial="hidden"
@@ -181,6 +197,7 @@ export default function Home() {
             )}
           </div>
         </section>
+        )}
 
         <Footer />
       </div>

@@ -45,6 +45,7 @@ export async function createCategory(req, res) {
       tag: req.body.tag,
       group: req.body.group,
       icon: req.body.icon ?? 'Shirt',
+      image: req.body.image ?? '',
       home: req.body.home ?? false,
       order: req.body.order ?? 0,
     });
@@ -67,7 +68,7 @@ export async function updateCategory(req, res) {
       return res.status(404).json({ error: 'Category not found' });
     }
 
-    const { name, tag, group, icon, home, order, active } = req.body;
+    const { name, tag, group, icon, image, home, order, active } = req.body;
 
     if (tag !== undefined && tag !== category.tag) {
       const existing = await Category.findOne({ tag, _id: { $ne: category._id } });
@@ -79,6 +80,7 @@ export async function updateCategory(req, res) {
     if (name !== undefined) category.name = name;
     if (group !== undefined) category.group = group;
     if (icon !== undefined) category.icon = icon;
+    if (image !== undefined) category.image = image;
     if (home !== undefined) category.home = home;
     if (order !== undefined) category.order = order;
     if (active !== undefined) category.active = active;
