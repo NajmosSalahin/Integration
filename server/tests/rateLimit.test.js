@@ -20,7 +20,7 @@ function getFreePort() {
   });
 }
 
-async function waitForHealth(port) {
+async function waitForHealth(port, getLogs) {
   const hosts = ['localhost', '[::1]', '127.0.0.1'];
 
   for (let attempt = 0; attempt < 100; attempt += 1) {
@@ -36,7 +36,7 @@ async function waitForHealth(port) {
     }
     await new Promise((resolve) => setTimeout(resolve, 100));
   }
-  throw new Error('server did not become healthy');
+  throw new Error(`server did not become healthy\n${getLogs()}`);
 }
 
 test('rotating X-Forwarded-For does not reset the contact limiter', async (t) => {
@@ -73,7 +73,7 @@ test('rotating X-Forwarded-For does not reset the contact limiter', async (t) =>
     rmSync(dir, { recursive: true, force: true });
   });
 
-  const baseUrl = await waitForHealth(port);
+  const baseUrl = await waitForHealth(port, () => logs);
 
   const statuses = [];
   for (let attempt = 1; attempt <= 6; attempt += 1) {
