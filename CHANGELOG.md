@@ -1,6 +1,10 @@
 ﻿## [Unreleased]
 
-**Status:** Audit remediation on `audit-fixes` - not released
+------
+
+## [1.3.1] - 2026-11-05
+
+**Status:** Stable — security audit remediation
 
 **Security fixes**
 
