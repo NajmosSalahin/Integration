@@ -36,8 +36,8 @@ export function AuthProvider({ children }) {
 
   const signupMutation = useMutation({
     mutationFn: apiSignup,
-    onSuccess: (data) => {
-      queryClient.setQueryData(['user'], data.user);
+    onSuccess: () => {
+      queryClient.setQueryData(['user'], null);
     },
   });
 

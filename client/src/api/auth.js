@@ -2,7 +2,7 @@ import { setAccessToken } from './token';
 import { authJson, refreshAccessToken } from './authFetch';
 
 export async function signup(data) {
-  const result = await authJson(
+  return authJson(
     '/api/auth/signup',
     {
       method: 'POST',
@@ -10,8 +10,6 @@ export async function signup(data) {
     },
     false
   );
-  setAccessToken(result.accessToken);
-  return result;
 }
 
 export async function login(data) {

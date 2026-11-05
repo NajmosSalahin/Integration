@@ -10,6 +10,8 @@ import {
 import { sessionStore } from '../utils/session.js';
 import { sendVerificationEmail } from '../emails/verification.js';
 import { sendResetPasswordEmail } from '../emails/resetPassword.js';
+import { sendAccountExistsEmail } from '../emails/accountExists.js';
+import { verifyLoginPassword } from '../utils/loginPassword.js';
 import cloudinary from '../utils/cloudinary.js';
 
 function formatUser(user) {
@@ -35,22 +37,29 @@ export async function signup(req, res) {
   try {
     const { name, email, password } = req.body;
 
-    const existing = await User.findOne({ email });
-    if (existing) {
-      return res.status(400).json({ error: 'Email already in use' });
-    }
-
     const passwordHash = await User.hashPassword(password);
     const verificationToken = generateEmailToken();
     const verificationTokenHash = hashToken(verificationToken);
 
-    const user = await User.create({
-      name,
-      email,
-      passwordHash,
-      verificationToken: verificationTokenHash,
-      verificationExpires: new Date(Date.now() + 24 * 60 * 60 * 1000),
-    });
+    try {
+      await User.create({
+        name,
+        email,
+        passwordHash,
+        verificationToken: verificationTokenHash,
+        verificationExpires: new Date(Date.now() + 24 * 60 * 60 * 1000),
+      });
+    } catch (err) {
+      if (err?.code === 11000) {
+        try {
+          await sendAccountExistsEmail(email);
+        } catch (emailErr) {
+          console.error('Failed to send account exists email:', emailErr);
+        }
+        return res.status(201).json({ message: 'Check your email to continue' });
+      }
+      throw err;
+    }
 
     try {
       await sendVerificationEmail(email, verificationToken);
@@ -58,14 +67,7 @@ export async function signup(req, res) {
       console.error('Failed to send verification email:', emailErr);
     }
 
-    const accessToken = generateAccessToken(user);
-    const refreshToken = await sessionStore.createSession(user);
-    setRefreshCookie(res, refreshToken);
-
-    res.status(201).json({
-      accessToken,
-      user: formatUser(user),
-    });
+    res.status(201).json({ message: 'Check your email to continue' });
   } catch (err) {
     console.error('Signup error:', err);
     res.status(500).json({ error: 'Failed to create account' });
@@ -77,11 +79,7 @@ export async function login(req, res) {
     const { email, password } = req.body;
 
     const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(401).json({ error: 'Invalid email or password' });
-    }
-
-    const isMatch = await user.comparePassword(password);
+    const isMatch = await verifyLoginPassword(user, password);
     if (!isMatch) {
       return res.status(401).json({ error: 'Invalid email or password' });
     }
