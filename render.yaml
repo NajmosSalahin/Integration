@@ -8,6 +8,7 @@ services:
       cd client && npm install --include=dev && npm run build &&
       cd ../server && npm install
     startCommand: cd server && node server.js
+    healthCheckPath: /api/health
     envVars:
       - key: MONGO_URI
         sync: false
