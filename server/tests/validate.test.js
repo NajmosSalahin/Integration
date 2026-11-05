@@ -77,6 +77,30 @@ test('all request schemas accept representative valid payloads', () => {
   newsletterSchema.parse({ email: 'test@example.com' });
 });
 
+test('order bounds reject oversized quantities, carts, addresses, and phones', () => {
+  const base = { deliveryAddress: '123 Test Street', contactPhone: '+8801700000000' };
+  const item = { productId: 'product-1', size: 'M', quantity: 1 };
+
+  assert.equal(createOrderSchema.safeParse({ ...base, items: [{ ...item, quantity: 11 }] }).success, false);
+  assert.equal(createOrderSchema.safeParse({
+    ...base,
+    items: Array.from({ length: 21 }, () => item),
+  }).success, false);
+  assert.equal(createOrderSchema.safeParse({ ...base, deliveryAddress: 'x'.repeat(501), items: [item] }).success, false);
+  assert.equal(createOrderSchema.safeParse({ ...base, contactPhone: '1'.repeat(21), items: [item] }).success, false);
+  assert.equal(createOrderSchema.safeParse({ ...base, contactPhone: 'call me maybe', items: [item] }).success, false);
+});
+
+test('order bounds accept the maximum allowed values', () => {
+  const item = { productId: 'product-1', size: 'M', quantity: 10 };
+
+  assert.equal(createOrderSchema.safeParse({
+    items: Array.from({ length: 20 }, () => item),
+    deliveryAddress: 'x'.repeat(500),
+    contactPhone: '+8801700000000',
+  }).success, true);
+});
+
 test('invalid values are still rejected after the Zod upgrade', () => {
   assert.equal(signupSchema.safeParse({ name: 'A', email: 'not-an-email', password: 'weak', confirmPassword: 'weak' }).success, false);
   assert.equal(createOrderSchema.safeParse({ items: [], deliveryAddress: 'x', contactPhone: '1' }).success, false);

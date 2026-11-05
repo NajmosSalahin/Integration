@@ -37,13 +37,14 @@ export const resetPasswordSchema = z.object({
 export const orderItemsSchema = z.array(z.object({
   productId: z.string().min(1),
   size: z.string().min(1),
-  quantity: z.number().int().min(1),
-})).min(1, 'Cart must not be empty');
+  quantity: z.number().int().min(1).max(10, 'Quantity cannot exceed 10'),
+})).min(1, 'Cart must not be empty').max(20, 'Cart cannot contain more than 20 items');
 
 export const createOrderSchema = z.object({
   items: orderItemsSchema,
-  deliveryAddress: z.string().min(5, 'Delivery address is required'),
-  contactPhone: z.string().min(5, 'Phone number is required'),
+  deliveryAddress: z.string().min(5, 'Delivery address is required').max(500, 'Delivery address is too long'),
+  contactPhone: z.string().min(5, 'Phone number is required').max(20, 'Phone number is too long')
+    .regex(/^[+\d\s()-]+$/, 'Invalid phone number'),
   paymentMethod: z.enum(['bkash', 'nagad', 'rocket', 'cod']).optional().default('bkash'),
   promoCode: z.string().trim().max(30).optional(),
 });

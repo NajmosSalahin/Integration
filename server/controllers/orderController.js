@@ -9,6 +9,8 @@ import { resolveOrderItems } from '../utils/orderItems.js';
 import { computeDiscount, couponIssue, COUPON_REASON_MESSAGES } from '../utils/coupon.js';
 import { couponReservationStore } from '../utils/couponReservation.js';
 
+const MAX_ORDER_TOTAL = 1000000;
+
 export async function createOrder(req, res) {
   try {
     if (mongoose.connection.readyState !== 1) {
@@ -22,7 +24,7 @@ export async function createOrder(req, res) {
 
     let discountAmount = 0;
     let couponCode = '';
-    let reservedCoupon = null;
+    let couponToReserve = null;
     if (promoCode) {
       const code = promoCode.trim().toUpperCase();
       const coupon = await Coupon.findOne({ code });
@@ -33,16 +35,24 @@ export async function createOrder(req, res) {
       if (issue) {
         return res.status(400).json({ error: COUPON_REASON_MESSAGES[issue.reason] });
       }
-      const reservation = await couponReservationStore.reserve(coupon, req.user._id);
-      if (!reservation.ok) {
-        return res.status(400).json({ error: COUPON_REASON_MESSAGES[reservation.reason] });
-      }
-      reservedCoupon = coupon;
       discountAmount = computeDiscount({ coupon, subtotal });
       couponCode = code;
+      couponToReserve = coupon;
     }
 
     const totalAmount = subtotal - discountAmount;
+    if (totalAmount > MAX_ORDER_TOTAL) {
+      return res.status(400).json({ error: 'Order total exceeds the maximum allowed' });
+    }
+
+    let reservedCoupon = null;
+    if (couponToReserve) {
+      const reservation = await couponReservationStore.reserve(couponToReserve, req.user._id);
+      if (!reservation.ok) {
+        return res.status(400).json({ error: COUPON_REASON_MESSAGES[reservation.reason] });
+      }
+      reservedCoupon = couponToReserve;
+    }
 
     let order;
     try {
