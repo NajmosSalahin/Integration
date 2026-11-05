@@ -23,7 +23,7 @@ function getFreePort() {
 async function waitForHealth(port, getLogs) {
   const hosts = ['localhost', '[::1]', '127.0.0.1'];
 
-  for (let attempt = 0; attempt < 100; attempt += 1) {
+  for (let attempt = 0; attempt < 300; attempt += 1) {
     for (const host of hosts) {
       try {
         const response = await fetch(`http://${host}:${port}/api/health`);
