@@ -7,6 +7,7 @@ import {
   deleteCoupon,
 } from '../controllers/couponController.js';
 import { protect, requireSections } from '../middleware/auth.js';
+import { validateObjectId } from '../middleware/validateObjectId.js';
 import { validate, validateCouponSchema, couponSchema, updateCouponSchema } from '../utils/validate.js';
 import { couponValidateLimiter } from '../middleware/rateLimit.js';
 
@@ -15,7 +16,7 @@ const router = Router();
 router.post('/validate', protect, couponValidateLimiter, validate(validateCouponSchema), validateCoupon);
 router.get('/', protect, requireSections('coupons'), getCoupons);
 router.post('/', protect, requireSections('coupons'), validate(couponSchema), createCoupon);
-router.put('/:id', protect, requireSections('coupons'), validate(updateCouponSchema), updateCoupon);
-router.delete('/:id', protect, requireSections('coupons'), deleteCoupon);
+router.put('/:id', protect, requireSections('coupons'), validateObjectId('id'), validate(updateCouponSchema), updateCoupon);
+router.delete('/:id', protect, requireSections('coupons'), validateObjectId('id'), deleteCoupon);
 
 export default router;

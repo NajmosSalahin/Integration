@@ -5,7 +5,6 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import compression from 'compression';
-import multer from 'multer';
 import { fileURLToPath } from 'url';
 import { readFileSync } from 'fs';
 import { dirname, join, sep } from 'path';
@@ -19,6 +18,7 @@ import bannerRoutes from './routes/bannerRoutes.js';
 import categoryRoutes from './routes/categoryRoutes.js';
 import uploadRoutes from './routes/uploadRoutes.js';
 import bootstrapAdmin from './utils/bootstrapAdmin.js';
+import errorHandler from './middleware/errorHandler.js';
 import { parseTrustProxy } from './utils/trustProxy.js';
 import { parseAllowedOrigins, isAllowedOrigin } from './utils/origin.js';
 import Product from './models/Product.js';
@@ -250,16 +250,7 @@ if (process.env.NODE_ENV === 'production') {
   });
 }
 
-app.use((err, req, res, next) => {
-  if (err instanceof multer.MulterError) {
-    return res.status(400).json({ error: 'Image upload failed — max 5 MB allowed' });
-  }
-  if (err?.message === 'Only image files are allowed') {
-    return res.status(400).json({ error: 'Only image files are allowed' });
-  }
-  console.error(err.stack);
-  res.status(500).json({ error: 'Something went wrong' });
-});
+app.use(errorHandler);
 
 const MONGO_URI = process.env.MONGO_URI;
 
