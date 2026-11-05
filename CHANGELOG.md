@@ -2,6 +2,23 @@
 
 ------
 
+## [1.3.2] - 2026-11-05
+
+**Status:** Stable — security follow-up
+
+**Fixes**
+
+- L-06: malformed JSON now returns `400 {"error":"Invalid JSON"}`, oversized bodies return `413`, and invalid ObjectIds on product, order, category, coupon, and banner routes return `400 {"error":"Invalid id"}` instead of `500`.
+- Extracted the global error handler so upload errors, parser errors, and unexpected errors are handled consistently; the generic `500` still hides internals.
+- Added `healthCheckPath: /api/health` to `render.yaml` and to the live Render service, so unhealthy deploys are not promoted.
+- Added a GitHub Actions workflow that runs server tests, `npm audit` for both packages, and the client production build on pushes and pull requests.
+
+**Tests:** 41/41 server tests pass; client build passes; both audits report 0 vulnerabilities.
+
+Detailed release notes: [versions/v1.3.2.md](versions/v1.3.2.md)
+
+------
+
 ## [1.3.1] - 2026-11-05
 
 **Status:** Stable — security audit remediation
