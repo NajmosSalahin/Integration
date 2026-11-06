@@ -10,7 +10,7 @@ import OrderItemsTotal from '../components/order/OrderItemsTotal';
 import OrderContactButtons from '../components/order/OrderContactButtons';
 import OrderStep from '../components/order/OrderStep';
 import { paymentLabel } from '../lib/paymentMethods';
-import { orderStatusBadge } from '../lib/orderStatus';
+import { orderStatusBadge, orderStatusLabel } from '../lib/orderStatus';
 import { orderErrorMessage } from '../lib/orderErrors';
 
 export default function OrderDetails() {
@@ -135,6 +135,51 @@ export default function OrderDetails() {
                     <span className="text-[var(--text-primary)]">{order.contactPhone}</span>
                   </div>
                 </div>
+              </section>
+
+              <section>
+                <h2 {...sectionHeading}>Order Timeline</h2>
+                <ol className="space-y-3 border-l border-[var(--border)] ml-1 pl-4">
+                  {order.statusHistory?.length > 0 ? (
+                    order.statusHistory.map((entry, index) => {
+                      const isLatest = index === order.statusHistory.length - 1;
+                      return (
+                        <li key={`${entry.status}-${entry.changedAt}-${index}`} className="relative">
+                          <span
+                            className={`absolute -left-[20px] top-1.5 h-2 w-2 rounded-full ${
+                              isLatest ? 'bg-[var(--accent)]' : 'bg-[var(--text-secondary)]'
+                            }`}
+                            aria-hidden="true"
+                          />
+                          <p className="text-sm text-[var(--text-primary)]">{orderStatusLabel(entry.status)}</p>
+                          <p className="text-xs text-[var(--text-secondary)]">
+                            {new Date(entry.changedAt).toLocaleString('en-US', {
+                              year: 'numeric',
+                              month: 'short',
+                              day: 'numeric',
+                              hour: 'numeric',
+                              minute: '2-digit',
+                            })}
+                          </p>
+                        </li>
+                      );
+                    })
+                  ) : (
+                    <li className="relative">
+                      <span className="absolute -left-[20px] top-1.5 h-2 w-2 rounded-full bg-[var(--accent)]" aria-hidden="true" />
+                      <p className="text-sm text-[var(--text-primary)]">{orderStatusLabel(order.status)}</p>
+                      <p className="text-xs text-[var(--text-secondary)]">
+                        {new Date(order.updatedAt || order.createdAt).toLocaleString('en-US', {
+                          year: 'numeric',
+                          month: 'short',
+                          day: 'numeric',
+                          hour: 'numeric',
+                          minute: '2-digit',
+                        })}
+                      </p>
+                    </li>
+                  )}
+                </ol>
               </section>
 
               <section>

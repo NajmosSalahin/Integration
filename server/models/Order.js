@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { ORDER_STATUSES } from '../utils/orderStatus.js';
 
 const orderItemSchema = new mongoose.Schema({
   productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },
@@ -6,6 +7,12 @@ const orderItemSchema = new mongoose.Schema({
   size: { type: String, required: true },
   quantity: { type: Number, required: true, min: 1 },
   priceAtOrder: { type: Number, required: true },
+}, { _id: false });
+
+const statusHistorySchema = new mongoose.Schema({
+  status: { type: String, enum: ORDER_STATUSES, required: true },
+  changedAt: { type: Date, required: true, default: Date.now },
+  changedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', select: false },
 }, { _id: false });
 
 const orderSchema = new mongoose.Schema({
@@ -29,8 +36,12 @@ const orderSchema = new mongoose.Schema({
   contactPhone: { type: String, required: true, trim: true },
   status: {
     type: String,
-    enum: ['pending_payment', 'awaiting_confirmation', 'paid', 'shipped', 'fulfilled', 'cancelled'],
+    enum: ORDER_STATUSES,
     default: 'pending_payment',
+  },
+  statusHistory: {
+    type: [statusHistorySchema],
+    default: [],
   },
   paymentMethod: {
     type: String,

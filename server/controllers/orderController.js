@@ -9,6 +9,7 @@ import { resolveOrderItems } from '../utils/orderItems.js';
 import { computeDiscount, couponIssue, COUPON_REASON_MESSAGES } from '../utils/coupon.js';
 import { couponReservationStore } from '../utils/couponReservation.js';
 import { parseOrderQuery } from '../utils/orderQuery.js';
+import { canTransition } from '../utils/orderStatus.js';
 
 const MAX_ORDER_TOTAL = 1000000;
 
@@ -55,6 +56,8 @@ export async function createOrder(req, res) {
       reservedCoupon = couponToReserve;
     }
 
+    const initialStatus = paymentMethod === 'cod' ? 'awaiting_confirmation' : 'pending_payment';
+
     let order;
     try {
       order = await Order.create({
@@ -66,7 +69,8 @@ export async function createOrder(req, res) {
         deliveryAddress,
         contactPhone,
         paymentMethod: paymentMethod || 'bkash',
-        status: paymentMethod === 'cod' ? 'awaiting_confirmation' : 'pending_payment',
+        status: initialStatus,
+        statusHistory: [{ status: initialStatus, changedAt: new Date(), changedBy: req.user._id }],
       });
     } catch (err) {
       if (reservedCoupon) {
@@ -247,19 +251,46 @@ export async function updateOrderStatus(req, res) {
       return res.status(404).json({ error: 'Order not found' });
     }
 
-    order.status = status;
+    if (order.status === status) {
+      const unchanged = await Order.findById(order._id)
+        .populate('userId', 'name email')
+        .select('-__v');
+      return res.json(unchanged);
+    }
+
+    if (!canTransition(order.status, status)) {
+      return res.status(409).json({
+        error: `Cannot change status from ${order.status} to ${status}`,
+        code: 'INVALID_STATUS_TRANSITION',
+      });
+    }
+
+    const now = new Date();
+    const update = {
+      $set: { status },
+      $push: { statusHistory: { status, changedAt: now, changedBy: req.user._id } },
+    };
     if (status === 'paid' && !order.paidAt) {
-      order.paidAt = new Date();
+      update.$set.paidAt = now;
     }
     if (status === 'fulfilled' && !order.fulfilledAt) {
-      order.fulfilledAt = new Date();
+      update.$set.fulfilledAt = now;
     }
 
-    await order.save();
-
-    const updated = await Order.findById(order._id)
+    const updated = await Order.findOneAndUpdate(
+      { _id: order._id, status: order.status },
+      update,
+      { new: true, runValidators: true }
+    )
       .populate('userId', 'name email')
       .select('-__v');
+
+    if (!updated) {
+      return res.status(409).json({
+        error: 'Order status changed by another request. Refresh and try again.',
+        code: 'STATUS_CONFLICT',
+      });
+    }
 
     res.json(updated);
   } catch (err) {

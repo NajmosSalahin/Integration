@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { ORDER_STATUSES } from './orderStatus.js';
 
 export const signupSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters').max(50),
@@ -73,7 +74,7 @@ export const couponSchema = couponFields.refine(couponPercentRule, couponPercent
 export const updateCouponSchema = couponFields.partial().refine(couponPercentRule, couponPercentRuleOpts);
 
 export const updateStatusSchema = z.object({
-  status: z.enum(['pending_payment', 'awaiting_confirmation', 'paid', 'shipped', 'fulfilled', 'cancelled']),
+  status: z.enum(ORDER_STATUSES),
 });
 
 export const updateProfileSchema = z.object({

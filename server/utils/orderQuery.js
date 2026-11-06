@@ -1,11 +1,6 @@
-export const ORDER_STATUSES = [
-  'pending_payment',
-  'awaiting_confirmation',
-  'paid',
-  'shipped',
-  'fulfilled',
-  'cancelled',
-];
+import { ORDER_STATUSES } from './orderStatus.js';
+
+export { ORDER_STATUSES };
 
 export function parseOrderQuery(query = {}) {
   const { status, page = '1', limit = '20', search, sort } = query;

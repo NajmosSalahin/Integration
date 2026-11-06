@@ -12,15 +12,7 @@ import ErrorState from '../../components/ui/ErrorState';
 import Spinner from '../../components/ui/Spinner';
 import Modal from '../../components/ui/Modal';
 import { paymentLabel } from '../../lib/paymentMethods';
-
-const STATUS_OPTIONS = [
-  { value: 'pending_payment', label: 'Pending Payment' },
-  { value: 'awaiting_confirmation', label: 'Awaiting Confirmation' },
-  { value: 'paid', label: 'Paid' },
-  { value: 'shipped', label: 'Shipped' },
-  { value: 'fulfilled', label: 'Fulfilled' },
-  { value: 'cancelled', label: 'Cancelled' },
-];
+import { ORDER_STATUS_LABELS, ORDER_STATUS_TRANSITIONS, orderStatusLabel } from '../../lib/orderStatus';
 
 const STATUS_COLORS = {
   pending_payment: 'text-yellow-400',
@@ -30,6 +22,8 @@ const STATUS_COLORS = {
   fulfilled: 'text-emerald-400',
   cancelled: 'text-red-400',
 };
+
+const statusOptionsFor = (status) => [status, ...(ORDER_STATUS_TRANSITIONS[status] || [])];
 
 const PAYMENT_BADGES = {
   bkash: 'bg-[var(--accent)]/10 text-[var(--accent)]',
@@ -99,8 +93,7 @@ export default function Orders() {
         };
       });
       queryClient.invalidateQueries({ queryKey: ['adminOrders'] });
-      const label = STATUS_OPTIONS.find((s) => s.value === updated.status)?.label || updated.status;
-      setToast({ type: 'success', message: `Status updated — ${label}` });
+      setToast({ type: 'success', message: `Status updated — ${orderStatusLabel(updated.status)}` });
     },
     onError: (err, _vars, context) => {
       if (context?.previous) {
@@ -314,13 +307,14 @@ export default function Orders() {
                                 value={order.status}
                                 onChange={(e) => handleStatusChange(order._id, e.target.value)}
                                 onClick={(e) => e.stopPropagation()}
-                                disabled={pendingStatus === order._id}
+                                disabled={pendingStatus === order._id || statusOptionsFor(order.status).length === 1}
                                 aria-label={`Status for order #${String(order._id).slice(-8).toUpperCase()}`}
-                                className={`bg-transparent border border-[var(--border)] rounded-lg px-2 py-1 text-xs cursor-pointer focus:border-[var(--accent)] focus:outline-none disabled:opacity-50 ${STATUS_COLORS[order.status] || 'text-[var(--text-secondary)]'}`}
+                                className={`bg-transparent border border-[var(--border)] rounded-lg px-2 py-1 text-xs focus:border-[var(--accent)] focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed ${STATUS_COLORS[order.status] || 'text-[var(--text-secondary)]'}`}
                               >
-                                {STATUS_OPTIONS.map((opt) => (
-                                  <option key={opt.value} value={opt.value} className="bg-[var(--bg-primary)] text-[var(--text-primary)]">
-                                    {opt.label}
+                                {statusOptionsFor(order.status).map((value) => (
+                                  <option key={value} value={value} className="bg-[var(--bg-primary)] text-[var(--text-primary)]">
+                                    {ORDER_STATUS_LABELS[value] || value}
+                                    {value === order.status ? ' (current)' : ''}
                                   </option>
                                 ))}
                               </select>
@@ -366,7 +360,7 @@ export default function Orders() {
             <div className="space-y-4 text-sm">
               <div className="flex flex-wrap items-center gap-2">
                 <span className={`text-xs px-2 py-0.5 rounded-lg border border-[var(--border)] ${STATUS_COLORS[detail.status] || 'text-[var(--text-secondary)]'}`}>
-                  {(STATUS_OPTIONS.find((s) => s.value === detail.status) || {}).label || detail.status}
+                  {orderStatusLabel(detail.status)}
                 </span>
                 <span className={`text-xs px-2 py-0.5 rounded-lg ${PAYMENT_BADGES[detail.paymentMethod] || 'bg-[var(--accent)]/10 text-[var(--accent)]'}`}>
                   {paymentLabel(detail.paymentMethod)}
@@ -441,6 +435,31 @@ export default function Orders() {
                   <span>৳{detail.totalAmount.toLocaleString()}</span>
                 </div>
               </div>
+
+              {detail.statusHistory?.length > 0 && (
+                <div className="bg-[var(--bg-primary)] border border-[var(--border)] rounded-lg p-3">
+                  <p className="text-xs uppercase tracking-wider text-[var(--text-secondary)] mb-2">Status History</p>
+                  <ol className="space-y-2">
+                    {detail.statusHistory.map((entry, index) => (
+                      <li
+                        key={`${entry.status}-${entry.changedAt}-${index}`}
+                        className="flex items-start justify-between gap-3 text-xs"
+                      >
+                        <span className="text-[var(--text-primary)]">{orderStatusLabel(entry.status)}</span>
+                        <span className="text-[var(--text-secondary)] text-right">
+                          {new Date(entry.changedAt).toLocaleString('en-US', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric',
+                            hour: 'numeric',
+                            minute: '2-digit',
+                          })}
+                        </span>
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+              )}
             </div>
           )}
         </Modal>

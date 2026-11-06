@@ -1,3 +1,25 @@
+export const ORDER_STATUS_LABELS = {
+  pending_payment: 'Pending Payment',
+  awaiting_confirmation: 'Awaiting Confirmation',
+  paid: 'Paid',
+  shipped: 'Shipped',
+  fulfilled: 'Fulfilled',
+  cancelled: 'Cancelled',
+};
+
+export const ORDER_STATUS_TRANSITIONS = {
+  pending_payment: ['paid', 'cancelled'],
+  awaiting_confirmation: ['paid', 'shipped', 'cancelled'],
+  paid: ['shipped', 'cancelled'],
+  shipped: ['fulfilled'],
+  fulfilled: [],
+  cancelled: [],
+};
+
+export function orderStatusLabel(status) {
+  return ORDER_STATUS_LABELS[status] || status;
+}
+
 export const ORDER_STATUS_BADGES = {
   pending_payment: { label: 'Processing', cls: 'bg-yellow-500/10 text-yellow-400' },
   awaiting_confirmation: { label: 'Processing', cls: 'bg-yellow-500/10 text-yellow-400' },
