@@ -2,6 +2,25 @@
 
 ------
 
+## [1.4.0] - 2026-11-06
+
+**Status:** Stable - verified checkout and order status lifecycle
+
+**Features**
+
+- L-04: unverified accounts can no longer place orders. `POST /api/orders` returns `403 EMAIL_NOT_VERIFIED`; checkout gates the form, and the profile and checkout screens provide resend and status-refresh controls.
+- L-04: new authenticated `POST /api/auth/resend-verification` endpoint reissues a hashed 24-hour token, limited to 3 requests per 15 minutes per user. Verification now refreshes the signed-in profile automatically.
+- L-07: admin status changes follow an explicit matrix. `pending_payment → paid|cancelled`, `awaiting_confirmation → paid|shipped|cancelled`, `paid → shipped|cancelled`, `shipped → fulfilled`; `fulfilled` and `cancelled` are terminal. Invalid changes return `409`, same-status requests are no-ops, and concurrent changes return `409 STATUS_CONFLICT`.
+- L-07: new orders record `statusHistory` entries with status, timestamp, and actor. The admin order modal and customer order details show the timeline; the admin dropdown only offers valid next states.
+
+**Data:** added `Order.statusHistory` (additive, no backfill for existing orders). Shared status constants now back the Order model, status validation, and admin query filter.
+
+**Tests:** 52/52 server tests pass; client build passes. Local HTTP checks covered the unverified `403`, three resends followed by `429`, verified order validation, customer `403`, invalid/same-status/terminal transitions, concurrent-safe updates, and persisted history. No production orders or coupons were created.
+
+Detailed release notes: [versions/v1.4.0.md](versions/v1.4.0.md)
+
+------
+
 ## [1.3.2] - 2026-11-05
 
 **Status:** Stable — security follow-up
