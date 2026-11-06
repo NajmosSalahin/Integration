@@ -67,13 +67,14 @@ test('token.js signs with the configured secrets instead of the removed fallback
 
   try {
     const result = runNode(
-      "import jwt from 'jsonwebtoken'; import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from './utils/token.js'; const token = generateAccessToken({ _id: '507f1f77bcf86cd799439011', email: 'test@example.com', role: 'admin' }); const refresh = generateRefreshToken({ _id: '507f1f77bcf86cd799439011' }); console.log(JSON.stringify({ role: jwt.verify(token, 'test-access-secret').role, refreshId: verifyRefreshToken(refresh).id }));",
+      "import jwt from 'jsonwebtoken'; import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from './utils/token.js'; const token = generateAccessToken({ _id: '507f1f77bcf86cd799439011', email: 'test@example.com', role: 'admin' }, '507f1f77bcf86cd799439012'); const refresh = generateRefreshToken({ _id: '507f1f77bcf86cd799439011' }); const decoded = jwt.verify(token, 'test-access-secret'); console.log(JSON.stringify({ role: decoded.role, sid: decoded.sid, refreshId: verifyRefreshToken(refresh).id }));",
       cleanEnv({ ENV_FILE: envFile }),
     );
 
     assert.equal(result.status, 0, result.stderr);
     assert.deepEqual(JSON.parse(result.stdout), {
       role: 'admin',
+      sid: '507f1f77bcf86cd799439012',
       refreshId: '507f1f77bcf86cd799439011',
     });
   } finally {

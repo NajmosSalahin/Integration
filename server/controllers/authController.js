@@ -84,8 +84,8 @@ export async function login(req, res) {
       return res.status(401).json({ error: 'Invalid email or password' });
     }
 
-    const accessToken = generateAccessToken(user);
-    const refreshToken = await sessionStore.createSession(user);
+    const { refreshToken, sessionId } = await sessionStore.createSession(user);
+    const accessToken = generateAccessToken(user, sessionId);
     setRefreshCookie(res, refreshToken);
 
     res.json({
@@ -121,14 +121,16 @@ export async function refresh(req, res) {
       return res.status(401).json({ error: 'User not found' });
     }
 
-    const newRefreshToken = await sessionStore.rotateSession(token, decoded, user);
-    if (!newRefreshToken) {
+    const rotated = await sessionStore.rotateSession(token, decoded, user);
+    if (!rotated) {
       clearRefreshCookie(res);
       return res.status(401).json({ error: 'Invalid refresh token' });
     }
 
-    const accessToken = generateAccessToken(user);
-    setRefreshCookie(res, newRefreshToken);
+    const accessToken = generateAccessToken(user, rotated.sessionId);
+    if (rotated.refreshToken) {
+      setRefreshCookie(res, rotated.refreshToken);
+    }
 
     res.json({ accessToken });
   } catch (err) {

@@ -2,19 +2,26 @@ import crypto from 'crypto';
 import Session from '../models/Session.js';
 import { generateRefreshToken, hashToken, REFRESH_TOKEN_TTL_MS } from './token.js';
 
-export function createSessionStore(SessionModel) {
+export const REFRESH_ROTATION_GRACE_MS = 30 * 1000;
+
+export function createSessionStore(SessionModel, options = {}) {
+  const now = options.now || (() => new Date());
+  const graceMs = options.graceMs ?? REFRESH_ROTATION_GRACE_MS;
+
   async function createSession(user) {
     const familyId = crypto.randomUUID();
     const refreshToken = generateRefreshToken(user, familyId);
+    const currentTime = now();
 
-    await SessionModel.create({
+    const session = await SessionModel.create({
       userId: user._id,
       familyId,
       tokenHash: hashToken(refreshToken),
-      expiresAt: new Date(Date.now() + REFRESH_TOKEN_TTL_MS),
+      previousTokenHashes: [],
+      expiresAt: new Date(currentTime.getTime() + REFRESH_TOKEN_TTL_MS),
     });
 
-    return refreshToken;
+    return { refreshToken, sessionId: session._id };
   }
 
   async function rotateSession(refreshToken, decoded, user) {
@@ -22,28 +29,54 @@ export function createSessionStore(SessionModel) {
       return null;
     }
 
+    const currentTime = now();
+    const tokenHash = hashToken(refreshToken);
     const nextToken = generateRefreshToken(user, decoded.fid);
+    const nextExpiresAt = new Date(currentTime.getTime() + REFRESH_TOKEN_TTL_MS);
+    const graceUntil = new Date(currentTime.getTime() + graceMs);
+
     const session = await SessionModel.findOneAndUpdate(
       {
-        tokenHash: hashToken(refreshToken),
+        tokenHash,
         userId: user._id,
-        expiresAt: { $gt: new Date() },
+        familyId: decoded.fid,
+        expiresAt: { $gt: currentTime },
       },
       {
         $set: {
           tokenHash: hashToken(nextToken),
-          expiresAt: new Date(Date.now() + REFRESH_TOKEN_TTL_MS),
+          expiresAt: nextExpiresAt,
+        },
+        $push: {
+          previousTokenHashes: { hash: tokenHash, graceUntil },
         },
       },
       { new: true }
     );
 
-    if (!session) {
-      await SessionModel.deleteMany({ userId: user._id, familyId: decoded.fid });
-      return null;
+    if (session) {
+      await SessionModel.updateOne(
+        { _id: session._id },
+        { $pull: { previousTokenHashes: { graceUntil: { $lte: currentTime } } } }
+      );
+      return { refreshToken: nextToken, sessionId: session._id, rotated: true };
     }
 
-    return nextToken;
+    const graceSession = await SessionModel.findOne({
+      userId: user._id,
+      familyId: decoded.fid,
+      expiresAt: { $gt: currentTime },
+      previousTokenHashes: {
+        $elemMatch: { hash: tokenHash, graceUntil: { $gt: currentTime } },
+      },
+    });
+
+    if (graceSession) {
+      return { refreshToken: null, sessionId: graceSession._id, rotated: false };
+    }
+
+    await SessionModel.deleteMany({ userId: user._id, familyId: decoded.fid });
+    return null;
   }
 
   async function revokeSession(refreshToken) {
@@ -51,7 +84,13 @@ export function createSessionStore(SessionModel) {
       return;
     }
 
-    await SessionModel.deleteOne({ tokenHash: hashToken(refreshToken) });
+    const tokenHash = hashToken(refreshToken);
+    await SessionModel.deleteOne({
+      $or: [
+        { tokenHash },
+        { 'previousTokenHashes.hash': tokenHash },
+      ],
+    });
   }
 
   async function revokeAllSessions(userId) {

@@ -2,13 +2,18 @@ import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import { JWT_SECRET, JWT_REFRESH_SECRET } from '../config.js';
 
+export const ACCESS_TOKEN_TTL_MS = 10 * 60 * 1000;
 export const REFRESH_TOKEN_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 
-export function generateAccessToken(user) {
+export function generateAccessToken(user, sessionId) {
+  if (!sessionId) {
+    throw new Error('sessionId is required for access tokens');
+  }
+
   return jwt.sign(
-    { id: user._id, email: user.email, role: user.role },
+    { id: user._id, email: user.email, role: user.role, sid: String(sessionId) },
     JWT_SECRET,
-    { expiresIn: '15m' }
+    { expiresIn: ACCESS_TOKEN_TTL_MS / 1000 }
   );
 }
 
