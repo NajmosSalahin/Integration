@@ -56,6 +56,9 @@ server/uploaded_urls.json
 # DB dumps from one-off ingest/backup scripts (local only)
 server/scripts/backups/
 
+# Backup encryption key and portable restore tools (never commit)
+backup-keys/
+
 # Local package-locks superseded by workspace resolution
 client/package-lock.json
 server/package-lock.json
