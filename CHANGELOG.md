@@ -2,6 +2,23 @@
 
 ------
 
+## [1.5.0] - 2026-11-06
+
+**Status:** Stable - encrypted database backups
+
+**Operations**
+
+- Added a daily GitHub Actions backup at `19:00 UTC`. It dumps the full `integration` database with `mongodump`, encrypts the archive with age, and uploads it as a GitHub Actions artifact retained for 90 days. No new paid service is required.
+- Added `BACKUPS.md` with key custody, download/decrypt commands, a scratch-database restore drill, full-restore steps, and free-plan limits.
+- Verified the full path from the real workflow artifact: downloaded, decrypted, restored 224 documents across 8 collections and their indexes into `restore_20261106T1249`, matched the source, and dropped the scratch database.
+- Updated `actions/checkout`, `actions/setup-node`, and `actions/upload-artifact` to v7 to clear the Node 20 deprecation warnings.
+
+**Tests:** CI passes on `develop` and `master`; backup runs `42220602086` and `42220871229` succeeded. No production users, orders, coupons, or schema changes were created.
+
+Detailed release notes: [versions/v1.5.0.md](versions/v1.5.0.md)
+
+------
+
 ## [1.4.0] - 2026-11-06
 
 **Status:** Stable - verified checkout and order status lifecycle
