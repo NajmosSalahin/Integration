@@ -2,6 +2,22 @@
 
 ------
 
+## [1.6.0] - 2026-11-06
+
+**Status:** Stable - session-bound access tokens
+
+**Security**
+
+- Access tokens now carry a session id (`sid`) and are verified against the `Session` collection on every protected request. Logout, password change, and password reset revoke access immediately instead of waiting for the token to expire.
+- Access-token lifetime shortened from 15 to 10 minutes.
+- Refresh rotation keeps the previous token hash for a 30-second grace window so concurrent tabs do not trigger reuse revocation. A replay inside the window receives a new access token without another rotation; a replay after it still revokes the session family.
+
+**Tests:** 65/65 server tests pass, the client build passes, and both audits report 0 vulnerabilities. A local HTTP suite passed 18/18 checks covering session binding, logout and password-change revocation, per-device logout, rotation, grace replay, post-grace rejection, and reuse detection. The disposable test user and session were deleted; no orders or coupons were created.
+
+Detailed release notes: [versions/v1.6.0.md](versions/v1.6.0.md)
+
+------
+
 ## [1.5.0] - 2026-11-06
 
 **Status:** Stable - encrypted database backups
