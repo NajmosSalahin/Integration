@@ -40,6 +40,15 @@ export const refreshLimiter = rateLimit({
   legacyHeaders: false,
 });
 
+export const resendVerificationLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 3,
+  keyGenerator: (req) => req.user?._id?.toString() || 'anonymous',
+  message: { error: 'Too many verification email requests. Please try again later.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 export const orderCreateLimiter = rateLimit({
   windowMs: 60 * 60 * 1000,
   max: 10,

@@ -4,11 +4,13 @@ import { motion } from 'framer-motion';
 import MetaTags from '../components/MetaTags';
 import { AlertCircle, CheckCircle } from 'lucide-react';
 import { verifyEmail } from '../api/auth';
+import { useAuth } from '../context/AuthContext';
 import Spinner from '../components/ui/Spinner';
 
 export default function VerifyEmail() {
   const [searchParams] = useSearchParams();
   const token = searchParams.get('token');
+  const { refreshUser } = useAuth();
   const [status, setStatus] = useState('verifying');
   const [error, setError] = useState(null);
 
@@ -19,7 +21,10 @@ export default function VerifyEmail() {
       return;
     }
     verifyEmail(token)
-      .then(() => setStatus('success'))
+      .then(() => {
+        setStatus('success');
+        refreshUser().catch(() => {});
+      })
       .catch((err) => {
         setStatus('error');
         setError(err.message || 'Verification failed. The link may have expired.');

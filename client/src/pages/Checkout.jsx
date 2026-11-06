@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { AlertCircle, Tag } from 'lucide-react';
+import { AlertCircle, Mail, RefreshCw, Tag } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { resendVerification } from '../api/auth';
 import { createOrder } from '../api/orders';
 import { validateCoupon } from '../api/coupons';
 import useCart from '../stores/cartStore';
@@ -23,7 +24,7 @@ const inputClass = (hasError) =>
   }`;
 
 export default function Checkout() {
-  const { user } = useAuth();
+  const { user, refreshUser } = useAuth();
   const navigate = useNavigate();
   const { items, getTotal, clearCart } = useCart();
   const total = getTotal();
@@ -35,6 +36,9 @@ export default function Checkout() {
   const [error, setError] = useState(null);
   const [fieldErrors, setFieldErrors] = useState({ phone: null, address: null });
   const [promoCode, setPromoCode] = useState('');
+  const [verificationAction, setVerificationAction] = useState(null);
+  const [verificationMessage, setVerificationMessage] = useState('');
+  const [verificationError, setVerificationError] = useState('');
   const [promo, setPromo] = useState({
     status: 'idle',
     appliedCode: '',
@@ -105,6 +109,33 @@ export default function Checkout() {
     if (!address && saved) setAddress(composeAddress(saved));
   }, [user]);
 
+  const handleResendVerification = async () => {
+    setVerificationAction('sending');
+    setVerificationMessage('');
+    setVerificationError('');
+    try {
+      const result = await resendVerification();
+      setVerificationMessage(result.message || 'Verification email sent.');
+    } catch (err) {
+      setVerificationError(err.message || 'Could not send verification email.');
+    } finally {
+      setVerificationAction(null);
+    }
+  };
+
+  const handleRefreshVerification = async () => {
+    setVerificationAction('refreshing');
+    setVerificationMessage('');
+    setVerificationError('');
+    try {
+      await refreshUser();
+    } catch {
+      setVerificationError('Could not refresh your account status.');
+    } finally {
+      setVerificationAction(null);
+    }
+  };
+
   if (items.length === 0) {
     return (
       <>
@@ -117,6 +148,71 @@ export default function Checkout() {
               Browse the collection
             </Link>
           </div>
+          <Footer />
+        </div>
+      </>
+    );
+  }
+
+  if (user && !user.emailVerified) {
+    return (
+      <>
+        <MetaTags title="Verify Email to Checkout" description="Verify your email before placing an order." path="/checkout" noindex />
+        <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
+          <Navbar />
+          <main className="px-4 sm:px-6 lg:px-8 py-12">
+            <div className="max-w-xl mx-auto border border-[var(--border)] rounded-xl bg-[var(--bg-secondary)] p-6 sm:p-8 text-center space-y-4">
+              <Mail size={40} className="mx-auto text-[var(--accent)]" aria-hidden="true" />
+              <h1
+                className="text-3xl tracking-[0.15em] uppercase"
+                style={{ fontFamily: "'Bebas Neue', sans-serif" }}
+              >
+                Verify your email
+              </h1>
+              <p className="text-sm text-[var(--text-secondary)]">
+                We need to verify <span className="text-[var(--text-primary)]">{user.email}</span> before we can
+                accept your order.
+              </p>
+              <p className="text-sm text-[var(--text-secondary)]">
+                Check your inbox for the verification link, then come back and refresh your status.
+              </p>
+
+              {verificationMessage && (
+                <p className="text-sm text-emerald-400" role="status">{verificationMessage}</p>
+              )}
+              {verificationError && (
+                <p className="text-sm text-red-400" role="alert">{verificationError}</p>
+              )}
+
+              <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
+                <button
+                  type="button"
+                  onClick={handleResendVerification}
+                  disabled={Boolean(verificationAction)}
+                  className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-[var(--accent)] hover:bg-[var(--accent-hover)] disabled:bg-[var(--border)] disabled:text-[var(--text-secondary)] text-sm tracking-wider uppercase transition-colors disabled:cursor-not-allowed"
+                >
+                  {verificationAction === 'sending' ? 'Sending...' : 'Resend verification email'}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleRefreshVerification}
+                  disabled={Boolean(verificationAction)}
+                  className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg border border-[var(--border)] hover:border-[var(--accent)] text-sm tracking-wider uppercase transition-colors disabled:opacity-50"
+                >
+                  <RefreshCw size={14} className={verificationAction === 'refreshing' ? 'animate-spin' : ''} aria-hidden="true" />
+                  {verificationAction === 'refreshing' ? 'Checking...' : 'Refresh status'}
+                </button>
+              </div>
+
+              <p className="text-xs text-[var(--text-secondary)] pt-2">
+                You can also manage this from your{' '}
+                <Link to="/account" className="text-[var(--accent)] hover:text-blue-400 transition-colors">
+                  account profile
+                </Link>
+                .
+              </p>
+            </div>
+          </main>
           <Footer />
         </div>
       </>
@@ -136,6 +232,10 @@ export default function Checkout() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
+    if (!user?.emailVerified) {
+      setError('Please verify your email before placing an order.');
+      return;
+    }
     if (!validate()) return;
 
     const trimmedPromo = promoCode.trim().toUpperCase();

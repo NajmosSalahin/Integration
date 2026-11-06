@@ -1,8 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
-import { Camera, Loader2 } from 'lucide-react';
+import { BadgeCheck, Camera, Loader2, Mail, RefreshCw } from 'lucide-react';
 import { useMutation } from '@tanstack/react-query';
 import { useAuth } from '../../context/AuthContext';
 import { updateMe, uploadAvatar } from '../../api/account';
+import { resendVerification } from '../../api/auth';
 import { useToast } from '../ui/Toast';
 
 const inputClass =
@@ -15,6 +16,8 @@ export default function ProfileSection() {
   const fileRef = useRef(null);
   const [name, setName] = useState(user?.name || '');
   const [phone, setPhone] = useState(user?.phone || '');
+  const [resending, setResending] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     setName(user?.name || '');
@@ -52,6 +55,30 @@ export default function ProfileSection() {
     const file = e.target.files?.[0];
     if (file) avatarMutation.mutate(file);
     e.target.value = '';
+  };
+
+  const handleResend = async () => {
+    setResending(true);
+    try {
+      const result = await resendVerification();
+      toast({ type: 'success', message: result.message || 'Verification email sent' });
+    } catch (err) {
+      toast({ type: 'error', message: err?.message || 'Failed to send verification email' });
+    } finally {
+      setResending(false);
+    }
+  };
+
+  const handleRefreshStatus = async () => {
+    setRefreshing(true);
+    try {
+      await refreshUser();
+      toast({ type: 'info', message: 'Account status refreshed' });
+    } catch {
+      toast({ type: 'error', message: 'Failed to refresh account status' });
+    } finally {
+      setRefreshing(false);
+    }
   };
 
   return (
@@ -106,7 +133,19 @@ export default function ProfileSection() {
           </div>
 
           <div>
-            <label htmlFor="profile-email" className={labelClass}>Email</label>
+            <div className="flex items-center justify-between gap-2 mb-1.5">
+              <label htmlFor="profile-email" className="block text-xs uppercase tracking-[0.15em] text-[var(--text-secondary)]">
+                Email
+              </label>
+              {user?.emailVerified ? (
+                <span className="inline-flex items-center gap-1 text-xs text-emerald-400">
+                  <BadgeCheck size={14} aria-hidden="true" />
+                  Verified
+                </span>
+              ) : (
+                <span className="text-xs text-yellow-400">Not verified</span>
+              )}
+            </div>
             <input
               id="profile-email"
               type="email"
@@ -118,6 +157,28 @@ export default function ProfileSection() {
             <p className="text-xs text-[var(--text-secondary)] mt-1.5">
               Email is used to sign in and receive order updates. Contact support to change it.
             </p>
+            {!user?.emailVerified && (
+              <div className="mt-2 flex flex-wrap items-center gap-2">
+                <button
+                  type="button"
+                  onClick={handleResend}
+                  disabled={resending}
+                  className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border border-[var(--border)] hover:border-[var(--accent)] text-[var(--text-primary)] transition-colors disabled:opacity-50"
+                >
+                  {resending ? <Loader2 size={12} className="animate-spin" aria-hidden="true" /> : <Mail size={12} aria-hidden="true" />}
+                  Resend verification email
+                </button>
+                <button
+                  type="button"
+                  onClick={handleRefreshStatus}
+                  disabled={refreshing}
+                  className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border border-[var(--border)] hover:border-[var(--accent)] text-[var(--text-primary)] transition-colors disabled:opacity-50"
+                >
+                  <RefreshCw size={12} className={refreshing ? 'animate-spin' : ''} aria-hidden="true" />
+                  Refresh status
+                </button>
+              </div>
+            )}
           </div>
 
           <div>

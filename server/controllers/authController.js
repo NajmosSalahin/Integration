@@ -7,6 +7,7 @@ import {
   generateEmailToken,
   hashToken,
 } from '../utils/token.js';
+import { createVerification } from '../utils/verification.js';
 import { sessionStore } from '../utils/session.js';
 import { sendVerificationEmail } from '../emails/verification.js';
 import { sendResetPasswordEmail } from '../emails/resetPassword.js';
@@ -38,16 +39,15 @@ export async function signup(req, res) {
     const { name, email, password } = req.body;
 
     const passwordHash = await User.hashPassword(password);
-    const verificationToken = generateEmailToken();
-    const verificationTokenHash = hashToken(verificationToken);
+    const verification = createVerification();
 
     try {
       await User.create({
         name,
         email,
         passwordHash,
-        verificationToken: verificationTokenHash,
-        verificationExpires: new Date(Date.now() + 24 * 60 * 60 * 1000),
+        verificationToken: verification.tokenHash,
+        verificationExpires: verification.expiresAt,
       });
     } catch (err) {
       if (err?.code === 11000) {
@@ -62,7 +62,7 @@ export async function signup(req, res) {
     }
 
     try {
-      await sendVerificationEmail(email, verificationToken);
+      await sendVerificationEmail(email, verification.token);
     } catch (emailErr) {
       console.error('Failed to send verification email:', emailErr);
     }
@@ -176,6 +176,34 @@ export async function verifyEmail(req, res) {
   } catch (err) {
     console.error('Verify email error:', err);
     res.status(500).json({ error: 'Failed to verify email' });
+  }
+}
+
+export async function resendVerification(req, res) {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    if (user.emailVerified) {
+      return res.json({ message: 'Email already verified' });
+    }
+
+    const verification = createVerification();
+    user.verificationToken = verification.tokenHash;
+    user.verificationExpires = verification.expiresAt;
+    await user.save();
+
+    try {
+      await sendVerificationEmail(user.email, verification.token);
+    } catch (emailErr) {
+      console.error('Failed to send verification email:', emailErr);
+    }
+
+    res.json({ message: 'Verification email sent' });
+  } catch (err) {
+    console.error('Resend verification error:', err);
+    res.status(500).json({ error: 'Failed to send verification email' });
   }
 }
 

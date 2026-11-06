@@ -6,6 +6,7 @@ import {
   refresh,
   getMe,
   verifyEmail,
+  resendVerification,
   forgotPassword,
   resetPassword,
   updateMe,
@@ -37,6 +38,7 @@ import {
   forgotPasswordLimiter,
   resetPasswordLimiter,
   refreshLimiter,
+  resendVerificationLimiter,
 } from '../middleware/rateLimit.js';
 
 const router = Router();
@@ -55,6 +57,7 @@ router.put('/addresses/:addressId', protect, validate(updateAddressSchema), upda
 router.delete('/addresses/:addressId', protect, deleteAddress);
 router.patch('/addresses/:addressId/default', protect, setDefaultAddress);
 router.post('/verify-email', verifyEmail);
+router.post('/resend-verification', protect, resendVerificationLimiter, resendVerification);
 router.post('/forgot-password', forgotPasswordLimiter, validate(forgotPasswordSchema), forgotPassword);
 router.post('/reset-password', resetPasswordLimiter, validate(resetPasswordSchema), resetPassword);
 

@@ -49,6 +49,12 @@ export async function verifyEmail(token) {
   );
 }
 
+export async function resendVerification() {
+  return authJson('/api/auth/resend-verification', {
+    method: 'POST',
+  });
+}
+
 export async function forgotPassword(email) {
   return authJson(
     '/api/auth/forgot-password',
