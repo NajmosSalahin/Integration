@@ -2,6 +2,35 @@
 
 ------
 
+## [1.7.0] - 2026-11-08
+
+**Status:** Stable - admin workspace redesign
+
+**Admin workspace**
+
+- Added `/admin` overview dashboard with permission-aware cards for orders, products, coupons, banners, and categories plus the latest five orders. `/admin` no longer redirects to `/admin/orders`.
+- Added `AdminLayout` with a permission-filtered sidebar, mobile drawer, account summary, store link, and logout. Admin pages no longer render the storefront navbar or footer.
+- Added shared admin primitives: `AdminPageHeader`, `AdminToolbar`, `StatusBadge`, `IconButton`, `formatCurrency`/`formatDate` helpers, and `useListControls`.
+- Rebuilt Orders with status-count tabs, debounced server-side search, sorting, mobile cards, explicit view actions, copy order ID/email actions, contact links, a sticky detail footer, and confirmation for terminal statuses.
+- Rebuilt Products with search, filters, sorting, pagination, mobile cards, per-size stock editing, image gallery uploads, tag chips, inline validation, a dirty-form guard, and optimistic stock/featured/homepage/active updates.
+- Rebuilt Coupons and Banners with search, filters, sorting, pagination, mobile cards, activation/deactivation, inline validation, sticky modal footers, and dirty-form guards.
+- Rebuilt Categories with search, filters, sorting, pagination, mobile cards, icon previews, a tag-rename warning, image upload preview, activation/deactivation, and a dirty-form guard.
+- Replaced the five navbar admin links with one “Admin dashboard” entry.
+
+**Fixes and security**
+
+- `GET /api/orders` now returns `statusCounts` for the order filter tabs.
+- `GET /api/orders/:id` now restricts admins without the `orders` permission to their own orders.
+- Admin forms now map server field errors to inputs and use the global toast store above modals.
+- Modal scroll locking now survives stacked dialogs; only the topmost dialog handles Escape and traps focus.
+- The mobile admin drawer now traps focus, closes on Escape, and restores focus to the menu button.
+
+**Tests:** 65/65 server tests pass, the client production build passes, and both audits report 0 vulnerabilities. Verification was local only; no production orders or coupons were created.
+
+Detailed release notes: [versions/v1.7.0.md](versions/v1.7.0.md)
+
+------
+
 ## [1.6.0] - 2026-11-06
 
 **Status:** Stable - session-bound access tokens
