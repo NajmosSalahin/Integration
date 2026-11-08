@@ -2,6 +2,20 @@
 
 ------
 
+## [1.7.1] - 2026-11-08
+
+**Status:** Stable - health version fix
+
+- `GET /api/health` now reports the version from `server/package.json` instead of the hardcoded `0.1.0`.
+- Bumped the server package and lockfile versions to `1.7.1`.
+- Added a test that asserts the health payload matches the server package version.
+
+**Tests:** 66/66 server tests pass. No production orders or coupons were created.
+
+Detailed release notes: [versions/v1.7.1.md](versions/v1.7.1.md)
+
+------
+
 ## [1.7.0] - 2026-11-08
 
 **Status:** Stable - admin workspace redesign

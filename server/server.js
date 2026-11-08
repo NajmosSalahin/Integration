@@ -21,6 +21,7 @@ import bootstrapAdmin from './utils/bootstrapAdmin.js';
 import errorHandler from './middleware/errorHandler.js';
 import { parseTrustProxy } from './utils/trustProxy.js';
 import { parseAllowedOrigins, isAllowedOrigin } from './utils/origin.js';
+import { healthPayload } from './utils/health.js';
 import Product from './models/Product.js';
 import {
   applySeo,
@@ -67,7 +68,7 @@ app.use(cookieParser());
 app.use(compression());
 
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', version: '0.1.0' });
+  res.json(healthPayload());
 });
 
 app.use('/api/auth', authRoutes);
