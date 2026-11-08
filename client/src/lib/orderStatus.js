@@ -20,6 +20,19 @@ export function orderStatusLabel(status) {
   return ORDER_STATUS_LABELS[status] || status;
 }
 
+export const ORDER_STATUS_TONES = {
+  pending_payment: 'amber',
+  awaiting_confirmation: 'orange',
+  paid: 'blue',
+  shipped: 'indigo',
+  fulfilled: 'emerald',
+  cancelled: 'red',
+};
+
+export function orderStatusTone(status) {
+  return ORDER_STATUS_TONES[status] || 'neutral';
+}
+
 export const ORDER_STATUS_BADGES = {
   pending_payment: { label: 'Processing', cls: 'bg-yellow-500/10 text-yellow-400' },
   awaiting_confirmation: { label: 'Processing', cls: 'bg-yellow-500/10 text-yellow-400' },

@@ -15,10 +15,11 @@ export async function getOrder(id) {
   return request(`/api/orders/${id}`);
 }
 
-export async function getAllOrders({ status, page, search, sort } = {}) {
+export async function getAllOrders({ status, page, limit, search, sort } = {}) {
   const params = new URLSearchParams();
   if (status) params.set('status', status);
   if (page) params.set('page', String(page));
+  if (limit) params.set('limit', String(limit));
   if (search) params.set('search', search);
   if (sort) params.set('sort', sort);
   const qs = params.toString();

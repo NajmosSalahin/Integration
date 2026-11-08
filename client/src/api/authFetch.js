@@ -56,7 +56,17 @@ export async function authJson(url, options = {}, retry = true) {
   const res = await authenticatedFetch(url, options, retry);
   const data = await res.json().catch(() => ({}));
   if (!res.ok) {
-    throw new Error(data.error || 'Request failed');
+    const fieldErrors =
+      data.errors && typeof data.errors === 'object' && !Array.isArray(data.errors)
+        ? data.errors
+        : null;
+    const firstFieldError = fieldErrors
+      ? Object.values(fieldErrors).flat().find(Boolean)
+      : null;
+    const error = new Error(data.error || firstFieldError || 'Request failed');
+    error.status = res.status;
+    error.fieldErrors = fieldErrors;
+    throw error;
   }
   return data;
 }

@@ -24,6 +24,8 @@ const AdminProducts = lazyWithRetry(() => import('./pages/admin/Products'));
 const AdminCoupons = lazyWithRetry(() => import('./pages/admin/Coupons'));
 const AdminBanners = lazyWithRetry(() => import('./pages/admin/Banners'));
 const AdminCategories = lazyWithRetry(() => import('./pages/admin/Categories'));
+const AdminDashboard = lazyWithRetry(() => import('./pages/admin/Dashboard'));
+const AdminLayout = lazyWithRetry(() => import('./components/admin/AdminLayout'));
 const Account = lazyWithRetry(() => import('./pages/Account'));
 const About = lazyWithRetry(() => import('./pages/About'));
 const Contact = lazyWithRetry(() => import('./pages/Contact'));
@@ -117,48 +119,54 @@ function App() {
           <Route path="/verify-email" element={<VerifyEmail />} />
           <Route
             path="/admin"
-            element={<Navigate to="/admin/orders" replace />}
-          />
-          <Route
-            path="/admin/orders"
             element={
-              <AdminRoute section="orders">
-                <AdminOrders />
+              <AdminRoute>
+                <AdminLayout />
               </AdminRoute>
             }
-          />
-          <Route
-            path="/admin/products"
-            element={
-              <AdminRoute section="products">
-                <AdminProducts />
-              </AdminRoute>
-            }
-          />
-          <Route
-            path="/admin/coupons"
-            element={
-              <AdminRoute section="coupons">
-                <AdminCoupons />
-              </AdminRoute>
-            }
-          />
-          <Route
-            path="/admin/banners"
-            element={
-              <AdminRoute section="banners">
-                <AdminBanners />
-              </AdminRoute>
-            }
-          />
-          <Route
-            path="/admin/categories"
-            element={
-              <AdminRoute section="categories">
-                <AdminCategories />
-              </AdminRoute>
-            }
-          />
+          >
+            <Route index element={<AdminDashboard />} />
+            <Route
+              path="orders"
+              element={
+                <AdminRoute section="orders">
+                  <AdminOrders />
+                </AdminRoute>
+              }
+            />
+            <Route
+              path="products"
+              element={
+                <AdminRoute section="products">
+                  <AdminProducts />
+                </AdminRoute>
+              }
+            />
+            <Route
+              path="coupons"
+              element={
+                <AdminRoute section="coupons">
+                  <AdminCoupons />
+                </AdminRoute>
+              }
+            />
+            <Route
+              path="banners"
+              element={
+                <AdminRoute section="banners">
+                  <AdminBanners />
+                </AdminRoute>
+              }
+            />
+            <Route
+              path="categories"
+              element={
+                <AdminRoute section="categories">
+                  <AdminCategories />
+                </AdminRoute>
+              }
+            />
+          </Route>
           <Route
             path="/account"
             element={

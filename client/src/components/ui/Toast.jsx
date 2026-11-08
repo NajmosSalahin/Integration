@@ -57,6 +57,8 @@ export default function ToastContainer() {
               exit={{ opacity: 0, y: -10, scale: 0.95 }}
               transition={{ duration: 0.25 }}
               className={`pointer-events-auto flex items-start gap-3 px-4 py-3 rounded-lg border backdrop-blur-md max-w-sm shadow-lg bg-black/75 text-white border-white/10 ${colors[toast.type]}`}
+              role="status"
+              aria-live="polite"
             >
               <Icon size={18} className={`shrink-0 mt-0.5 ${iconColors[toast.type]}`} />
               <p className="text-sm flex-1 leading-snug">{toast.message}</p>

@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { Link, useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, ShoppingCart, Menu, X, LogOut, Package, LogIn, User, Loader2, BadgePercent, LayoutGrid, Tags } from 'lucide-react';
+import { Search, ShoppingCart, Menu, X, LogOut, Package, LogIn, User, Loader2, LayoutDashboard } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { fetchProducts } from '../api/products';
 import useCart from '../stores/cartStore';
@@ -192,56 +192,6 @@ export default function Navbar() {
                 >
                   Shop
                 </Link>
-
-                {adminSections.length > 0 && (
-                  <>
-                    {adminSections.includes('orders') && (
-                      <Link
-                        to="/admin/orders"
-                        className={navLinkClass(isActive('/admin/orders'))}
-                        aria-current={isActive('/admin/orders') ? 'page' : undefined}
-                      >
-                        Orders
-                      </Link>
-                    )}
-                    {adminSections.includes('products') && (
-                      <Link
-                        to="/admin/products"
-                        className={navLinkClass(isActive('/admin/products'))}
-                        aria-current={isActive('/admin/products') ? 'page' : undefined}
-                      >
-                        Products
-                      </Link>
-                    )}
-                    {adminSections.includes('coupons') && (
-                      <Link
-                        to="/admin/coupons"
-                        className={navLinkClass(isActive('/admin/coupons'))}
-                        aria-current={isActive('/admin/coupons') ? 'page' : undefined}
-                      >
-                        Coupons
-                      </Link>
-                    )}
-                    {adminSections.includes('banners') && (
-                      <Link
-                        to="/admin/banners"
-                        className={navLinkClass(isActive('/admin/banners'))}
-                        aria-current={isActive('/admin/banners') ? 'page' : undefined}
-                      >
-                        Banners
-                      </Link>
-                    )}
-                    {adminSections.includes('categories') && (
-                      <Link
-                        to="/admin/categories"
-                        className={navLinkClass(isActive('/admin/categories'))}
-                        aria-current={isActive('/admin/categories') ? 'page' : undefined}
-                      >
-                        Categories
-                      </Link>
-                    )}
-                  </>
-                )}
               </nav>
 
               <Link
@@ -336,63 +286,15 @@ export default function Navbar() {
                           </Link>
                         )}
                         {adminSections.length > 0 && (
-                          <>
-                            {adminSections.includes('orders') && (
-                              <Link
-                                to="/admin/orders"
-                                onClick={() => setUserMenuOpen(false)}
-                                className="flex items-center gap-3 px-4 py-2 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-primary)] transition-colors sm:hidden"
-                                role="menuitem"
-                              >
-                                <Package size={16} aria-hidden="true" />
-                                Admin Orders
-                              </Link>
-                            )}
-                            {adminSections.includes('products') && (
-                              <Link
-                                to="/admin/products"
-                                onClick={() => setUserMenuOpen(false)}
-                                className="flex items-center gap-3 px-4 py-2 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-primary)] transition-colors sm:hidden"
-                                role="menuitem"
-                              >
-                                <Package size={16} aria-hidden="true" />
-                                Admin Products
-                              </Link>
-                            )}
-                            {adminSections.includes('coupons') && (
-                              <Link
-                                to="/admin/coupons"
-                                onClick={() => setUserMenuOpen(false)}
-                                className="flex items-center gap-3 px-4 py-2 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-primary)] transition-colors sm:hidden"
-                                role="menuitem"
-                              >
-                                <BadgePercent size={16} aria-hidden="true" />
-                                Admin Coupons
-                              </Link>
-                            )}
-                            {adminSections.includes('banners') && (
-                              <Link
-                                to="/admin/banners"
-                                onClick={() => setUserMenuOpen(false)}
-                                className="flex items-center gap-3 px-4 py-2 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-primary)] transition-colors sm:hidden"
-                                role="menuitem"
-                              >
-                                <LayoutGrid size={16} aria-hidden="true" />
-                                Admin Banners
-                              </Link>
-                            )}
-                            {adminSections.includes('categories') && (
-                              <Link
-                                to="/admin/categories"
-                                onClick={() => setUserMenuOpen(false)}
-                                className="flex items-center gap-3 px-4 py-2 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-primary)] transition-colors sm:hidden"
-                                role="menuitem"
-                              >
-                                <Tags size={16} aria-hidden="true" />
-                                Admin Categories
-                              </Link>
-                            )}
-                          </>
+                          <Link
+                            to="/admin"
+                            onClick={() => setUserMenuOpen(false)}
+                            className="flex items-center gap-3 px-4 py-2 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-primary)] transition-colors"
+                            role="menuitem"
+                          >
+                            <LayoutDashboard size={16} aria-hidden="true" />
+                            Admin dashboard
+                          </Link>
                         )}
                         <div className="border-t border-[var(--border)] my-0.5" role="none" />
                         {user ? (
@@ -496,24 +398,14 @@ export default function Navbar() {
                 <Link to="/contact" className="block py-2 px-1 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">Contact</Link>
                 <Link to="/faq" className="block py-2 px-1 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">FAQ</Link>
                 {adminSections.length > 0 && (
-                  <>
-                    <div className="border-t border-[var(--border)] my-2" />
-                    {adminSections.includes('orders') && (
-                      <Link to="/admin/orders" className={`block py-2 px-1 text-sm transition-colors ${isActive('/admin/orders') ? 'text-[var(--accent)]' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`} aria-current={isActive('/admin/orders') ? 'page' : undefined}>Admin Orders</Link>
-                    )}
-                    {adminSections.includes('products') && (
-                      <Link to="/admin/products" className={`block py-2 px-1 text-sm transition-colors ${isActive('/admin/products') ? 'text-[var(--accent)]' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`} aria-current={isActive('/admin/products') ? 'page' : undefined}>Admin Products</Link>
-                    )}
-                    {adminSections.includes('coupons') && (
-                      <Link to="/admin/coupons" className={`block py-2 px-1 text-sm transition-colors ${isActive('/admin/coupons') ? 'text-[var(--accent)]' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`} aria-current={isActive('/admin/coupons') ? 'page' : undefined}>Admin Coupons</Link>
-                    )}
-                    {adminSections.includes('banners') && (
-                      <Link to="/admin/banners" className={`block py-2 px-1 text-sm transition-colors ${isActive('/admin/banners') ? 'text-[var(--accent)]' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`} aria-current={isActive('/admin/banners') ? 'page' : undefined}>Admin Banners</Link>
-                    )}
-                    {adminSections.includes('categories') && (
-                      <Link to="/admin/categories" className={`block py-2 px-1 text-sm transition-colors ${isActive('/admin/categories') ? 'text-[var(--accent)]' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`} aria-current={isActive('/admin/categories') ? 'page' : undefined}>Admin Categories</Link>
-                    )}
-                  </>
+                  <Link
+                    to="/admin"
+                    className={`flex items-center gap-2 py-2 px-1 text-sm transition-colors ${isActive('/admin') ? 'text-[var(--accent)]' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}
+                    aria-current={isActive('/admin') ? 'page' : undefined}
+                  >
+                    <LayoutDashboard size={15} aria-hidden="true" />
+                    Admin dashboard
+                  </Link>
                 )}
                 <div className="border-t border-[var(--border)] my-2" />
                 {user ? (
