@@ -9,7 +9,7 @@ import { resolveOrderItems } from '../utils/orderItems.js';
 import { computeDiscount, couponIssue, COUPON_REASON_MESSAGES } from '../utils/coupon.js';
 import { couponReservationStore } from '../utils/couponReservation.js';
 import { parseOrderQuery } from '../utils/orderQuery.js';
-import { canTransition } from '../utils/orderStatus.js';
+import { canTransition, ORDER_STATUSES } from '../utils/orderStatus.js';
 
 const MAX_ORDER_TOTAL = 1000000;
 
@@ -151,7 +151,11 @@ export async function getOrder(req, res) {
     }
 
     const ownerId = order.userId?._id ?? order.userId;
-    if (req.user.role !== 'admin' && String(ownerId) !== String(req.user._id)) {
+    const permissions = req.user.permissions || [];
+    const canManageOrders =
+      req.user.role === 'admin' &&
+      (permissions.length === 0 || permissions.includes('orders'));
+    if (!canManageOrders && String(ownerId) !== String(req.user._id)) {
       return res.status(403).json({ error: 'Not authorized to view this order' });
     }
 
@@ -165,7 +169,13 @@ export async function getOrder(req, res) {
 export async function getAllOrders(req, res) {
   try {
     if (mongoose.connection.readyState !== 1) {
-      return res.json({ orders: [], page: 1, totalOrders: 0, totalPages: 0 });
+      return res.json({
+        orders: [],
+        page: 1,
+        totalOrders: 0,
+        totalPages: 0,
+        statusCounts: Object.fromEntries(ORDER_STATUSES.map((status) => [status, 0])),
+      });
     }
 
     const parsed = parseOrderQuery(req.query);
@@ -175,6 +185,14 @@ export async function getAllOrders(req, res) {
     const { status, page, limit, search, sort } = parsed;
     const filter = {};
     if (status) filter.status = status;
+
+    const groupedCounts = await Order.aggregate([
+      { $group: { _id: '$status', count: { $sum: 1 } } },
+    ]);
+    const statusCounts = Object.fromEntries(ORDER_STATUSES.map((s) => [s, 0]));
+    for (const row of groupedCounts) {
+      if (statusCounts[row._id] !== undefined) statusCounts[row._id] = row.count;
+    }
 
     const trimmedSearch = (search || '').trim();
     if (trimmedSearch) {
@@ -204,7 +222,7 @@ export async function getAllOrders(req, res) {
       if (conditions.length > 0) {
         filter.$or = conditions;
       } else {
-        return res.json({ orders: [], page, totalOrders: 0, totalPages: 0 });
+        return res.json({ orders: [], page, totalOrders: 0, totalPages: 0, statusCounts });
       }
     }
 
@@ -232,6 +250,7 @@ export async function getAllOrders(req, res) {
       page,
       totalOrders,
       totalPages,
+      statusCounts,
     });
   } catch (err) {
     console.error('getAllOrders error:', err);
