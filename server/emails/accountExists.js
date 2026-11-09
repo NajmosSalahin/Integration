@@ -33,7 +33,7 @@ export async function sendAccountExistsEmail(email) {
 
   await brevo.transactionalEmails.sendTransacEmail({
     subject: 'Your Integration account already exists',
-    sender: { name: 'Integration', email: 'najmussalahin.adib@gmail.com' },
+    sender: { name: 'Integration', email: process.env.FROM_EMAIL || process.env.OWNER_EMAIL },
     to: [{ email }],
     htmlContent: wrap(content),
   });

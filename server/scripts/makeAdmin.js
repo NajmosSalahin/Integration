@@ -8,7 +8,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const args = process.argv.slice(2);
 const passwordIndex = args.indexOf('--password');
-const password = passwordIndex >= 0 ? args[passwordIndex + 1] : '[redacted]';
+const password = passwordIndex >= 0 ? args[passwordIndex + 1] : undefined;
 const permsIndex = args.indexOf('--permissions');
 const permissions = permsIndex >= 0
   ? args[permsIndex + 1].split(',').map((s) => s.trim().toLowerCase()).filter(Boolean)
@@ -35,7 +35,15 @@ if (!MONGO_URI) {
   process.exit(1);
 }
 if (emails.length === 0) {
-  console.error('Usage: node scripts/makeAdmin.js <email> [<email> ...] [--password <password>] [--permissions orders,products,coupons,banners,categories] [--prod]');
+  console.error('Usage: node scripts/makeAdmin.js <email> [<email> ...] --password <password> [--permissions orders,products,coupons,banners,categories] [--prod]');
+  process.exit(1);
+}
+if (!password) {
+  console.error('A password is required. Pass --password <password> (minimum 12 characters).');
+  process.exit(1);
+}
+if (password.length < 12) {
+  console.error('Password must be at least 12 characters.');
   process.exit(1);
 }
 
@@ -78,9 +86,7 @@ async function run() {
     }
   }
 
-  if (passwordIndex < 0) {
-    console.log('Temporary password for new accounts is [redacted] — log in and change it immediately. Existing accounts keep their current password.');
-  }
+  console.log('Log in with the password you passed and change it immediately. Existing accounts keep their current password.');
 
   await mongoose.disconnect();
   process.exit(0);

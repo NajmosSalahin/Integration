@@ -1,25 +1,6 @@
 export const categories = [
-  { name: 'IU T-Shirts', tag: 'iu-tshirts', icon: 'Shirt', group: 'T-Shirts', home: true },
-  { name: "Men's T-Shirts", tag: 'mens-tshirts', icon: 'Shirt', group: 'T-Shirts', home: true },
-  { name: "Men's Shirts", tag: 'mens-shirts', icon: 'Shirt', group: 'Shirts', home: true },
+  { name: 'Classic Tees', tag: 'tees', icon: 'Shirt', group: 'T-Shirts', home: true },
   { name: 'Hoodies', tag: 'hoodies', icon: 'Shirt', group: 'Outerwear', home: true },
-  { name: "Jerseys", tag: 'jerseys', icon: 'Shield', group: 'Outerwear', home: true },
-  { name: 'Aesthetic T-Shirt', tag: 'aesthetic-tshirts', icon: 'Shirt', group: 'T-Shirts', home: true },
-  { name: 'Lalon T-Shirt', tag: 'lalon-tshirts', icon: 'Shirt', group: 'T-Shirts', home: true },
-  { name: 'Literature Cover T-Shirt', tag: 'literature-tshirts', icon: 'BookOpenText', group: 'T-Shirts', home: true },
-  { name: 'Anime T-Shirts', tag: 'anime-tshirts', icon: 'Shirt', group: 'T-Shirts', home: true },
-  { name: "Men's Cap", tag: 'mens-caps', icon: 'Crown', group: 'Headwear', home: false },
-  { name: "Joggers", tag: 'joggers', icon: 'Footprints', group: 'Bottoms', home: false },
-  { name: "Men's Handbag", tag: 'mens-handbags', icon: 'ShoppingBag', group: 'Bags', home: false },
-  { name: "Women's Handbag", tag: 'womens-handbags', icon: 'ShoppingBag', group: 'Bags', home: false },
-  { name: "Men's Backpack", tag: 'mens-backpacks', icon: 'Backpack', group: 'Bags', home: false },
-  { name: "Women's Backpack", tag: 'womens-backpacks', icon: 'Backpack', group: 'Bags', home: false },
-  { name: 'Tote Bag', tag: 'tote-bags', icon: 'BaggageClaim', group: 'Bags', home: false },
-  { name: 'Messenger Bag', tag: 'messenger-bags', icon: 'Briefcase', group: 'Bags', home: false },
-  { name: "Women's T-Shirt", tag: 'womens-tshirts', icon: 'Shirt', group: 'T-Shirts', home: false },
-  { name: "Women's Shirt", tag: 'womens-shirts', icon: 'Shirt', group: 'Shirts', home: false },
-  { name: "Men's Jeans", tag: 'mens-jeans', icon: 'TvMinimal', group: 'Bottoms', home: false },
-  { name: "Women's Jeans", tag: 'womens-jeans', icon: 'TvMinimal', group: 'Bottoms', home: false },
+  { name: 'Long Sleeves', tag: 'long-sleeves', icon: 'Shirt', group: 'Shirts', home: true },
+  { name: 'Accessories', tag: 'accessories', icon: 'ShoppingBag', group: 'Accessories', home: false },
 ];
-
-export const CATEGORY_GROUPS = ['T-Shirts', 'Shirts', 'Outerwear', 'Bottoms', 'Headwear', 'Bags'];

@@ -1,13 +1,12 @@
 import { Link } from 'react-router-dom';
-import { ChevronUp, Facebook, X, Instagram } from 'lucide-react';
+import { ChevronUp, Facebook, X } from 'lucide-react';
 import NewsletterForm from './NewsletterForm';
 import { siteConfig } from '../lib/site';
 
 const SOCIAL_LINKS = [
   { label: 'Facebook', href: siteConfig.social.facebook, Icon: Facebook },
   { label: 'X', href: siteConfig.social.x, Icon: X },
-  { label: 'Instagram', href: siteConfig.social.instagram, Icon: Instagram },
-];
+].filter(({ href }) => Boolean(href));
 
 export default function Footer() {
   return (

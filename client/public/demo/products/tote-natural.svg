@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" role="img" aria-label="Canvas Tote in Natural">
+  <rect width="800" height="800" fill="#f7f2e8"/>
+  <circle cx="640" cy="150" r="170" fill="#efe6d6"/>
+  <path d="M320 270 Q320 160 400 160 Q480 160 480 270" fill="none" stroke="#b8a17e" stroke-width="18" stroke-linecap="round"/>
+  <rect x="250" y="270" width="300" height="350" rx="10" fill="#d9c7a7"/>
+  <rect x="250" y="270" width="300" height="350" rx="10" fill="none" stroke="#c4ad87" stroke-width="4"/>
+  <path d="M250 380 L550 380" stroke="#c4ad87" stroke-width="4" opacity="0.7"/>
+  <text x="400" y="490" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="18" letter-spacing="5" fill="#8a7553">INTEGRATION</text>
+  <text x="400" y="735" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="22" letter-spacing="7" fill="#78716c">CANVAS TOTE</text>
+  <text x="400" y="765" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" letter-spacing="4" fill="#a8a29e">NATURAL</text>
+</svg>

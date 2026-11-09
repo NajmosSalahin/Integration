@@ -1,8 +1,11 @@
 {
   "name": "integration-client",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.8.0",
   "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",

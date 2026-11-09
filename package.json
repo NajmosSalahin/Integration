@@ -1,18 +1,20 @@
 {
   "name": "integration",
-  "version": "1.0.0",
+  "version": "1.8.0",
   "private": true,
-  "description": "Curated T-Shirt Storefront — Integration",
+  "description": "Production MERN e-commerce storefront for Integration",
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "dev": "concurrently \"npm run dev:client\" \"npm run dev:server\"",
     "dev:client": "cd client && npm run dev",
     "dev:server": "cd server && npm run dev",
     "build": "cd client && npm run build",
     "start": "cd server && node server.js",
-    "seed": "cd server && node --input-type=module -e \"import './utils/seed.js'\"",
-    "seed:upload": "cd server && node utils/uploadImages.js",
-    "seed:users": "cd server && node --input-type=module -e \"import './utils/seedUsers.js'\"",
-    "prepare": "[ -d .git ] && husky || true"
+    "seed": "cd server && node utils/seedDemo.js",
+    "test": "cd server && npm test",
+    "prepare": "husky || true"
   },
   "devDependencies": {
     "concurrently": "^9.0.0",

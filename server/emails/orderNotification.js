@@ -59,7 +59,7 @@ export async function sendOrderNotificationEmail({ order, customerName, customer
 
   await brevo.transactionalEmails.sendTransacEmail({
     subject: `New Order — #${String(order._id).slice(-8).toUpperCase()}`,
-    sender: { name: 'Integration', email: 'najmussalahin.adib@gmail.com' },
+    sender: { name: 'Integration', email: process.env.FROM_EMAIL || process.env.OWNER_EMAIL },
     to: ownerEmails.map((email) => ({ email })),
     htmlContent: wrap(content),
     attachment: pdfBuffer

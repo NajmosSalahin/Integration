@@ -34,7 +34,7 @@ export async function sendContactEmail({ name, email, message }) {
 
   await brevo.transactionalEmails.sendTransacEmail({
     subject: `Contact Form — ${name}`,
-    sender: { name: 'Integration Website', email: 'najmussalahin.adib@gmail.com' },
+    sender: { name: 'Integration Website', email: process.env.FROM_EMAIL || process.env.OWNER_EMAIL },
     to: ownerEmails.map((email) => ({ email })),
     replyTo: { email, name },
     htmlContent: wrap(content),

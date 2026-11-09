@@ -2,19 +2,30 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-const CLOUD_BASE = 'https://res.cloudinary.com/zo1t9pye/image/upload';
+const CLOUD_BASE = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
+  ? `https://res.cloudinary.com/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload`
+  : 'https://res.cloudinary.com/zo1t9pye/image/upload';
 const BANNER_WIDTHS = [480, 900, 1600];
 const AUTOPLAY_MS = 4500;
 const RESUME_AFTER_INTERACTION_MS = 5000;
 
 const FALLBACK_SLIDES = [
-  { publicId: 'v1789713367/integration/banners/banner1', alt: 'New Collection', cta: '/shop', label: 'Shop New Collection' },
-  { publicId: 'v1789713379/integration/banners/banner2', alt: 'Street Essentials', cta: '/shop?tag=streetwear', label: 'Shop Street Essentials' },
-  { publicId: 'v1789713387/integration/banners/banner3', alt: 'Featured Designs', cta: '/shop', label: 'Shop Featured Designs' },
+  { publicId: '/demo/banner-1.svg', alt: 'New Collection', cta: '/shop', label: 'Shop New Collection' },
+  { publicId: '/demo/banner-2.svg', alt: 'Street Essentials', cta: '/shop', label: 'Shop Street Essentials' },
+  { publicId: '/demo/banner-3.svg', alt: 'Featured Designs', cta: '/shop', label: 'Shop Featured Designs' },
 ];
 
-const bannerUrl = (publicId, width) =>
-  `${CLOUD_BASE}/f_auto,q_auto,w_${width}/${publicId}`;
+const isDirectUrl = (src) => typeof src === 'string' && (/^https?:\/\//.test(src) || src.startsWith('/'));
+
+const bannerUrl = (publicId, width) => {
+  if (isDirectUrl(publicId)) return publicId;
+  return `${CLOUD_BASE}/f_auto,q_auto,w_${width}/${publicId}`;
+};
+
+const bannerSrcSet = (publicId) => {
+  if (isDirectUrl(publicId)) return undefined;
+  return BANNER_WIDTHS.map((w) => `${bannerUrl(publicId, w)} ${w}w`).join(', ');
+};
 
 const FALLBACK_IMAGE = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="500"><rect width="100%25" height="100%25" fill="%23111111"/></svg>';
 
@@ -148,7 +159,7 @@ export default function Hero() {
             <img
               key={slide.publicId}
               src={bannerUrl(slide.publicId, 1600)}
-              srcSet={BANNER_WIDTHS.map((w) => `${bannerUrl(slide.publicId, w)} ${w}w`).join(', ')}
+              srcSet={bannerSrcSet(slide.publicId)}
               sizes="100vw"
               alt={slide.alt}
               aria-hidden={!active}

@@ -7,10 +7,16 @@ export const siteConfig = {
   social: {
     facebook: 'https://www.facebook.com/profile.php?id=61594204353841',
     x: 'https://x.com/integration09',
-    instagram: 'https://www.instagram.com/YOUR_HANDLE',
   },
 };
 
+export function normalizeWhatsappNumber(number) {
+  const digits = String(number).replace(/\D/g, '');
+  if (digits.startsWith('880')) return digits;
+  if (digits.startsWith('0')) return `880${digits.slice(1)}`;
+  return digits;
+}
+
 export function buildWhatsappUrl(number, text) {
-  return `https://wa.me/${number}?text=${encodeURIComponent(text)}`;
+  return `https://wa.me/${normalizeWhatsappNumber(number)}?text=${encodeURIComponent(text)}`;
 }

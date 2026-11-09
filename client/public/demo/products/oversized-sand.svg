@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" role="img" aria-label="Oversized Tee in Sand">
+  <rect width="800" height="800" fill="#f7f2e8"/>
+  <circle cx="640" cy="150" r="170" fill="#efe6d6"/>
+  <path d="M285 180 L355 145 Q400 205 445 145 L515 180 L615 265 L545 345 L530 655 Q400 685 270 655 L255 345 L185 265 Z" fill="#d6c3a5"/>
+  <path d="M355 145 Q400 205 445 145" fill="none" stroke="#bda985" stroke-width="7"/>
+  <path d="M270 655 Q400 685 530 655" fill="none" stroke="#c4b08f" stroke-width="6"/>
+  <text x="400" y="735" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="22" letter-spacing="7" fill="#78716c">OVERSIZED TEE</text>
+  <text x="400" y="765" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" letter-spacing="4" fill="#a8a29e">SAND</text>
+</svg>

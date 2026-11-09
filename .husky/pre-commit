@@ -16,7 +16,7 @@ if [ -n "$code_changed" ] && [ -z "$changelog_updated" ]; then
   echo ""
   echo "⚠️  WARNING: Code files changed but CHANGELOG.md was not updated."
   echo ""
-  echo "If this is a version completion, update CHANGELOG.md and version docs."
+  echo "If this is a version completion, update CHANGELOG.md."
   echo "If this is mid-development, this warning is expected — proceed."
   echo ""
   echo "To suppress: git commit --no-verify"

@@ -1,4 +1,25 @@
-﻿## [Unreleased]
+﻿## [1.8.0] - 2026-11-09
+
+**Status:** Stable - public portfolio release
+
+**Public repository**
+
+- Published a sanitized public copy of the project under the PolyForm Noncommercial 1.0.0 license.
+- Rebuilt the public Git history without internal operations docs, real catalog scripts, admin emails, or production secrets.
+- Replaced the production catalog seed with a generic demo seed (`npm run seed`) and local SVG artwork.
+- Added `.env.example`, `.nvmrc`, `.editorconfig`, `SECURITY.md`, `TRADEMARK.md`, `docs/ARCHITECTURE.md`, `docs/CASE_STUDY.md`, and `docs/DEVELOPMENT.md`.
+- Added CodeQL, gitleaks, and Dependabot to CI.
+
+**Fixes**
+
+- Removed the broken Instagram placeholder from the footer.
+- Normalized WhatsApp links to the international `880...` format.
+- Made hero banners accept local and absolute image URLs for the demo seed.
+- Email senders now use `FROM_EMAIL`, falling back to `OWNER_EMAIL`.
+- `makeAdmin.js` now requires an explicit password of at least 12 characters and no longer has a default.
+- Admin bootstrap now requires `ALLOW_ADMIN_BOOTSTRAP=true` and a password of at least 12 characters.
+
+**Tests:** 66/66 server tests pass. Client production build passes.
 
 ------
 
@@ -12,7 +33,7 @@
 
 **Tests:** 66/66 server tests pass. No production orders or coupons were created.
 
-Detailed release notes: [versions/v1.7.1.md](versions/v1.7.1.md)
+Detailed release notes: [v1.7.1](https://github.com/NajmosSalahin/Integration/releases/tag/v1.7.1)
 
 ------
 
@@ -41,7 +62,7 @@ Detailed release notes: [versions/v1.7.1.md](versions/v1.7.1.md)
 
 **Tests:** 65/65 server tests pass, the client production build passes, and both audits report 0 vulnerabilities. Verification was local only; no production orders or coupons were created.
 
-Detailed release notes: [versions/v1.7.0.md](versions/v1.7.0.md)
+Detailed release notes: [v1.7.0](https://github.com/NajmosSalahin/Integration/releases/tag/v1.7.0)
 
 ------
 
@@ -57,7 +78,7 @@ Detailed release notes: [versions/v1.7.0.md](versions/v1.7.0.md)
 
 **Tests:** 65/65 server tests pass, the client build passes, and both audits report 0 vulnerabilities. A local HTTP suite passed 18/18 checks covering session binding, logout and password-change revocation, per-device logout, rotation, grace replay, post-grace rejection, and reuse detection. The disposable test user and session were deleted; no orders or coupons were created.
 
-Detailed release notes: [versions/v1.6.0.md](versions/v1.6.0.md)
+Detailed release notes: [v1.6.0](https://github.com/NajmosSalahin/Integration/releases/tag/v1.6.0)
 
 ------
 
@@ -67,14 +88,13 @@ Detailed release notes: [versions/v1.6.0.md](versions/v1.6.0.md)
 
 **Operations**
 
-- Added a daily GitHub Actions backup at `19:00 UTC`. It dumps the full `integration` database with `mongodump`, encrypts the archive with age, and uploads it as a GitHub Actions artifact retained for 90 days. No new paid service is required.
-- Added `BACKUPS.md` with key custody, download/decrypt commands, a scratch-database restore drill, full-restore steps, and free-plan limits.
-- Verified the full path from the real workflow artifact: downloaded, decrypted, restored 224 documents across 8 collections and their indexes into `restore_20261106T1249`, matched the source, and dropped the scratch database.
-- Updated `actions/checkout`, `actions/setup-node`, and `actions/upload-artifact` to v7 to clear the Node 20 deprecation warnings.
+- Added encrypted daily database backups in the private operations repository: a scheduled dump, age encryption, and 90-day artifact retention.
+- Verified the full backup path end to end with a restore drill into a scratch database.
+- Updated GitHub Actions to current major versions to clear the Node 20 deprecation warnings.
 
-**Tests:** CI passes on `develop` and `master`; backup runs `42220602086` and `42220871229` succeeded. No production users, orders, coupons, or schema changes were created.
+**Tests:** CI passes on `develop` and `master`; the backup workflow completed successfully. No production users, orders, coupons, or schema changes were created.
 
-Detailed release notes: [versions/v1.5.0.md](versions/v1.5.0.md)
+Detailed release notes: [v1.5.0](https://github.com/NajmosSalahin/Integration/releases/tag/v1.5.0)
 
 ------
 
@@ -93,7 +113,7 @@ Detailed release notes: [versions/v1.5.0.md](versions/v1.5.0.md)
 
 **Tests:** 52/52 server tests pass; client build passes. Local HTTP checks covered the unverified `403`, three resends followed by `429`, verified order validation, customer `403`, invalid/same-status/terminal transitions, concurrent-safe updates, and persisted history. No production orders or coupons were created.
 
-Detailed release notes: [versions/v1.4.0.md](versions/v1.4.0.md)
+Detailed release notes: [v1.4.0](https://github.com/NajmosSalahin/Integration/releases/tag/v1.4.0)
 
 ------
 
@@ -110,7 +130,7 @@ Detailed release notes: [versions/v1.4.0.md](versions/v1.4.0.md)
 
 **Tests:** 41/41 server tests pass; client build passes; both audits report 0 vulnerabilities.
 
-Detailed release notes: [versions/v1.3.2.md](versions/v1.3.2.md)
+Detailed release notes: [v1.3.2](https://github.com/NajmosSalahin/Integration/releases/tag/v1.3.2)
 
 ------
 
@@ -134,25 +154,25 @@ Detailed release notes: [versions/v1.3.2.md](versions/v1.3.2.md)
 - Server: `zod@4.6.7`, `multer@2.5.0`, patched `body-parser`/`proxy-addr`/`qs`; client: `vite@6.4.5`, `source-map-js@1.2.2`.
 - Tests: `npm test` in `server/` (34 tests).
 
-Detailed audit status and manual re-tests: [AUDIT_REPORT.md](AUDIT_REPORT.md)
+Security audit completed; findings and remediation were tracked privately.
 
 ------
 
 ## [1.3.0] - 2026-10-03
 
-**Status:** Stable — admin category images, Anime T-Shirts category, homepage Collection reset
+**Status:** Stable — admin category images, a new catalog category, homepage collection reset
 
 **Changes**
 
-- Admin-controlled category images: new `image` field on Category (model, zod `categorySchema`, create/update controller, `categories` upload section). Admin Categories gets an upload/replace/remove control (Cloudinary `integration/categories`) plus a table thumbnail; the homepage grid now resolves `category.image` → product-derived image → icon. Category create/update/delete/deactivate now also invalidate the public `['categories']` cache so the homepage refreshes immediately.
-- New **Anime T-Shirts** category (`anime-tshirts`): the 11 anime designs moved out of `aesthetic-tshirts` (70 remaining) via `server/scripts/createAnimeCategory.js` (product/category backups in `server/scripts/backups/`); homepage tile `order: 8`, right after Literature (grid 8 → 9 tiles). Local source folder `Product Images/Anime_Tshirt_image/` (11 PNGs moved, gitignored) added to `uploadImages.js`; static `categories.js` and `seed.js` tagged accordingly. Ramen Neko / Tsuki / Maya World stay Aesthetic; `Lain Islamic University` keeps `iu-tshirts`.
-- Homepage Collection data reset: all products set to `homeCollection: false`, then 16 random active products enabled with `collectionOrder` 0–15 (was all-true from the v1.2.0 backfill, which made the curation feature look inert). New script `server/scripts/randomHomeCollection.js` — re-runnable to reshuffle.
+- Admin-controlled category images: new `image` field on Category (model, Zod schema, create/update controller, `categories` upload section). Admin Categories gets an upload/replace/remove control plus a table thumbnail; the homepage grid now resolves `category.image` → product-derived image → icon. Category create/update/delete/deactivate now also invalidate the public `['categories']` cache so the homepage refreshes immediately.
+- Added a new catalog category and moved the matching products into it through a one-off maintenance script with product/category backups.
+- Homepage Collection data reset: all products set to `homeCollection: false`, then a curated subset enabled with explicit `collectionOrder` values. Added a re-runnable script to reshuffle the homepage collection.
 
 **Fixes**
 
-- Edit-modal Homepage Collection switch (and create/delete/deactivate) didn't refresh the live homepage: only `adminProducts` was invalidated, so the public `['products']` cache stayed stale up to 5 min (`staleTime`). All product mutations now invalidate both caches.
+- Edit-modal Homepage Collection switch (and create/delete/deactivate) didn't refresh the live homepage: only `adminProducts` was invalidated, so the public `['products']` cache stayed stale up to 5 minutes. All product mutations now invalidate both caches.
 
-**Detailed snapshot:** [versions/v1.3.0.md](versions/v1.3.0.md)
+**Detailed snapshot:** [v1.3.0](https://github.com/NajmosSalahin/Integration/releases)
 
 ------
 
@@ -162,8 +182,8 @@ Detailed audit status and manual re-tests: [AUDIT_REPORT.md](AUDIT_REPORT.md)
 
 **Changes**
 
-- Removed Cultural / Landscape / Artisan T-Shirt categories (docs already inactive in Atlas). 16 products reassigned: cultural 4 + Murobbi Murobbi → `literature-tshirts`, landscape 8 + artisan 3 → `aesthetic-tshirts`. Static `categories.js` and `seed.js` updated; local `Product Images\IDK Category\` deleted (16 PNGs moved into Literature/Aesthetic source folders); dropped from `uploadImages.js`. Cloudinary assets untouched.
-- Homepage Collection is now admin-curated: new `homeCollection` + `collectionOrder` fields on Product, quick toggle + order input in admin products, `PATCH /:id/home-collection` endpoint, migration `initHomeCollection.js` (existing 192 products pre-enabled with recency rank — homepage order unchanged). New products default to hidden; `?q=`/`?tag=` search views still search the full catalog.
+- Retired three overlapping catalog categories and reassigned their products to the remaining categories. Updated the static category list and seed data, removed the retired source folders from the upload helper, and left existing Cloudinary assets untouched.
+- Homepage Collection is now admin-curated: new `homeCollection` + `collectionOrder` fields on Product, quick toggle + order input in admin products, `PATCH /:id/home-collection` endpoint, and a migration that preserved the existing homepage order. New products default to hidden; search views still search the full catalog.
 - Faster hero/featured carousels: hero autoplay 6s → 4.5s, crossfade 1100ms → 600ms; featured row step 5s → 4s, slide 400ms → 250ms
 
 **Fixes**
@@ -177,9 +197,9 @@ Detailed audit status and manual re-tests: [AUDIT_REPORT.md](AUDIT_REPORT.md)
 
 ## [1.1.2] - 2026-10-03
 
-**Status:** Stable — SEO: server-side meta injection (GSC 202 pages "Discovered – currently not indexed")
+**Status:** Stable — SEO: server-side meta injection
 
-Googlebot's first fetch of every URL got an identical static shell — unique `<title>`/description/canonical/JSON-LD only existed after client-side Helmet ran, all 203 sitemap URLs returned 200 (soft-404s included), and robots.txt blocked noindex pages from ever being seen. Now the Express catch-all injects per-route head metadata into the cached `index.html` before responding.
+Search Console showed that Googlebot's first fetch of every URL got an identical static shell — unique `<title>`/description/canonical/JSON-LD only existed after client-side Helmet ran, and every sitemap URL returned 200, including soft-404s. Now the Express catch-all injects per-route head metadata into the cached `index.html` before responding.
 
 **Highlights**
 
@@ -193,7 +213,7 @@ Googlebot's first fetch of every URL got an identical static shell — unique `<
 
 **Post-deploy (manual):** GSC resubmit sitemap + Request indexing on `/`, `/shop`, 3–5 products
 
-**Detailed snapshot:** [versions/v1.1.2.md](versions/v1.1.2.md)
+**Detailed snapshot:** [v1.1.2](https://github.com/NajmosSalahin/Integration/releases)
 
 ------
 
@@ -203,10 +223,10 @@ Googlebot's first fetch of every URL got an identical static shell — unique `<
 
 **Fixes**
 
-- [x] Replaced placeholder admin accounts (`[redacted]`, `[redacted]`, `[redacted]`) with the real admins in bootstrap env, seed, and version docs — avoids confusion with non-existent accounts
+- [x] Cleaned up placeholder admin accounts in the bootstrap config, seed data, and docs so they match the accounts that actually exist
 - [x] Deduplicated customer order history: `/orders` is now the single canonical page. `/account?tab=orders` redirects to `/orders`; the Account sidebar "My Orders" entry links there instead of rendering a second orders pane (`OrdersSection` removed). `OrdersHistory` gained product thumbnails, an order count, a Shipped status/filter (was missing), and the empty-state CTA now points to `/shop`.
 
-**Detailed snapshot:** [versions/v1.1.1.md](versions/v1.1.1.md)
+**Detailed snapshot:** [v1.1.1](https://github.com/NajmosSalahin/Integration/releases)
 
 ------
 
@@ -214,18 +234,17 @@ Googlebot's first fetch of every URL got an identical static shell — unique `<
 
 **Status:** Stable — Catalog Expansion
 
-The catalog grows by 37 products via the new `server/scripts/ingestNewProducts.js` one-off ingest: the **Lalon collection (29)**, **Raglan jerseys (4)**, and **IU tees (4)**, plus a new **Lalon T-Shirt** category. Every product was uploaded to Cloudinary 3× (gallery pattern) with template descriptions and category-led tags. Script is idempotent (skips existing titles), backs up `Product`/`Category` first, and is wired for `--prod`.
+The catalog grows with a new collection, new colorways, and additional campus designs through a one-off ingest script. Every product was uploaded to Cloudinary with the standard gallery pattern, template descriptions, and category-led tags. The script is idempotent, backs up Product/Category first, and supports a production target.
 
 **Highlights**
 
-- **Lalon T-Shirt** — 29 Baul/Fakir Lalon designs (portraits, lyrics, emblems, graffiti) under new category `lalon-tshirts`, placed after `aesthetic-tshirts`
-- **Raglan jerseys** — 4 colorways (Maroon, Navy Blue, Olive Green, Storm Grey) under existing `jerseys`
-- **IU tees** — 4 new campus designs under existing `iu-tshirts`
-- All new products: ৳450, sizes S/M/L/XL, in stock, `featured: false`
-- **Tooling:** `server/scripts/ingestNewProducts.js` (backup → idempotent upload → insert; dev/prod aware)
-- **Note:** `.env.development` and `.env.production` currently share the same `MONGO_URI` (`integration`), so the dev ingest wrote directly to the live DB; the `--prod` run was a verified no-op
+- A new catalog category for the collection
+- New colorways under an existing category
+- New campus designs under an existing category
+- All new products use the standard price, sizes S/M/L/XL, in-stock status, and `featured: false`
+- **Tooling:** a one-off, environment-aware ingest script (backup → idempotent upload → insert)
 
-**Detailed snapshot:** [versions/v1.1.0.md](versions/v1.1.0.md)
+**Detailed snapshot:** [v1.1.0](https://github.com/NajmosSalahin/Integration/releases)
 
 ------
 
@@ -237,7 +256,7 @@ Integration opens to customers. Everything built through the 0.1.x pre-release l
 
 **Features (cumulative)**
 
-- **Catalog & discovery:** 150+ curated t‑shirts across 17 categories; smart search (Fuse.js, debounced, weighted title/tags/description); numbered pagination + sort; category nav; featured-row carousel; product detail pages with sizes, stock status, and gallery
+- **Catalog & discovery:** a curated t-shirt catalog across multiple categories; smart search (Fuse.js, debounced, weighted title/tags/description); numbered pagination + sort; category nav; featured-row carousel; product detail pages with sizes, stock status, and gallery
 - **Accounts:** signup/signup-verification, login, logout, refresh-token session recovery, password reset, profile + avatar, saved addresses, wishlists
 - **Cart & checkout:** Zustand cart (localStorage), coupon discounts, pre-filled checkout, order placement with rate-limited + Zod-validated endpoint, PDF receipt, owner notification email, customer confirmation email
 - **Orders:** `/orders` history, `/order/:id` details, admin order management (list, filter, search, status updates), honest ownership error handling
@@ -249,9 +268,9 @@ Integration opens to customers. Everything built through the 0.1.x pre-release l
 
 - React 19 + Vite + Tailwind 4 client; Express + MongoDB server; single-service Render deploy
 - Brevo transactional email + newsletter; Cloudinary image hosting; Plausible analytics
-- Multi-admin bootstrap via env vars (`ADMIN_BOOTSTRAP_*`) and `npm run make:admin`
+- Multi-admin bootstrap via env vars (`ADMIN_BOOTSTRAP_*`, now gated by `ALLOW_ADMIN_BOOTSTRAP=true`) and `npm run make:admin`
 
-**Detailed snapshot:** [versions/v1.0.0.md](versions/v1.0.0.md)
+**Detailed snapshot:** [v1.0.0](https://github.com/NajmosSalahin/Integration/releases/tag/v1.0.0)
 
 ------
 
@@ -274,4 +293,4 @@ Two bugs sink the order flow. **(1) Blank until refresh** — the app intermitte
 | **Standalone `/orders` history page** | `OrdersHistory` is now a real `/orders` route (was a dead redirect); account tab kept; Navbar "My Orders" links repointed |
 | Id-less `/order-confirmation` | Redirects to `/orders` (logged-in) / `/login` (guest) instead of the raw 404 page |
 
-**Detailed snapshot:** [versions/v0.1.21.md](versions/v0.1.21.md)
+**Detailed snapshot:** [v0.1.21](https://github.com/NajmosSalahin/Integration/releases)

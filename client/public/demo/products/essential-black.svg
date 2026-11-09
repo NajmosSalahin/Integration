@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" role="img" aria-label="Essential Tee in Black">
+  <rect width="800" height="800" fill="#f4f4f5"/>
+  <circle cx="640" cy="150" r="170" fill="#e4e4e7"/>
+  <path d="M300 170 L360 140 Q400 195 440 140 L500 170 L590 250 L530 320 L520 650 Q400 678 280 650 L270 320 L210 250 Z" fill="#18181b"/>
+  <path d="M360 140 Q400 195 440 140" fill="none" stroke="#3f3f46" stroke-width="7"/>
+  <path d="M280 650 Q400 678 520 650" fill="none" stroke="#27272a" stroke-width="6" opacity="0.7"/>
+  <text x="400" y="735" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="22" letter-spacing="7" fill="#52525b">ESSENTIAL TEE</text>
+  <text x="400" y="765" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" letter-spacing="4" fill="#a1a1aa">BLACK</text>
+</svg>

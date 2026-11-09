@@ -5,11 +5,8 @@ node_modules/
 
 # Environment files
 .env
-.env.development
-.env.production
-.env.local
-.env.*.local
-render.env
+.env.*
+!.env.example
 
 # Build output
 dist/
@@ -28,7 +25,8 @@ build/
 Thumbs.db
 desktop.ini
 
-# Debug
+# Logs
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
@@ -36,31 +34,13 @@ yarn-error.log*
 # Testing
 coverage/
 
-# Misc
-*.log
-
-# Marketplace asset folders (large / user-uploaded, kept local; Cloudinary is source of truth)
+# Local and user-uploaded assets
 Product Images/
-client/public/**/Product Images/
-
-# Scratch / working notes (never ship)
-homepage-restructure-prompt.md
-versions/TEMPLATE.md
-versions/TEMPLATE_backup.md
-versions/versions/v0.1.5.md
-versions/order_backup_pre_taka.json
 order_backup_pre_taka.json
-client/node_modules/
-server/uploaded_urls.json
+*.bundle
 
-# DB dumps from one-off ingest/backup scripts (local only)
-server/scripts/backups/
-
-# Backup encryption key and portable restore tools (never commit)
-backup-keys/
-
-# Local package-locks superseded by workspace resolution
-client/package-lock.json
-server/package-lock.json
-# scratch notes - never committed (see AGENTS.md scope rules)
+# Scratch notes
+homepage-restructure-prompt.md
 works.md
+prompt.md
+.opencode/

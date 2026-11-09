@@ -57,7 +57,7 @@ export async function sendOrderConfirmationEmail({ order, customerEmail, custome
 
   await brevo.transactionalEmails.sendTransacEmail({
     subject: `Order Confirmed — #${String(order._id).slice(-8).toUpperCase()}`,
-    sender: { name: 'Integration', email: 'najmussalahin.adib@gmail.com' },
+    sender: { name: 'Integration', email: process.env.FROM_EMAIL || process.env.OWNER_EMAIL },
     to: [{ email: customerEmail }],
     htmlContent: wrap(content),
   });

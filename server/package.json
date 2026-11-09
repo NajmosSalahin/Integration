@@ -1,14 +1,17 @@
 {
   "name": "integration-server",
   "private": true,
-  "version": "1.7.1",
+  "version": "1.8.0",
   "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "dev": "node --watch server.js",
     "start": "node server.js",
     "test": "node --test",
     "make:admin": "node scripts/makeAdmin.js",
-    "seed:catalog": "node scripts/seedCatalog.js"
+    "seed:demo": "node utils/seedDemo.js"
   },
   "dependencies": {
     "@getbrevo/brevo": "^6.0.0",

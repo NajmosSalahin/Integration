@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" role="img" aria-label="Oxford Shirt in Navy">
+  <rect width="800" height="800" fill="#f4f4f5"/>
+  <circle cx="640" cy="150" r="170" fill="#e4e4e7"/>
+  <path d="M300 170 L360 140 Q400 195 440 140 L500 170 L640 300 L570 380 L540 340 L525 650 Q400 678 275 650 L260 340 L230 380 L160 300 Z" fill="#1e293b"/>
+  <path d="M360 140 Q400 195 440 140" fill="none" stroke="#0f172a" stroke-width="7"/>
+  <path d="M400 200 L400 640" stroke="#0f172a" stroke-width="5" opacity="0.7"/>
+  <circle cx="400" cy="280" r="6" fill="#94a3b8"/>
+  <circle cx="400" cy="360" r="6" fill="#94a3b8"/>
+  <circle cx="400" cy="440" r="6" fill="#94a3b8"/>
+  <circle cx="400" cy="520" r="6" fill="#94a3b8"/>
+  <text x="400" y="735" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="22" letter-spacing="7" fill="#52525b">OXFORD SHIRT</text>
+  <text x="400" y="765" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" letter-spacing="4" fill="#a1a1aa">NAVY</text>
+</svg>

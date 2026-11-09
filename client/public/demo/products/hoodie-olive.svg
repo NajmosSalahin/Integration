@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" role="img" aria-label="Zip Hoodie in Olive">
+  <rect width="800" height="800" fill="#f4f5f0"/>
+  <circle cx="640" cy="150" r="170" fill="#e6e9de"/>
+  <path d="M290 220 Q300 150 400 145 Q500 150 510 220 L600 280 L550 350 L525 650 Q400 680 275 650 L250 350 L200 280 Z" fill="#4d5d3a"/>
+  <path d="M330 205 Q400 265 470 205 Q455 158 400 155 Q345 158 330 205 Z" fill="#3d4a2e"/>
+  <path d="M400 205 L400 650" stroke="#2f3a23" stroke-width="6"/>
+  <circle cx="400" cy="300" r="9" fill="#c7d2b5"/>
+  <path d="M330 520 L470 520 L470 610 L330 610 Z" fill="#3d4a2e" opacity="0.5"/>
+  <path d="M275 650 Q400 680 525 650" fill="none" stroke="#3d4a2e" stroke-width="6"/>
+  <text x="400" y="735" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="22" letter-spacing="7" fill="#52525b">ZIP HOODIE</text>
+  <text x="400" y="765" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" letter-spacing="4" fill="#a1a1aa">OLIVE</text>
+</svg>

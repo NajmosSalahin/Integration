@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" role="img" aria-label="Graphic Tee with Wave print">
+  <rect width="800" height="800" fill="#f4f4f5"/>
+  <circle cx="640" cy="150" r="170" fill="#e4e4e7"/>
+  <path d="M300 170 L360 140 Q400 195 440 140 L500 170 L590 250 L530 320 L520 650 Q400 678 280 650 L270 320 L210 250 Z" fill="#27272a"/>
+  <path d="M360 140 Q400 195 440 140" fill="none" stroke="#3f3f46" stroke-width="7"/>
+  <path d="M310 400 Q355 360 400 400 T490 400" fill="none" stroke="#60a5fa" stroke-width="10" stroke-linecap="round"/>
+  <path d="M310 445 Q355 405 400 445 T490 445" fill="none" stroke="#3b82f6" stroke-width="8" stroke-linecap="round" opacity="0.85"/>
+  <path d="M310 490 Q355 450 400 490 T490 490" fill="none" stroke="#2563eb" stroke-width="6" stroke-linecap="round" opacity="0.7"/>
+  <text x="400" y="735" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="22" letter-spacing="7" fill="#52525b">GRAPHIC TEE</text>
+  <text x="400" y="765" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" letter-spacing="4" fill="#a1a1aa">WAVE</text>
+</svg>

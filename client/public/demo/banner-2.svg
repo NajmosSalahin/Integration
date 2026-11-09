@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1942 809" role="img" aria-label="Street Essentials">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#efe3cf"/>
+      <stop offset="1" stop-color="#c9b08c"/>
+    </linearGradient>
+  </defs>
+  <rect width="1942" height="809" fill="url(#bg)"/>
+  <circle cx="1580" cy="260" r="300" fill="#ffffff" opacity="0.25"/>
+  <circle cx="1780" cy="640" r="220" fill="#8a6f4d" opacity="0.18"/>
+  <path d="M0 640 Q480 520 960 640 T1942 600 L1942 809 L0 809 Z" fill="#1c1917" opacity="0.06"/>
+  <text x="120" y="300" font-family="Arial, Helvetica, sans-serif" font-size="34" letter-spacing="14" fill="#57534e">INTEGRATION</text>
+  <text x="120" y="440" font-family="Arial, Helvetica, sans-serif" font-size="96" font-weight="700" fill="#1c1917">STREET ESSENTIALS</text>
+  <text x="120" y="510" font-family="Arial, Helvetica, sans-serif" font-size="30" letter-spacing="8" fill="#44403c">BUILT FOR THE EVERYDAY</text>
+  <line x1="120" y1="570" x2="520" y2="570" stroke="#1c1917" stroke-width="2" opacity="0.5"/>
+</svg>

@@ -1,6 +1,8 @@
 import User from '../models/User.js';
 
 export default async function bootstrapAdmin() {
+  if (process.env.ALLOW_ADMIN_BOOTSTRAP !== 'true') return;
+
   const emailRaw = process.env.ADMIN_BOOTSTRAP_EMAIL;
   if (!emailRaw) return;
 
@@ -14,6 +16,10 @@ export default async function bootstrapAdmin() {
   const password = process.env.ADMIN_BOOTSTRAP_PASSWORD;
   if (!password) {
     console.warn('ADMIN_BOOTSTRAP_EMAIL is set but ADMIN_BOOTSTRAP_PASSWORD is missing — skipping admin bootstrap');
+    return;
+  }
+  if (password.length < 12) {
+    console.warn('ADMIN_BOOTSTRAP_PASSWORD must be at least 12 characters — skipping admin bootstrap');
     return;
   }
 
