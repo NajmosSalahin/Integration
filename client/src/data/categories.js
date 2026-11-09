@@ -4,3 +4,5 @@ export const categories = [
   { name: 'Long Sleeves', tag: 'long-sleeves', icon: 'Shirt', group: 'Shirts', home: true },
   { name: 'Accessories', tag: 'accessories', icon: 'ShoppingBag', group: 'Accessories', home: false },
 ];
+
+export const CATEGORY_GROUPS = ['T-Shirts', 'Shirts', 'Outerwear', 'Accessories'];
