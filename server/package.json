@@ -14,7 +14,7 @@
     "seed:demo": "node utils/seedDemo.js"
   },
   "dependencies": {
-    "@getbrevo/brevo": "^6.0.0",
+    "@getbrevo/brevo": "^6.2.0",
     "bcrypt": "^6.0.0",
     "cloudinary": "^2.5.0",
     "compression": "^1.8.2",
