@@ -1,4 +1,16 @@
-﻿## [1.8.0] - 2026-11-09
+﻿## [Unreleased]
+
+**Security**
+
+- Added a global API rate limiter plus a separate limiter for the sitemap and SPA fallback.
+- Hardened the trailing-slash redirect against protocol-relative and encoded-separator open redirects.
+- Updated mongoose to 8.24.8 and refreshed the client dependency group.
+
+**Tests:** 70/70 server tests pass. Client production build passes.
+
+------
+
+## [1.8.0] - 2026-11-09
 
 **Status:** Stable - public portfolio release
 
