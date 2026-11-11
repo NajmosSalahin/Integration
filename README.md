@@ -11,9 +11,9 @@
 
 ---
 
-Integration is a full-stack storefront for a small t-shirt and streetwear business in Bangladesh. It covers the entire customer journey — browsing, search, cart, checkout, manual mobile-money payment, order tracking — plus a permission-aware admin workspace for running the store day to day.
+Integration is a full-stack storefront for a small t-shirt and streetwear business in Bangladesh. It covers the entire customer journey - browsing, search, cart, checkout, manual mobile-money payment, order tracking - plus a permission-aware admin workspace for running the store day to day.
 
-The repository is public as a portfolio piece. Production secrets, customer data, the real catalog, and internal operations docs are kept private. The demo seed in this repo uses generic products and local SVG artwork so the app can be run from a fresh clone without any external media account.
+> **Sanitized portfolio mirror.** The live store deploys from a private production repository, not from this one. This public repository is a sanitized mirror kept for code review and portfolio purposes. Production secrets, customer data, the real catalog, and internal operations docs stay private, and the demo seed here uses generic products and local SVG artwork so the app can run from a fresh clone without any external media account.
 
 ## Screenshots
 
