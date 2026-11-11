@@ -254,7 +254,7 @@ Set the environment variables in the Render dashboard. `JWT_SECRET` and `JWT_REF
 - Password changes and resets revoke all sessions for that user
 - Admin routes require both authentication and the relevant section permission
 - All mutating endpoints validate input with Zod
-- Login, signup, refresh, contact, newsletter, coupon, and order endpoints have dedicated rate limits
+- A global API limiter plus dedicated limits on login, signup, refresh, contact, newsletter, coupon, and order endpoints
 - Product and banner uploads are restricted by type and size
 - CI runs gitleaks on every push and pull request; CodeQL and Dependabot are enabled
 - The public repository contains no production credentials, customer records, or private catalog data

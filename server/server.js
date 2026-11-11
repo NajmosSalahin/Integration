@@ -19,6 +19,7 @@ import categoryRoutes from './routes/categoryRoutes.js';
 import uploadRoutes from './routes/uploadRoutes.js';
 import bootstrapAdmin from './utils/bootstrapAdmin.js';
 import errorHandler from './middleware/errorHandler.js';
+import { apiLimiter } from './middleware/rateLimit.js';
 import { parseTrustProxy } from './utils/trustProxy.js';
 import { parseAllowedOrigins, isAllowedOrigin } from './utils/origin.js';
 import { healthPayload } from './utils/health.js';
@@ -70,6 +71,8 @@ app.use(compression());
 app.get('/api/health', (req, res) => {
   res.json(healthPayload());
 });
+
+app.use('/api', apiLimiter);
 
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
