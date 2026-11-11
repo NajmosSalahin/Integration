@@ -8,6 +8,14 @@ export const apiLimiter = rateLimit({
   legacyHeaders: false,
 });
 
+export const pageLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 300,
+  message: { error: 'Too many requests. Please try again later.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 export const signupLimiter = rateLimit({
   windowMs: 60 * 60 * 1000,
   max: 5,

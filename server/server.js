@@ -19,7 +19,8 @@ import categoryRoutes from './routes/categoryRoutes.js';
 import uploadRoutes from './routes/uploadRoutes.js';
 import bootstrapAdmin from './utils/bootstrapAdmin.js';
 import errorHandler from './middleware/errorHandler.js';
-import { apiLimiter } from './middleware/rateLimit.js';
+import { apiLimiter, pageLimiter } from './middleware/rateLimit.js';
+import { normalizeRedirectTarget } from './utils/redirect.js';
 import { parseTrustProxy } from './utils/trustProxy.js';
 import { parseAllowedOrigins, isAllowedOrigin } from './utils/origin.js';
 import { healthPayload } from './utils/health.js';
@@ -90,8 +91,10 @@ if (process.env.NODE_ENV === 'production') {
       return res.redirect(301, `/${req.search || ''}`);
     }
     if (req.path.length > 1 && req.path.endsWith('/')) {
-      const target = req.path.replace(/\/+$/, '');
-      return res.redirect(301, `${target === '' ? '/' : target}${req.search || ''}`);
+      const target = normalizeRedirectTarget(req.path);
+      if (target) {
+        return res.redirect(301, `${target}${req.search || ''}`);
+      }
     }
     next();
   });
@@ -121,7 +124,7 @@ const xmlEscape = (value) =>
 
 const formatDate = (date) => new Date(date).toISOString();
 
-app.get('/sitemap.xml', async (req, res) => {
+app.get('/sitemap.xml', pageLimiter, async (req, res) => {
   try {
     const products = await Product.find({ active: true })
       .select('_id updatedAt')
@@ -180,7 +183,7 @@ if (process.env.NODE_ENV === 'production') {
     res.send(indexTemplate ? applySeo(indexTemplate, seo) : '');
   };
 
-  app.get('*', async (req, res) => {
+  app.get('*', pageLimiter, async (req, res) => {
     if (req.path.startsWith('/api')) return res.status(404).end();
     if (/\.[A-Za-z0-9]{1,6}$/.test(req.path)) {
       return res.status(404).end();
